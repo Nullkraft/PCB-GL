@@ -41,6 +41,7 @@
 #include <SdaiAUTOMOTIVE_DESIGN.h>
 
 #include "utils.h"
+#include "string.h"
 
 extern "C" {
 #include <glib.h>
@@ -69,6 +70,8 @@ extern "C" {
 #  undef DEBUG_CHILD_REMOVAL
 #  undef DEBUG_PRODUCT_DEFINITION
 #endif
+
+#undef DEBUG_NOT_IMPLEMENTED
 
 #include <glib.h>
 
@@ -174,7 +177,178 @@ find_mapped_item (SdaiShape_representation *sr,
     }
 }
 
-static void process_edges (GHashTable *edges_hash_set, object3d *object)
+typedef struct process_step_info {
+  /* Hash / list of SR -> step_model */
+  object3d *object;
+  double current_transform[4][4];
+
+} process_step_info;
+
+void
+copy_4x4 (double from[4][4],
+          double to[4][4])
+{
+  memcpy (to, from, sizeof(double[4][4]));
+}
+
+void
+identity_4x4 (double m[4][4])
+{
+  int i, j;
+
+  for (i = 0; i < 4; i++)
+    for (j = 0; j < 4; j++)
+      m[i][j] = 0.0;
+
+  m[0][0] = 1.0;
+  m[1][1] = 1.0;
+  m[2][2] = 1.0;
+  m[3][3] = 1.0;
+}
+
+/* NB: Column major */
+/* matrix[column][row] */
+void
+mult_4x4 (double a[4][4], double b[4][4], double to[4][4])
+{
+  int i, j;
+
+  for (i = 0; i < 4; i++)
+    for (j = 0; j < 4; j++)
+      to[i][j] = a[0][j] * b[i][0] +
+                 a[1][j] * b[i][1] +
+                 a[2][j] * b[i][2] +
+                 a[3][j] * b[i][3];
+}
+
+/* NB: Column major */
+void
+translate_origin (double m[4][4], double x, double y, double z)
+{
+  m[3][0] += x;
+  m[3][1] += y;
+  m[3][2] += z;
+}
+
+/* NB: Column major */
+void
+rotate_basis (double m[4][4], double ax, double ay, double az,
+                              double rx, double ry, double rz)
+{
+  double basis[4][4];
+  double old[4][4];
+  double ox, oy, oz;
+
+  ox = ay * rz - az * ry;
+  oy = az * rx - ax * rz;
+  oz = ax * ry - ay * rx;
+
+  basis[0][0] = rx;  basis[1][0] = ox;  basis[2][0] = ax;  basis[3][0] = 0.0;
+  basis[0][1] = ry;  basis[1][1] = oy;  basis[2][1] = ay;  basis[3][1] = 0.0;
+  basis[0][2] = rz;  basis[1][2] = oz;  basis[2][2] = az;  basis[3][2] = 0.0;
+  basis[0][3] = 0.0; basis[1][3] = 0.0; basis[2][3] = 0.0; basis[3][3] = 1.0;
+
+  copy_4x4 (m, old);
+  //mult_4x4 (old, basis, m);
+  mult_4x4 (basis, old, m);
+}
+
+/* NB: Row major, or transosed column major. Since Matrix will be orthogonal, this is equal to its inverse */
+void
+rotate_basis_inverted (double m[4][4], double ax, double ay, double az,
+                                       double rx, double ry, double rz)
+{
+  double basis[4][4];
+  double old[4][4];
+  double ox, oy, oz;
+
+  ox = ay * rz - az * ry;
+  oy = az * rx - ax * rz;
+  oz = ax * ry - ay * rx;
+
+  basis[0][0] = rx;  basis[0][1] = ox;  basis[0][2] = ax;  basis[0][3] = 0.0;
+  basis[1][0] = ry;  basis[1][1] = oy;  basis[1][2] = ay;  basis[1][3] = 0.0;
+  basis[2][0] = rz;  basis[2][1] = oz;  basis[2][2] = az;  basis[2][3] = 0.0;
+  basis[3][0] = 0.0; basis[3][1] = 0.0; basis[3][2] = 0.0; basis[3][3] = 1.0;
+
+  copy_4x4 (m, old);
+  //mult_4x4 (old, basis, m);
+  mult_4x4 (basis, old, m);
+}
+
+/* NB: Column major */
+void
+transform_vertex (double m[4][4], double *x, double *y, double *z)
+{
+  double new_x, new_y, new_z, new_w;
+
+  new_x = m[0][0] * *x +
+          m[1][0] * *y +
+          m[2][0] * *z +
+          m[3][0] * 1.0;
+
+  new_y = m[0][1] * *x +
+          m[1][1] * *y +
+          m[2][1] * *z +
+          m[3][1] * 1.0;
+
+  new_z = m[0][2] * *x +
+          m[1][2] * *y +
+          m[2][2] * *z +
+          m[3][2] * 1.0;
+
+#if 0
+  new_w = m[0][3] * *x +
+          m[1][3] * *y +
+          m[2][3] * *z +
+          m[3][3] * 1.0;
+
+  new_x /= new_w;
+  new_y /= new_w;
+  new_z /= new_w;
+#endif
+
+  *x = new_x;
+  *y = new_y;
+  *z = new_z;
+}
+
+/* NB: Column major */
+void
+transform_vector (double m[4][4], double *x, double *y, double *z)
+{
+  double new_x, new_y, new_z, new_w;
+
+  new_x = m[0][0] * *x +
+          m[1][0] * *y +
+          m[2][0] * *z;
+
+  new_y = m[0][1] * *x +
+          m[1][1] * *y +
+          m[2][1] * *z;
+
+  new_z = m[0][2] * *x +
+          m[1][2] * *y +
+          m[2][2] * *z;
+
+#if 0
+  new_w = m[0][3] * *x +
+          m[1][3] * *y +
+          m[2][3] * *z +
+          m[3][3] * 1.0;
+
+  new_x /= new_w;
+  new_y /= new_w;
+  new_z /= new_w;
+#endif
+
+  *x = new_x;
+  *y = new_y;
+  *z = new_z;
+}
+
+static void
+process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *object)
 {
   GHashTableIter iter;
   SdaiEdge *edge;
@@ -255,8 +429,10 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
           SdaiCurve *curve = ec->edge_geometry_ ();
           bool same_sense = ec->same_sense_ ();
 
+#ifdef DEBUG_NOT_IMPLEMENTED
           if (!same_sense)
             printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
+#endif
 
 #if 0
           printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
@@ -264,9 +440,12 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
 
           if (strcmp (curve->EntityName (), "Line") == 0)
             {
+              transform_vertex (info->current_transform, &x1, &y1, &z1);
+              transform_vertex (info->current_transform, &x2, &y2, &z2);
+
               our_edge = make_edge ();
               UNDIR_DATA (our_edge) = make_edge_info ();
-              object3d_add_edge (object, our_edge);
+              object3d_add_edge (info->object, our_edge);
               vertex = make_vertex3d (x1, y1, z1);
               ODATA(our_edge) = vertex;
               vertex = make_vertex3d (x2, y2, z2);
@@ -287,21 +466,28 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
 
               double radius = circle->radius_();
 
-              edge_info *info;
+              edge_info *edge_info;
+
+              transform_vertex (info->current_transform, &cx, &cy, &cz);
+              transform_vertex (info->current_transform, &x1, &y1, &z1);
+              transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+              transform_vector (info->current_transform, &nx, &ny, &nz);
 
               our_edge = make_edge ();
-              info = make_edge_info ();
+              edge_info = make_edge_info ();
               if (!kludge) //(same_sense)
                 {
-                  edge_info_set_round (info, cx, cy, cz, nx, ny, nz, radius);
+                  edge_info_set_round (edge_info, cx, cy, cz, nx, ny, nz, radius);
                 }
               else
                 {
                   printf ("URM................\n");
-                  edge_info_set_round (info, cx, cy, cz, -nx, -ny, -nz, radius);
+                  edge_info_set_round (edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
                 }
-              UNDIR_DATA (our_edge) = info;
-              object3d_add_edge (object, our_edge);
+
+              UNDIR_DATA (our_edge) = edge_info;
+              object3d_add_edge (info->object, our_edge);
               vertex = make_vertex3d (x1, y1, z1);
               ODATA(our_edge) = vertex;
               vertex = make_vertex3d (x2, y2, z2);
@@ -312,7 +498,9 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
             }
           else
             {
+#ifdef DEBUG_NOT_IMPLEMENTED
               printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
+#endif
               // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
               // XXX: Various derived types of the above, e.g.:
               //      conic is a supertype of: circle, ellipse, hyperbola, parabola
@@ -328,17 +516,37 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
     }
 }
 
-typedef struct process_step_info {
-  /* Hash / list of SR -> step_model */
-} process_step_info;
+static step_model *
+process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, process_step_info *info);
 
 static step_model *
-process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr);
-
-static step_model *
-process_shape_representation(InstMgr *instance_list, SdaiShape_representation *sr)
+process_shape_representation(InstMgr *instance_list, SdaiShape_representation *sr, process_step_info *info)
 {
-  std::cout << "INFO: Processing raw SR" << std::endl;
+  step_model *step_model;
+//  std::cout << "INFO: Processing raw SR" << std::endl;
+
+  step_model = g_new0(struct step_model, 1);
+//  step_model->filename = g_strdup(filename);
+//  step_model->instances = NULL;    /* ??? */
+
+#if 0
+  SdaiAxis2_placement_3d *part_origin = find_axis2_placement_3d_in_sr (sr);
+  if (part_origin == NULL)
+    std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
+
+  if (part_origin != NULL)
+    {
+      step_model->ox = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ())->value;
+      step_model->oy = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      step_model->oz = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->ax = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ay = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->az = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->rx = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ry = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->rz = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+    }
+#endif
 
   /* We need to find "Shape_representation_relation" linking this SR to another.
    * The SRR could be on its own, or (for assemblies), is likely to be in a complex with
@@ -355,14 +563,14 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
   for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
     {
       SdaiShape_representation_relationship *srr = (*iter);
-      std::cout << "Found SRR; processing" << std::endl;
+//      std::cout << "Found SRR; processing" << std::endl;
 
       SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
 
       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
-      /* XXX: Origin offset etc..? */
       /* XXX: Do something with the result */
-      process_sr_or_subtype (instance_list, child_sr);
+      // Leave existing transformation
+      process_sr_or_subtype (instance_list, child_sr, info);
     }
 
 
@@ -373,18 +581,84 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
   for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
     {
+      double backup_transform[4][4];
+      double ox, oy, oz;
+      double ax, ay, az;
+      double rx, ry, rz;
+      SdaiAxis2_placement_3d *parent_axis;
+      SdaiAxis2_placement_3d *child_axis;
+
       srr_rrwt *item = (*iter);
-      std::cout << "Found SRR + RRWT; processing" << std::endl;
+//      std::cout << "Found SRR + RRWT; processing" << std::endl;
 
       SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(item->rep_2);
       SdaiItem_defined_transformation *idt = item->idt;
 
-      std::cout << "  child SR: #" << child_sr->StepFileId() << " IDT: #" << idt->StepFileId() << std::endl;
+//      std::cout << "  child SR: #" << child_sr->StepFileId() << " IDT: #" << idt->StepFileId() << std::endl;
+
+      copy_4x4 (info->current_transform, backup_transform);
+
+      child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
+      parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+
+      if (parent_axis == NULL ||
+          child_axis == NULL)
+        {
+          std::cout << "ERROR: Got NULL in one of the axis placements for IDT" << std::endl;
+          continue;
+        }
+
+      ox = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ())->value;
+      oy = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      oz = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      ax = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      ay = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      az = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      rx = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      ry = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      rz = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+      printf ("child axis o: (%f, %f, %f)\n"
+              "           a: (%f, %f, %f)\n"
+              "           r: (%f, %f, %f)\n",
+              ox, oy, oz,
+              ax, ay, az,
+              rx, ry, rz);
+
+      /* XXX: Looking only at the target vector.. need to find some examples where the parent transform coordinate system is not unity to get this correct */
+      rotate_basis (info->current_transform, ax, ay, az, rx, ry, rz);
+
+      /* Is this in the correct order? */
+      translate_origin (info->current_transform, ox, oy, oz);
+
+      ox = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ())->value;
+      oy = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      oz = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      ax = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      ay = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      az = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      rx = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      ry = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      rz = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+      printf ("parent axis o: (%f, %f, %f)\n"
+              "            a: (%f, %f, %f)\n"
+              "            r: (%f, %f, %f)\n",
+              ox, oy, oz,
+              ax, ay, az,
+              rx, ry, rz);
+      printf ("\n");
+
+      rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
+      translate_origin (info->current_transform, -ox, -oy, -oz);
 
       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
       /* XXX: Origin offset etc..? */
       /* XXX: Do something with the result */
-      process_sr_or_subtype (instance_list, child_sr);
+      process_sr_or_subtype (instance_list, child_sr, info);
+
+      // Revert the transformation
+      copy_4x4 (backup_transform, info->current_transform);
     }
 
 
@@ -400,23 +674,21 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
   // If SRR node was not complex, insert child with 1:1 tranformation
 
-
-
-  return NULL;
+  return step_model;
 }
 
 static step_model *
-process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
+process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, process_step_info *info)
 {
   step_model *step_model;
-  object3d *object;
+//  object3d *object;
   GHashTable *edges_hash_set;
   bool on_plane;
 
   // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), call the specific hander
   if (strcmp (sr->EntityName (), "Shape_Representation") == 0)
     {
-      return process_shape_representation (instance_list, sr);
+      return process_shape_representation (instance_list, sr, info);
     }
 
   if (strcmp (sr->EntityName (), "Advanced_Brep_Shape_Representation") != 0)
@@ -425,11 +697,30 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
       return NULL;
     }
 
-  object = make_object3d ((char *)"Test");
+//  object = make_object3d ((char *)"Test");
 
+  step_model = g_new0(struct step_model, 1);
+//  step_model->filename = g_strdup(filename);
+//  step_model->instances = NULL;    /* ??? */
+
+#if 0
   SdaiAxis2_placement_3d *part_origin = find_axis2_placement_3d_in_sr (sr);
   if (part_origin == NULL)
     std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
+
+  if (part_origin != NULL)
+    {
+      step_model->ox = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ())->value;
+      step_model->oy = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      step_model->oz = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->ax = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ay = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->az = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->rx = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ry = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->rz = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+    }
+#endif
 
   msb_list msb_list;
   find_manifold_solid_brep (sr, &msb_list);
@@ -472,7 +763,9 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
 
           if (surface->IsComplex ())
             {
+#ifdef DEBUG_NOT_IMPLEMENTED
               printf ("WARNING: Found a STEP Complex entity for our surface (which we don't support yet). Probably a B_SPLINE surface?\n");
+#endif
             }
           else if (strcmp (surface->EntityName (), "Plane") == 0)
             {
@@ -493,7 +786,9 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
             }
           else
             {
+#ifdef DEBUG_NOT_IMPLEMENTED
               printf ("ERROR: Found an unknown surface type (which we obviously don't support). Surface name is %s\n", surface->EntityName ());
+#endif
             }
 
           for (SingleLinkNode *iter = fs->bounds_ ()->GetHead ();
@@ -668,7 +963,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
 
         }
 
-        process_edges (edges_hash_set, object);
+        process_edges (edges_hash_set, info); //object);
 
         /* Deal with edges hash set */
         g_hash_table_destroy (edges_hash_set);
@@ -712,34 +1007,66 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
           continue;
         }
 
+#if 0
+      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
+      /* XXX: Origin offset etc..? */
+      /* XXX: Do something with the result */
+      process_sr_or_subtype (instance_list, child_sr, info);
+#endif
 
-      std::cout << "Should now have the pieces, and can derive a transform as required to recurse down" << std::endl;
+      double backup_transform[4][4];
+      double ox, oy, oz;
+      double ax, ay, az;
+      double rx, ry, rz;
+      SdaiAxis2_placement_3d *parent_axis = rm_axis;
+      SdaiAxis2_placement_3d *child_axis = mi_axis;
+
+      copy_4x4 (info->current_transform, backup_transform);
+
+      if (parent_axis == NULL ||
+          child_axis == NULL)
+        {
+          std::cout << "ERROR: Got NULL in one of the axis placements for IDT" << std::endl;
+          continue;
+        }
+
+      ox = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ())->value;
+      oy = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      oz = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      ax = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      ay = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      az = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      rx = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      ry = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      rz = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+      /* XXX: Looking only at the target vector.. need to find some examples where the parent transform coordinate system is not unity to get this correct */
+      translate_origin (info->current_transform, ox, oy, oz);
+      rotate_basis (info->current_transform, ax, ay, az, rx, ry, rz);
+
+      ox = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ())->value;
+      oy = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      oz = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      ax = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      ay = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      az = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      rx = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      ry = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      rz = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+      rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
+      translate_origin (info->current_transform, -ox, -oy, -oz);
 
       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
       /* XXX: Origin offset etc..? */
       /* XXX: Do something with the result */
-      process_sr_or_subtype (instance_list, child_sr);
+      process_sr_or_subtype (instance_list, child_sr, info);
+
+      // Revert the transformation
+      copy_4x4 (backup_transform, info->current_transform);
     }
 
-  step_model = g_new0(struct step_model, 1);
-
-//  step_model->filename = g_strdup(filename);
-//  step_model->instances = NULL;    /* ??? */
-
-  if (part_origin != NULL)
-    {
-      step_model->ox = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ())->value;
-      step_model->oy = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
-      step_model->oz = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      step_model->ax = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ())->value;
-      step_model->ay = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      step_model->az = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      step_model->rx = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
-      step_model->ry = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      step_model->rz = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-    }
-
-  step_model->object = object;
+  step_model->object = info->object;
 
   return step_model;
 }
@@ -748,6 +1075,7 @@ extern "C" struct step_model *
 step_model_to_shape_master (const char *filename)
 {
   step_model *step_model;
+  process_step_info info;
 
   printf ("step_model_to_shape_master(\"%s\")\n", filename);
 
@@ -767,7 +1095,31 @@ step_model_to_shape_master (const char *filename)
   SdaiShape_definition_representation *sdr = find_sdr_for_pd (instance_list, pd);
   SdaiShape_representation *sr = (SdaiShape_representation *)sdr->used_representation_ ();
 
-  step_model = process_sr_or_subtype (instance_list, sr);
+  info.object = make_object3d ((char *)"Test");
+  identity_4x4 (info.current_transform);
+
+  step_model = process_sr_or_subtype (instance_list, sr, &info);
+
+  /* KLUDGE */
+  SdaiAxis2_placement_3d *part_origin = find_axis2_placement_3d_in_sr (sr);
+  if (part_origin == NULL)
+    std::cout << "WARNING: Could not find AXIS2_PLACEMENT_3D entity in SHAPE_REPRESENTATION" << std::endl;
+
+  if (part_origin != NULL)
+    {
+      step_model->ox = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ())->value;
+      step_model->oy = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+      step_model->oz = ((RealNode *)part_origin->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->ax = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ay = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->az = ((RealNode *)part_origin->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      step_model->rx = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+      step_model->ry = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+      step_model->rz = ((RealNode *)part_origin->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+    }
+
+  /* KLUDGE */
+  step_model->object = info.object;
 
   delete instance_list;
   delete registry;

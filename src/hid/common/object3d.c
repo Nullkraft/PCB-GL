@@ -166,8 +166,7 @@ draw_quad_edge (edge_ref e, void *data)
 
   glColor3f (colors[id][0], colors[id][1], colors[id][2]);
 #else
-//  glColor3f (1., 1., 1.);
-  glColor3f (1., 1., 0.);
+  glColor3f (1., 1., 1.);
 #endif
 
   x1 = ((vertex3d *)ODATA(e))->x;
@@ -302,6 +301,7 @@ draw_quad_edge (edge_ref e, void *data)
         }
     }
 
+//  printf ("Drawing line (%f, %f, %f)-(%f, %f, %f)\n", x1, y1, z1, x2, y2, z2);
   glBegin (GL_LINES);
   glVertex3f (STEP_X_TO_COORD (PCB, x1),
               STEP_Y_TO_COORD (PCB, y1),

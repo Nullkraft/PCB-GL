@@ -200,7 +200,8 @@ compute_depth (int group)
   min_copper_group = MIN (bottom_group, top_group);
   max_copper_group = MAX (bottom_group, top_group);
   num_copper_groups = max_copper_group - min_copper_group;// + 1;
-  middle_copper_group = min_copper_group + num_copper_groups / 2;
+//  middle_copper_group = min_copper_group + num_copper_groups / 2;
+  middle_copper_group = min_copper_group;
 
   if (group >= 0 && group < max_group) {
     if (group >= min_copper_group && group <= max_copper_group) {
@@ -1138,14 +1139,14 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 
-  test_model = 
+//  test_model = 
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step");
-    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step");
 //    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/7446722007_handfixed.stp");
@@ -2131,6 +2132,10 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
 
   glColor4f (1.0f, 1.0f, 1.0f, 1.0f);
 
+//  /* KLUDGE */
+//  glTranslatef (0.0, 0.0, BOARD_THICKNESS / 2.0);
+
+
   // OpenGL matrix layout (numbers are memory offsets)
   // [ 0  4   8  12 ]
   // [ 1  5   9  13 ]
@@ -2144,7 +2149,7 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
   /* Undo -Y coord scaling */
   glScalef (1.0f, -1.0f, 1.0f);
 
-  ox = instance->ay * instance->rz - instance->az * -instance->ry;
+  ox = instance->ay * instance->rz - instance->az * instance->ry;
   oy = instance->az * instance->rx - instance->ax * instance->rz;
   oz = instance->ax * instance->ry - instance->ay * instance->rx;
   m[0][0] = instance->rx;  m[1][0] = ox;    m[2][0] = instance->ax;    m[3][0] = 0.0f;
