@@ -1054,8 +1054,8 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
       ry = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
       rz = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 
-      rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
       translate_origin (info->current_transform, -ox, -oy, -oz);
+      rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
 
       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
       /* XXX: Origin offset etc..? */
