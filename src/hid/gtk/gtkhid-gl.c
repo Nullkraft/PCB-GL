@@ -1111,6 +1111,7 @@ void
 ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
 {
   render_priv *priv;
+  step_model *test_model;
 
   port->render_priv = priv = g_new0 (render_priv, 1);
 
@@ -1137,15 +1138,20 @@ ghid_init_renderer (int *argc, char ***argv, GHidPort *port)
   ghid_graphics_class.fill_pcb_polygon = ghid_fill_pcb_polygon;
   ghid_graphics_class.thindraw_pcb_polygon = ghid_thindraw_pcb_polygon;
 
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step", &step_read_test);
-//  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step", &step_read_test);
-  step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step", &step_read_test);
+  test_model = 
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Resistor_vr68.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Ceramite_2500z_10kV.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Filament_Transformer.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/object3d_test.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/step_interlayer_manual.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/DPAK.step");
+    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Inductor_R1.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/Capacitor_100V_10uF.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/shape_rep.step");
+//    step_model_to_shape_master ("/home/pcjc2/gedasrc/pcb/git/src/example_step/7446722007_handfixed.stp");
+
+  if (test_model != NULL)
+    step_read_test = test_model->object;
 }
 
 void

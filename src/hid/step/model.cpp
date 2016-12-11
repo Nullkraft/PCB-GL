@@ -78,6 +78,8 @@ extern "C" {
 
 
 typedef std::list<SDAI_Application_instance *> ai_list;
+typedef std::list<SdaiManifold_solid_brep *> msb_list;
+typedef std::list<SdaiMapped_item *> mi_list;
 
 
 SdaiProduct_definition *
@@ -114,6 +116,8 @@ read_model_from_file (Registry *registry,
   /*  Try to determine the root product */
   find_and_remove_child_pd (instance_list, &pd_list, 1, "Next_assembly_usage_occurrence"); // Remove any PD which are children of another via NAUO
   find_and_remove_child_pd (instance_list, &pd_list, 1, "Assembly_component_usage");       // Remove any PD which are children of another via ACU
+  find_and_remove_child_pd_mi_rm_sr (instance_list, &pd_list, 1); // Remove any PD which are children of another via MAPPED_ITEM->REPRESENTATION_MAP->SHAPE_REPRESENTATION
+
 
 #ifdef DEBUG_PRODUCT_DEFINITION_SEARCH
   std::cout << "Hopefully left with the root product definition" << std::endl;
@@ -136,8 +140,6 @@ read_model_from_file (Registry *registry,
   return *pd_list.begin();
 }
 
-typedef std::list<SdaiManifold_solid_brep *> msb_list;
-
 static void
 find_manifold_solid_brep (SdaiShape_representation *sr,
                           msb_list *msb_list)
@@ -150,6 +152,23 @@ find_manifold_solid_brep (SdaiShape_representation *sr,
 
       if (strcmp (node->EntityName (), "Manifold_Solid_Brep") == 0)
         msb_list->push_back ((SdaiManifold_solid_brep *)node);
+
+      iter = iter->NextNode ();
+    }
+}
+
+static void
+find_mapped_item (SdaiShape_representation *sr,
+                  mi_list *mi_list)
+{
+  SingleLinkNode *iter = sr->items_ ()->GetHead ();
+
+  while (iter != NULL)
+    {
+      SDAI_Application_instance *node = ((EntityNode *)iter)->node;
+
+      if (strcmp (node->EntityName (), "Mapped_Item") == 0)
+        mi_list->push_back ((SdaiMapped_item *)node);
 
       iter = iter->NextNode ();
     }
@@ -309,40 +328,104 @@ static void process_edges (GHashTable *edges_hash_set, object3d *object)
     }
 }
 
-extern "C" struct step_model *
-step_model_to_shape_master (const char *filename, object3d **out_object)
+typedef struct process_step_info {
+  /* Hash / list of SR -> step_model */
+} process_step_info;
+
+static step_model *
+process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr);
+
+static step_model *
+process_shape_representation(InstMgr *instance_list, SdaiShape_representation *sr)
 {
+  std::cout << "INFO: Processing raw SR" << std::endl;
+
+  /* We need to find "Shape_representation_relation" linking this SR to another.
+   * The SRR could be on its own, or (for assemblies), is likely to be in a complex with
+   * "Representation_relationship_with_transformation", in which case the
+   * "Representation_Relationship" supertype of Shape_representation_relation is also
+   * explicitly in the complex.
+   */
+
+  srr_list srr_list;
+
+  // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
+  find_all_srr_with_rep_1 (instance_list, &srr_list, 1, sr);
+
+  for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
+    {
+      SdaiShape_representation_relationship *srr = (*iter);
+      std::cout << "Found SRR; processing" << std::endl;
+
+      SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
+
+      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
+      /* XXX: Origin offset etc..? */
+      /* XXX: Do something with the result */
+      process_sr_or_subtype (instance_list, child_sr);
+    }
+
+
+  srr_rrwt_list srr_rrwt_list;
+
+  // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
+  find_all_srr_rrwt_with_rep_1 (instance_list, &srr_rrwt_list, 1, sr);
+
+  for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
+    {
+      srr_rrwt *item = (*iter);
+      std::cout << "Found SRR + RRWT; processing" << std::endl;
+
+      SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(item->rep_2);
+      SdaiItem_defined_transformation *idt = item->idt;
+
+      std::cout << "  child SR: #" << child_sr->StepFileId() << " IDT: #" << idt->StepFileId() << std::endl;
+
+      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
+      /* XXX: Origin offset etc..? */
+      /* XXX: Do something with the result */
+      process_sr_or_subtype (instance_list, child_sr);
+    }
+
+
+  // Find all SRR where RR.rep_1 = sr
+  //              let   child_sr = RR.rep_2
+
+  // If SRR node is complex, and also RRWT, extract transform as follows:
+  // SdaiTransformation(SdaiSelect) transformation = RRWT.transformation_operator
+  // Check transformation.UnderlyingTypeName () == "Item_defined_transformation" - if not, error (don't know how to do Functionally defined tranformation
+  // item1 = transform.transform_item_1_() // Axis in parent (use dynamic cast to ensure it is the correct type?)
+  // item2 = transform.transform_item_2_() // Axis in child (use dynamic cast to ensure it is the correct type?)
+  // If item1 or item2 is NULL, then drop this child?
+
+  // If SRR node was not complex, insert child with 1:1 tranformation
+
+
+
+  return NULL;
+}
+
+static step_model *
+process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr)
+{
+  step_model *step_model;
   object3d *object;
   GHashTable *edges_hash_set;
   bool on_plane;
-  step_model *step_model;
 
-  printf ("step_model_to_shape_master(\"%s\", %p)\n", filename, out_object);
-
-  object = make_object3d ((char *)"Test");
-
-  Registry * registry = new Registry (SchemaInit);
-  InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
-
-  // Increment FileId so entities start at #1 instead of #0.
-  instance_list->NextFileId();
-
-  SdaiProduct_definition *pd = read_model_from_file (registry, instance_list, filename);
-  if (pd == NULL)
+  // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), call the specific hander
+  if (strcmp (sr->EntityName (), "Shape_Representation") == 0)
     {
-      printf ("ERROR Loading STEP model from file '%s'", filename);
-      return NULL;
+      return process_shape_representation (instance_list, sr);
     }
 
-  SdaiShape_definition_representation *sdr = find_sdr_for_pd (instance_list, pd);
-  SdaiShape_representation *sr = (SdaiShape_representation *)sdr->used_representation_ ();
-
-  // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), return - we are already in the correct form
   if (strcmp (sr->EntityName (), "Advanced_Brep_Shape_Representation") != 0)
     {
       printf ("step_model_to_shape_master: Looking for Advanced_Brep_Shape_Representation, but found %s (which we don't support yet)\n", sr->EntityName ());
       return NULL;
     }
+
+  object = make_object3d ((char *)"Test");
 
   SdaiAxis2_placement_3d *part_origin = find_axis2_placement_3d_in_sr (sr);
   if (part_origin == NULL)
@@ -591,6 +674,53 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
         g_hash_table_destroy (edges_hash_set);
     }
 
+  mi_list mi_list;
+  find_mapped_item (sr, &mi_list);
+
+  for (mi_list::iterator iter = mi_list.begin (); iter != mi_list.end (); iter++)
+    {
+      std::cout << "Found MAPPED_ITEM; processing" << std::endl;
+      SdaiMapped_item *mi = (*iter);
+
+      SdaiRepresentation_map *rm = dynamic_cast<SdaiRepresentation_map *>(mi->mapping_source_());
+      SdaiAxis2_placement_3d *mi_axis = dynamic_cast<SdaiAxis2_placement_3d *>(mi->mapping_target_());
+
+      if (rm == NULL)
+        {
+          std::cout << "ERROR: Could not find REPRESENTATION_ITEM referred to by MAPPED_ITEM" << std::endl;
+          continue;
+        }
+
+      if (mi_axis == NULL)
+        {
+          std::cout << "ERROR: Could not find AXIS2_PLACEMENT_3D referred to by MAPPED_ITEM" << std::endl;
+          continue;
+        }
+
+      SdaiAxis2_placement_3d *rm_axis = dynamic_cast<SdaiAxis2_placement_3d *>(rm->mapping_origin_());
+      SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(rm->mapped_representation_());
+
+      if (rm_axis == NULL)
+        {
+          std::cout << "ERROR: Could not find AXIS2_PLACEMENT_3D referred to by REPRESENTATION_ITEM" << std::endl;
+          continue;
+        }
+
+      if (child_sr == NULL)
+        {
+          std::cout << "ERROR: Could not find SHAPE_REPRESENTATION referred to by MAPPED_ITEM" << std::endl;
+          continue;
+        }
+
+
+      std::cout << "Should now have the pieces, and can derive a transform as required to recurse down" << std::endl;
+
+      /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
+      /* XXX: Origin offset etc..? */
+      /* XXX: Do something with the result */
+      process_sr_or_subtype (instance_list, child_sr);
+    }
+
   step_model = g_new0(struct step_model, 1);
 
 //  step_model->filename = g_strdup(filename);
@@ -611,12 +741,36 @@ step_model_to_shape_master (const char *filename, object3d **out_object)
 
   step_model->object = object;
 
-  if (out_object != NULL)
-    *out_object = object;
+  return step_model;
+}
+
+extern "C" struct step_model *
+step_model_to_shape_master (const char *filename)
+{
+  step_model *step_model;
+
+  printf ("step_model_to_shape_master(\"%s\")\n", filename);
+
+  Registry * registry = new Registry (SchemaInit);
+  InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
+
+  // Increment FileId so entities start at #1 instead of #0.
+  instance_list->NextFileId();
+
+  SdaiProduct_definition *pd = read_model_from_file (registry, instance_list, filename);
+  if (pd == NULL)
+    {
+      printf ("ERROR Loading STEP model from file '%s'", filename);
+      return NULL;
+    }
+
+  SdaiShape_definition_representation *sdr = find_sdr_for_pd (instance_list, pd);
+  SdaiShape_representation *sr = (SdaiShape_representation *)sdr->used_representation_ ();
+
+  step_model = process_sr_or_subtype (instance_list, sr);
 
   delete instance_list;
   delete registry;
-
 
   return step_model;
 }

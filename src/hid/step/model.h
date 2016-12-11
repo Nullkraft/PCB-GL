@@ -21,5 +21,5 @@ typedef struct step_model {
   object3d *object;
 } step_model;
 
-step_model *step_model_to_shape_master (const char *filename, object3d **out_object);
+step_model *step_model_to_shape_master (const char *filename);
 void step_model_free (step_model *step_model);

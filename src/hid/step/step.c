@@ -373,7 +373,7 @@ step_load_models(Coord board_thickness_)
             {
               model = g_new0 (struct assembly_model, 1);
               model->filename = model_filename;
-              model->step_model = step_model_to_shape_master (model_filename, NULL);
+              model->step_model = step_model_to_shape_master (model_filename);
               loaded_models = g_list_append (loaded_models, model);
             }
           instance = g_new0 (struct assembly_model_instance, 1);
