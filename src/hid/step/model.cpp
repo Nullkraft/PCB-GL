@@ -1041,8 +1041,8 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
       rz = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 
       /* XXX: Looking only at the target vector.. need to find some examples where the parent transform coordinate system is not unity to get this correct */
-      translate_origin (info->current_transform, ox, oy, oz);
       rotate_basis (info->current_transform, ax, ay, az, rx, ry, rz);
+      translate_origin (info->current_transform, ox, oy, oz);
 
       ox = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ())->value;
       oy = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
