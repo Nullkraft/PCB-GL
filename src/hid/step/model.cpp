@@ -71,7 +71,11 @@ extern "C" {
 #  undef DEBUG_PRODUCT_DEFINITION
 #endif
 
-#undef DEBUG_NOT_IMPLEMENTED
+#if 1
+#  define DEBUG_NOT_IMPLEMENTED
+#else
+#  undef DEBUG_NOT_IMPLEMENTED
+#endif
 
 #include <glib.h>
 
@@ -144,8 +148,8 @@ read_model_from_file (Registry *registry,
 }
 
 static void
-find_manifold_solid_brep (SdaiShape_representation *sr,
-                          msb_list *msb_list)
+find_manifold_solid_brep_possible_voids (SdaiShape_representation *sr,
+                                         msb_list *msb_list)
 {
   SingleLinkNode *iter = sr->items_ ()->GetHead ();
 
@@ -154,6 +158,18 @@ find_manifold_solid_brep (SdaiShape_representation *sr,
       SDAI_Application_instance *node = ((EntityNode *)iter)->node;
 
       if (strcmp (node->EntityName (), "Manifold_Solid_Brep") == 0)
+        msb_list->push_back ((SdaiManifold_solid_brep *)node);
+
+      iter = iter->NextNode ();
+    }
+
+
+  iter = sr->items_ ()->GetHead ();
+  while (iter != NULL)
+    {
+      SDAI_Application_instance *node = ((EntityNode *)iter)->node;
+
+      if (strcmp (node->EntityName (), "Brep_With_Voids") == 0)
         msb_list->push_back ((SdaiManifold_solid_brep *)node);
 
       iter = iter->NextNode ();
@@ -723,7 +739,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 #endif
 
   msb_list msb_list;
-  find_manifold_solid_brep (sr, &msb_list);
+  find_manifold_solid_brep_possible_voids (sr, &msb_list);
 
   for (msb_list::iterator iter = msb_list.begin (); iter != msb_list.end (); iter++)
     {
