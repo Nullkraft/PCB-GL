@@ -1,0 +1,88 @@
+Bottom: 1c9510b895bc80e975ca0a25f9a74eed12c3022f
+Top:    c909d497577e58e1aa062a36d927de29ef58f783
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-14 23:08:00 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
+index 3080865..1a76e97 100644
+--- a/src/hid/common/edge3d.h
++++ b/src/hid/common/edge3d.h
+@@ -13,6 +13,18 @@ typedef struct
+   double nz;
+   double radius;
+ 
++  /* For b-splines */
++  bool is_bspline;
++  int degree;
++  int num_control_points; /* Number of (triplet x,y,z) control points - control points array holds 3x more doubles */
++  double *control_points; /* Pointer to array of control points (in x,y,z triplets) */
++  /* Number of knots is (num_control_points + degree + 1) */
++  double *knots;          /* Pointer to array of knot values */
++
++  /* Rational b-splines */
++  double *weights; /* Pointer to array of weights for the control points */
++
++
+   /* XXX: STEP specific - breaks encapsulation */
+   step_id infinite_line_identifier;
+   step_id edge_identifier;
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index 57403a7..ce06c6e 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -71,7 +71,11 @@ extern "C" {
+ #  undef DEBUG_PRODUCT_DEFINITION
+ #endif
+ 
+-#undef DEBUG_NOT_IMPLEMENTED
++#if 1
++#  define DEBUG_NOT_IMPLEMENTED
++#else
++#  undef DEBUG_NOT_IMPLEMENTED
++#endif
+ 
+ #include <glib.h>
+ 
+@@ -144,8 +148,8 @@ read_model_from_file (Registry *registry,
+ }
+ 
+ static void
+-find_manifold_solid_brep (SdaiShape_representation *sr,
+-                          msb_list *msb_list)
++find_manifold_solid_brep_possible_voids (SdaiShape_representation *sr,
++                                         msb_list *msb_list)
+ {
+   SingleLinkNode *iter = sr->items_ ()->GetHead ();
+ 
+@@ -158,6 +162,18 @@ find_manifold_solid_brep (SdaiShape_representation *sr,
+ 
+       iter = iter->NextNode ();
+     }
++
++
++  iter = sr->items_ ()->GetHead ();
++  while (iter != NULL)
++    {
++      SDAI_Application_instance *node = ((EntityNode *)iter)->node;
++
++      if (strcmp (node->EntityName (), "Brep_With_Voids") == 0)
++        msb_list->push_back ((SdaiManifold_solid_brep *)node);
++
++      iter = iter->NextNode ();
++    }
+ }
+ 
+ static void
+@@ -723,7 +739,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+ #endif
+ 
+   msb_list msb_list;
+-  find_manifold_solid_brep (sr, &msb_list);
++  find_manifold_solid_brep_possible_voids (sr, &msb_list);
+ 
+   for (msb_list::iterator iter = msb_list.begin (); iter != msb_list.end (); iter++)
+     {
