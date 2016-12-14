@@ -516,6 +516,10 @@ process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *
             {
 #ifdef DEBUG_NOT_IMPLEMENTED
               printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
+              if (curve->IsComplex())
+                {
+                  printf ("CURVE IS COMPLEX\n");
+                }
 #endif
               // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
               // XXX: Various derived types of the above, e.g.:
@@ -745,6 +749,8 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
     {
       std::cout << "Found MANIFOLD_SOLID_BREP; processing" << std::endl;
       SdaiClosed_shell *cs = (*iter)->outer_ ();
+
+      /* XXX: Need to check if msb is actually an instance of BREP_WITH_VOIDS, whereupon we also need to iterate over the void shell(s) */
 
       std::cout << "Closed shell is " << cs << std::endl;
 
