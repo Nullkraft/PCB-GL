@@ -1,0 +1,33 @@
+Bottom: 76672b87e28d5405d34692681df78732d64d1263
+Top:    9a876fa9fc9ce15d7fb8fd5797156bca2769ec8c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-15 00:58:58 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index f01cf76..8ea8f56 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -745,7 +745,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+   step_model *step_model;
+ //  std::cout << "INFO: Processing raw SR" << std::endl;
+ 
+-  step_model = g_new0(struct step_model, 0);
++  step_model = g_new0(struct step_model, 1);
+ //  step_model->filename = g_strdup(filename);
+ //  step_model->instances = NULL;    /* ??? */
+ 
+@@ -1345,6 +1345,10 @@ step_model_to_shape_master (const char *filename)
+       /* KLUDGE */
+       step_model->object = info.object;
+     }
++  else
++    {
++      printf ("WARNING: Got NULL step_model.. must have been some problem loading it\n");
++    }
+ 
+   delete instance_list;
+   delete registry;
