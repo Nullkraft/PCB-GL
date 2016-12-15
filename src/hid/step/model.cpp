@@ -354,7 +354,7 @@ transform_vector (double m[4][4], double *x, double *y, double *z)
 }
 
 static void
-process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge/*, process_step_info *info */)
+process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, process_step_info *info)
 {
   /* Code using lazy binding approach, since many of the B_SPLINE_* types we will encounter
    * are used in complex entities.. no sense witing code to handle them twice
@@ -397,12 +397,15 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge/*, pro
   IntAggregate *knot_multiplicities = NULL;
   RealAggregate *knots = NULL;
   int num_knots; /* (Calculated) */
+  int num_knot_multiplicities; /* (Convenience) */
 
   /* RATIONAL_B_SPLINE_CURVE */
   RealAggregate *weights = NULL;
 
   /* Iterators, counters etc.. */
   int i;
+  int j;
+  int k;
   EntityNode *cp_iter;
   IntNode *km_iter;
   RealNode *k_iter;
@@ -533,6 +536,21 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge/*, pro
     printf ("Number of knots = %i\n", knots->EntryCount ());
   }
 
+  if ((knot_multiplicities == NULL) !=
+      (knots == NULL))
+    {
+      printf ("ERROR: Have one of knots, knot_multiplicities but not both!\n");
+      return;
+    }
+
+  if (knot_multiplicities != NULL &&
+      knots != NULL &&
+      knot_multiplicities->EntryCount () != knots->EntryCount ())
+    {
+      printf ("ERROR: Different length of knot and knot multiplicity lists\n");
+      return;
+    }
+
   if (control_points == NULL)
     {
       printf ("ERROR: control points == NULL\n");
@@ -564,6 +582,8 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge/*, pro
   our_edge_info->weights =        g_new(double, num_control_points);
   our_edge_info->knots =          g_new(double, num_knots);
 
+  /* Control points */
+
   for (i = 0, cp_iter = dynamic_cast<EntityNode *>(control_points->GetHead ());
        i < num_control_points * 3;
        i += 3, cp_iter = dynamic_cast<EntityNode *>(cp_iter->NextNode ()))
@@ -573,8 +593,89 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge/*, pro
       our_edge_info->control_points[i + 0] = ((RealNode *)cp->coordinates_ ()->GetHead ())->value;
       our_edge_info->control_points[i + 1] = ((RealNode *)cp->coordinates_ ()->GetHead ()->NextNode ())->value;
       our_edge_info->control_points[i + 2] = ((RealNode *)cp->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+      transform_vertex (info->current_transform,
+                        &our_edge_info->control_points[i + 0],
+                        &our_edge_info->control_points[i + 1],
+                        &our_edge_info->control_points[i + 2]);
     }
 
+  /* Weights */
+
+  if (weights == NULL)
+    {
+      for (i = 0; i < num_control_points; i++)
+        our_edge_info->weights[i] = 1.0;
+    }
+  else
+    {
+      for (i = 0, w_iter = dynamic_cast<RealNode *>(weights->GetHead ());
+           i < num_control_points;
+           i++, w_iter = dynamic_cast<RealNode *>(w_iter->NextNode ()))
+        {
+          our_edge_info->weights[i] = w_iter->value;
+        }
+    }
+
+  /* Knots & multiplicities */
+
+  if (knot_multiplicities == NULL)
+    {
+      int start_knot;
+
+      /* Examples for d=3:
+      *
+       *        Uniform has: KNOTS -d, -d+1, ... 0 ... num_cp - 1, num_cp
+       *   Quasi unirom has: KNOTS 0, 0, 0, 0, 1, 2, 3, ..., n, n, n, n                    (example for d = 3, n = num_cp - 2 * d (?))
+       *  Simple bezier has: KNOTS 0, 0, 0, 0, 1, 1, 1, 1                                  (NB: a special case of quasi uniform)
+       * General bezier has: KNOTS 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, ..., n, n, n, n
+       */
+
+      if (1/* UNIFORM CASE */)
+        start_knot = -b_spline_curve_degree;
+      else if (0/* QUASI UNIFORM CASE */)
+        start_knot = 0;
+      else if (0/* PIECEWISE BEZIER CASE */)
+        start_knot = 0;
+      else
+        return; /* ERROR */
+
+      k = 0;
+      for (i = 0; i < num_knots; i++)
+        {
+          int multiplicity;
+          bool first_or_last = (k == 0) || (k = num_knots - b_spline_curve_degree - 1);
+
+          if (1/* UNIFORM CASE */)
+            multiplicity = 1;
+          else if (0/* QUASI UNIFORM CASE */)
+            multiplicity = first_or_last ? b_spline_curve_degree + 1 : 1;
+          else if (0/* PIECEWISE BEZIER CASE */)
+            multiplicity = first_or_last ? b_spline_curve_degree + 1 : b_spline_curve_degree;
+          else
+            return; /* ERROR */
+
+          for (j = 0; j < multiplicity; j++, k++)
+            our_edge_info->knots[k] = start_knot;
+
+          /* XXX: Not expanded the multiplicities here */
+        }
+    }
+  else
+    {
+      /* NB: From checks above, we kow if know_multiplicities != NULL, so is knots */
+
+      num_knot_multiplicities = knot_multiplicities->EntryCount ();
+
+      k = 0;
+      for (i = 0, k_iter = dynamic_cast<RealNode *>(knots->GetHead ()), km_iter = dynamic_cast<IntNode *>(knot_multiplicities->GetHead ());
+           i < num_knot_multiplicities;
+           i++, k_iter = dynamic_cast<RealNode *>(k_iter->NextNode ()), km_iter = dynamic_cast<IntNode *>(km_iter->NextNode ()))
+        {
+          for (j = 0; j < km_iter->value; j++, k++)
+            our_edge_info->knots[k] = k_iter->value;
+        }
+    }
 }
 
 static void
@@ -740,7 +841,7 @@ process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *
               vertex = make_vertex3d (x2, y2, z2);
               DDATA(our_edge) = vertex;
 
-              process_bscwk (curve, our_edge); //, info);
+              process_bscwk (curve, our_edge, info);
             }
           else
             {

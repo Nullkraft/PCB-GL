@@ -155,11 +155,69 @@ float colors[12][3] = {{1., 0., 0.},
 
 #define CIRC_SEGS_D 64.0
 
+
+static void
+evaluate_bspline (edge_info *info, double u, double *x, double *y, double *z)
+{
+//  info->
+}
+
+static void
+draw_bspline (edge_ref e)
+{
+  edge_info *info = UNDIR_DATA(e);
+  double x1, y1, z1;
+  double x2, y2, z2;
+  double lx, ly, lz;
+  double x, y, z;
+  int i;
+
+  x1 = ((vertex3d *)ODATA(e))->x;
+  y1 = ((vertex3d *)ODATA(e))->y;
+  z1 = ((vertex3d *)ODATA(e))->z;
+
+  x2 = ((vertex3d *)DDATA(e))->x;
+  y2 = ((vertex3d *)DDATA(e))->y;
+  z2 = ((vertex3d *)DDATA(e))->z;
+
+  glBegin (GL_LINES);
+
+#if 0
+  for (i = 0; i < 20; i++, lx = x, ly = y, lz = z) /* Pieces */
+    {
+      evaluate_bspline (edge_info, i / 20.0, &x, &y, &z);
+
+      if (i > 0)
+        {
+          glVertex3f (STEP_X_TO_COORD (PCB, lx), STEP_Y_TO_COORD (PCB, ly), STEP_Z_TO_COORD (PCB, lz));
+          glVertex3f (STEP_X_TO_COORD (PCB,  x), STEP_Y_TO_COORD (PCB,  y), STEP_Z_TO_COORD (PCB,  z));
+        }
+    }
+#endif
+
+  /* Just draw the control points for now... */
+  for (i = 0; i < info->num_control_points; i++, lx = x, ly = y, lz = z) /* Pieces */
+    {
+      x = info->control_points[i * 3 + 0];
+      y = info->control_points[i * 3 + 1];
+      z = info->control_points[i * 3 + 2];
+
+      if (i > 0)
+        {
+          glVertex3f (STEP_X_TO_COORD (PCB, lx), STEP_Y_TO_COORD (PCB, ly), STEP_Z_TO_COORD (PCB, lz));
+          glVertex3f (STEP_X_TO_COORD (PCB,  x), STEP_Y_TO_COORD (PCB,  y), STEP_Z_TO_COORD (PCB,  z));
+        }
+    }
+
+  glEnd ();
+}
+
 static void
 draw_quad_edge (edge_ref e, void *data)
 {
   double x1, y1, z1;
   double x2, y2, z2;
+  int i;
 
 #if 0
   int id = ID(e) % 12;
@@ -181,11 +239,15 @@ draw_quad_edge (edge_ref e, void *data)
     {
       edge_info *info = UNDIR_DATA(e);
 
-//      if (!info->is_bspline)
-//        return;
-
 //      if (info->is_stitch)
 //        return;
+
+      if (info->is_bspline)
+        {
+          draw_bspline (e);
+          return;
+        }
+
       if (info->is_round)
         {
           int i;
