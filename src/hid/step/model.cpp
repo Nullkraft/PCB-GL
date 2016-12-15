@@ -286,7 +286,7 @@ rotate_basis_inverted (double m[4][4], double ax, double ay, double az,
 void
 transform_vertex (double m[4][4], double *x, double *y, double *z)
 {
-  double new_x, new_y, new_z, new_w;
+  double new_x, new_y, new_z; //, new_w;
 
   new_x = m[0][0] * *x +
           m[1][0] * *y +
@@ -323,7 +323,7 @@ transform_vertex (double m[4][4], double *x, double *y, double *z)
 void
 transform_vector (double m[4][4], double *x, double *y, double *z)
 {
-  double new_x, new_y, new_z, new_w;
+  double new_x, new_y, new_z; //, new_w;
 
   new_x = m[0][0] * *x +
           m[1][0] * *y +
@@ -354,7 +354,7 @@ transform_vector (double m[4][4], double *x, double *y, double *z)
 }
 
 static void
-process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, process_step_info *info)
+process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge/*, process_step_info *info */)
 {
   /* Code using lazy binding approach, since many of the B_SPLINE_* types we will encounter
    * are used in complex entities.. no sense witing code to handle them twice
@@ -389,15 +389,24 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
   /* Things we take note of for futher processing.. */
 
   /* B_SPLINE_CURVE */
-  SDAI_Integer b_spline_curve_degree;
+  int b_spline_curve_degree;
   EntityAggregate *control_points = NULL;
+  int num_control_points; /* (Convenience) */
 
   /* B_SPLINE_CURVE_WITH_KNOTS */
   IntAggregate *knot_multiplicities = NULL;
   RealAggregate *knots = NULL;
+  int num_knots; /* (Calculated) */
 
   /* RATIONAL_B_SPLINE_CURVE */
   RealAggregate *weights = NULL;
+
+  /* Iterators, counters etc.. */
+  int i;
+  EntityNode *cp_iter;
+  IntNode *km_iter;
+  RealNode *k_iter;
+  RealNode *w_iter;
 
   is_complex = entity->IsComplex();
 
@@ -520,18 +529,8 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
   if (knot_multiplicities != NULL)
     printf ("Number of knot_multiplicities = %i\n", knot_multiplicities->EntryCount ());
 
-  if (knots != NULL)
+  if (knots != NULL) {
     printf ("Number of knots = %i\n", knots->EntryCount ());
-
-  if (weights != NULL) {
-    printf ("Number of weights = %i\n", weights->EntryCount ());
-
-  printf ("------\n");
-
-    if (weights->EntryCount () != control_points->EntryCount ())
-      {
-        printf ("ERROR: Weights not null, but entry length doesn't equal the number of control points\n");
-      }
   }
 
   if (control_points == NULL)
@@ -540,11 +539,42 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
       return;
     }
 
+  num_control_points = control_points->EntryCount ();
+
+  if (weights != NULL) {
+    printf ("Number of weights = %i\n", weights->EntryCount ());
+
+    if (weights->EntryCount () != num_control_points)
+      {
+        printf ("ERROR: Weights not null, but entry length doesn't equal the number of control points\n");
+      }
+  }
+
+  num_knots = num_control_points + b_spline_curve_degree + 1;
+
+  printf ("------\n");
+
   our_edge_info->is_bspline = true;
   our_edge_info->degree = b_spline_curve_degree;
-  our_edge_info->num_control_points = control_points->EntryCount ();
+  our_edge_info->num_control_points = num_control_points;
 
   /* XXX: TODO: Iterate over control points, knots, weights etc.. filling in these details */
+
+  our_edge_info->control_points = g_new(double, num_control_points * 3);
+  our_edge_info->weights =        g_new(double, num_control_points);
+  our_edge_info->knots =          g_new(double, num_knots);
+
+  for (i = 0, cp_iter = dynamic_cast<EntityNode *>(control_points->GetHead ());
+       i < num_control_points * 3;
+       i += 3, cp_iter = dynamic_cast<EntityNode *>(cp_iter->NextNode ()))
+    {
+      SdaiCartesian_point *cp = dynamic_cast<SdaiCartesian_point *>(cp_iter->node);
+
+      our_edge_info->control_points[i + 0] = ((RealNode *)cp->coordinates_ ()->GetHead ())->value;
+      our_edge_info->control_points[i + 1] = ((RealNode *)cp->coordinates_ ()->GetHead ()->NextNode ())->value;
+      our_edge_info->control_points[i + 2] = ((RealNode *)cp->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+    }
+
 }
 
 static void
@@ -710,7 +740,7 @@ process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *
               vertex = make_vertex3d (x2, y2, z2);
               DDATA(our_edge) = vertex;
 
-              process_bscwk (curve, our_edge, info);
+              process_bscwk (curve, our_edge); //, info);
             }
           else
             {
