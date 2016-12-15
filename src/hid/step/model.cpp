@@ -745,7 +745,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
   step_model *step_model;
 //  std::cout << "INFO: Processing raw SR" << std::endl;
 
-  step_model = g_new0(struct step_model, 0);
+  step_model = g_new0(struct step_model, 1);
 //  step_model->filename = g_strdup(filename);
 //  step_model->instances = NULL;    /* ??? */
 
@@ -1344,6 +1344,10 @@ step_model_to_shape_master (const char *filename)
 
       /* KLUDGE */
       step_model->object = info.object;
+    }
+  else
+    {
+      printf ("WARNING: Got NULL step_model.. must have been some problem loading it\n");
     }
 
   delete instance_list;
