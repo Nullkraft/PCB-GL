@@ -180,6 +180,10 @@ draw_quad_edge (edge_ref e, void *data)
   if (UNDIR_DATA(e) != NULL)
     {
       edge_info *info = UNDIR_DATA(e);
+
+//      if (!info->is_bspline)
+//        return;
+
 //      if (info->is_stitch)
 //        return;
       if (info->is_round)
