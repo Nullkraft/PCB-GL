@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    76672b87e28d5405d34692681df78732d64d1263
+Top:    9a876fa9fc9ce15d7fb8fd5797156bca2769ec8c
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -660,10 +660,10 @@ index 7a8b5df..4594824 100644
  void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
 new file mode 100644
-index 0000000..f01cf76
+index 0000000..8ea8f56
 --- /dev/null
 +++ b/src/hid/step/model.cpp
-@@ -0,0 +1,1374 @@
+@@ -0,0 +1,1378 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -1411,7 +1411,7 @@ index 0000000..f01cf76
 +  step_model *step_model;
 +//  std::cout << "INFO: Processing raw SR" << std::endl;
 +
-+  step_model = g_new0(struct step_model, 0);
++  step_model = g_new0(struct step_model, 1);
 +//  step_model->filename = g_strdup(filename);
 +//  step_model->instances = NULL;    /* ??? */
 +
@@ -2010,6 +2010,10 @@ index 0000000..f01cf76
 +
 +      /* KLUDGE */
 +      step_model->object = info.object;
++    }
++  else
++    {
++      printf ("WARNING: Got NULL step_model.. must have been some problem loading it\n");
 +    }
 +
 +  delete instance_list;
