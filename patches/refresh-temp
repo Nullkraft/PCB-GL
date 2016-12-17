@@ -1,0 +1,22 @@
+Bottom: b49510eaffbd93e70ca3f0423a1b57129f739d21
+Top:    6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-17 18:50:40 +0000
+
+Refresh of toy-rendering-attempt
+
+---
+
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index 919bf84..ad1644c 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -725,7 +725,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
+ 
+   if (dist1 > 0.01 || dist2 > 0.02)
+     {
+-      printf ("Entity #%i end point to first control point distances %f and %f\n", 
++      printf ("Entity #%i end point to first control point distances %f and %f\n",
+               dist1, dist2);
+     }
+ }
