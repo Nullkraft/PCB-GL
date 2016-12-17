@@ -725,7 +725,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
 
   if (dist1 > 0.01 || dist2 > 0.02)
     {
-      printf ("Entity #%i end point to first control point distances %f and %f\n", 
+      printf ("Entity #%i end point to first control point distances %f and %f\n",
               dist1, dist2);
     }
 }
