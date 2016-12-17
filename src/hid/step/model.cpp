@@ -192,6 +192,8 @@ find_mapped_item (SdaiShape_representation *sr,
 typedef struct process_step_info {
   /* Hash / list of SR -> step_model */
   object3d *object;
+  face3d *current_face;
+  contour3d *current_contour;
   double current_transform[4][4];
 
 } process_step_info;
@@ -731,86 +733,74 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
 }
 
 static void
-process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *object)
+process_edge_geometry (SdaiEdge *edge, edge_ref our_edge, process_step_info *info)
 {
   GHashTableIter iter;
-  SdaiEdge *edge;
-  edge_ref our_edge;
   vertex3d *vertex;
   double x1, y1, z1;
   double x2, y2, z2;
-  bool orientation;
-  gpointer foo;
-  int bar;
-  bool kludge;
+  bool orientation = true;
 
-  g_hash_table_iter_init (&iter, edges_hash_set);
-  while (g_hash_table_iter_next (&iter, (void **)&edge, &foo))
+  if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
+      strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
     {
-      bar = GPOINTER_TO_INT (foo);
-      if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
-          strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
-        {
-          printf ("WARNING: Edge start and/or end vertices are not specified as VERTEX_POINT\n");
-          continue;
-        }
+      printf ("WARNING: Edge start and/or end vertices are not specified as VERTEX_POINT\n");
+      return;
+    }
 
-      orientation = (bar & 1) != 0;
-      kludge = (bar & 2) != 0;
+  // NB: Assuming edge points to an EDGE, or one of its subtypes that does not make edge_start and edge_end derived attributes.
+  //     In practice, edge should point to an EDGE_CURVE sub-type
+  SdaiVertex_point *edge_start = (SdaiVertex_point *) (orientation ? edge->edge_start_ () : edge->edge_end_ ());
+  SdaiVertex_point *edge_end =  (SdaiVertex_point *) (!orientation ? edge->edge_start_ () : edge->edge_end_ ());
 
-      // NB: Assuming edge points to an EDGE, or one of its subtypes that does not make edge_start and edge_end derived attributes.
-      //     In practice, edge should point to an EDGE_CURVE sub-type
-      SdaiVertex_point *edge_start = (SdaiVertex_point *) (orientation ? edge->edge_start_ () : edge->edge_end_ ());
-      SdaiVertex_point *edge_end =  (SdaiVertex_point *) (!orientation ? edge->edge_start_ () : edge->edge_end_ ());
+  // NB: XXX: SdaiVertex_point multiply inherits from vertex and geometric_representation_item
 
-      // NB: XXX: SdaiVertex_point multiply inherits from vertex and geometric_representation_item
+  SdaiPoint *edge_start_point = edge_start->vertex_geometry_ ();
+  SdaiPoint *edge_end_point = edge_end->vertex_geometry_ ();
 
-      SdaiPoint *edge_start_point = edge_start->vertex_geometry_ ();
-      SdaiPoint *edge_end_point = edge_end->vertex_geometry_ ();
+  if (strcmp (edge_start_point->EntityName (), "Cartesian_Point") == 0)
+    {
+      /* HAPPY WITH THIS TYPE */
+    }
+  else
+    {
+      // XXX: point_on_curve, point_on_surface, point_replica, degenerate_pcurve
+      printf ("WARNING: Got Edge start point as unhandled point type (%s)\n", edge_start_point->EntityName ());
+      return;
+    }
 
-      if (strcmp (edge_start_point->EntityName (), "Cartesian_Point") == 0)
-        {
-          /* HAPPY WITH THIS TYPE */
-        }
-      else
-        {
-          // XXX: point_on_curve, point_on_surface, point_replica, degenerate_pcurve
-          printf ("WARNING: Got Edge start point as unhandled point type (%s)\n", edge_start_point->EntityName ());
-          continue;
-        }
+  if (strcmp (edge_end_point->EntityName (), "Cartesian_Point") == 0)
+    {
+      /* HAPPY WITH THIS TYPE */
+    }
+  else
+    {
+      // XXX: point_on_curve, point_on_surface, point_replica, degenerate_pcurve
+      printf ("WARNING: Got Edge end point as unhandled point type (%s)\n", edge_end_point->EntityName ());
+      return;
+    }
 
-      if (strcmp (edge_end_point->EntityName (), "Cartesian_Point") == 0)
-        {
-          /* HAPPY WITH THIS TYPE */
-        }
-      else
-        {
-          // XXX: point_on_curve, point_on_surface, point_replica, degenerate_pcurve
-          printf ("WARNING: Got Edge end point as unhandled point type (%s)\n", edge_end_point->EntityName ());
-          continue;
-        }
+  SdaiCartesian_point *edge_start_cp = (SdaiCartesian_point *)edge_start_point;
+  SdaiCartesian_point *edge_end_cp = (SdaiCartesian_point *)edge_end_point;
 
-      SdaiCartesian_point *edge_start_cp = (SdaiCartesian_point *)edge_start_point;
-      SdaiCartesian_point *edge_end_cp = (SdaiCartesian_point *)edge_end_point;
-
-      x1 = ((RealNode *)edge_start_cp->coordinates_ ()->GetHead ())->value;
-      y1 = ((RealNode *)edge_start_cp->coordinates_ ()->GetHead ()->NextNode ())->value;
-      z1 = ((RealNode *)edge_start_cp->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      x2 = ((RealNode *)edge_end_cp->coordinates_ ()->GetHead ())->value;
-      y2 = ((RealNode *)edge_end_cp->coordinates_ ()->GetHead ()->NextNode ())->value;
-      z2 = ((RealNode *)edge_end_cp->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+  x1 = ((RealNode *)edge_start_cp->coordinates_ ()->GetHead ())->value;
+  y1 = ((RealNode *)edge_start_cp->coordinates_ ()->GetHead ()->NextNode ())->value;
+  z1 = ((RealNode *)edge_start_cp->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+  x2 = ((RealNode *)edge_end_cp->coordinates_ ()->GetHead ())->value;
+  y2 = ((RealNode *)edge_end_cp->coordinates_ ()->GetHead ()->NextNode ())->value;
+  z2 = ((RealNode *)edge_end_cp->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 
 #if 0
-      printf ("    Edge #%i starts at (%f, %f, %f) and ends at (%f, %f, %f)\n",
-              edge->StepFileId (), x1, y1, z1, x2, y2, z2);
+  printf ("    Edge #%i starts at (%f, %f, %f) and ends at (%f, %f, %f)\n",
+          edge->StepFileId (), x1, y1, z1, x2, y2, z2);
 #endif
 
-      if (strcmp (edge->EntityName (), "Edge_Curve") == 0)
-        {
-          SdaiEdge_curve *ec = (SdaiEdge_curve *)edge;
+  if (strcmp (edge->EntityName (), "Edge_Curve") == 0)
+    {
+      SdaiEdge_curve *ec = (SdaiEdge_curve *)edge;
 
-          SdaiCurve *curve = ec->edge_geometry_ ();
-          bool same_sense = ec->same_sense_ ();
+      SdaiCurve *curve = ec->edge_geometry_ ();
+      bool same_sense = ec->same_sense_ ();
 
 #ifdef DEBUG_NOT_IMPLEMENTED
 //          if (!same_sense)
@@ -818,103 +808,100 @@ process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *
 #endif
 
 #if 0
-          printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
+      printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
 #endif
 
-          if (strcmp (curve->EntityName (), "Line") == 0)
-            {
-              transform_vertex (info->current_transform, &x1, &y1, &z1);
-              transform_vertex (info->current_transform, &x2, &y2, &z2);
+      if (strcmp (curve->EntityName (), "Line") == 0)
+        {
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
 
-              our_edge = make_edge ();
-              UNDIR_DATA (our_edge) = make_edge_info ();
-              object3d_add_edge (info->object, our_edge);
-              vertex = make_vertex3d (x1, y1, z1);
-              ODATA(our_edge) = vertex;
-              vertex = make_vertex3d (x2, y2, z2);
-              DDATA(our_edge) = vertex;
+//          our_edge = make_edge ();
+          UNDIR_DATA (our_edge) = make_edge_info ();
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
 
 //              printf ("WARNING: Underlying curve geometry type Line is not supported yet\n");
-//              continue;
-            }
-          else if (strcmp (curve->EntityName (), "Circle") == 0)
+//              return;
+        }
+      else if (strcmp (curve->EntityName (), "Circle") == 0)
+        {
+          SdaiCircle *circle = (SdaiCircle *)curve;
+          double cx = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
+          double cy = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+          double cz = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+          double nx = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+          double ny = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+          double nz = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+          double radius = circle->radius_();
+
+          edge_info *edge_info;
+
+          transform_vertex (info->current_transform, &cx, &cy, &cz);
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+          transform_vector (info->current_transform, &nx, &ny, &nz);
+
+//          our_edge = make_edge ();
+          edge_info = make_edge_info ();
+          if (orientation)
             {
-              SdaiCircle *circle = (SdaiCircle *)curve;
-              double cx = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
-              double cy = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
-              double cz = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-              double nx = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
-              double ny = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-              double nz = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-
-              double radius = circle->radius_();
-
-              edge_info *edge_info;
-
-              transform_vertex (info->current_transform, &cx, &cy, &cz);
-              transform_vertex (info->current_transform, &x1, &y1, &z1);
-              transform_vertex (info->current_transform, &x2, &y2, &z2);
-
-              transform_vector (info->current_transform, &nx, &ny, &nz);
-
-              our_edge = make_edge ();
-              edge_info = make_edge_info ();
-              if (orientation) //(!kludge) //(same_sense)
-                {
-                  edge_info_set_round (edge_info, cx, cy, cz, nx, ny, nz, radius);
-                }
-              else
-                {
-                  edge_info_set_round (edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
-                }
-
-              UNDIR_DATA (our_edge) = edge_info;
-              object3d_add_edge (info->object, our_edge);
-              vertex = make_vertex3d (x1, y1, z1);
-              ODATA(our_edge) = vertex;
-              vertex = make_vertex3d (x2, y2, z2);
-              DDATA(our_edge) = vertex;
-
-//              printf ("WARNING: Underlying curve geometry type circle is not supported yet\n");
-//              continue;
-            }
-          else if (curve->IsComplex() || /* This is a guess - assuming complex curves are likely to be B_SPLINE_* complexes */
-                   strcmp (curve->EntityName (), "B_Spline_Curve_With_Knots") == 0)
-            {
-              transform_vertex (info->current_transform, &x1, &y1, &z1);
-              transform_vertex (info->current_transform, &x2, &y2, &z2);
-
-              our_edge = make_edge ();
-              UNDIR_DATA (our_edge) = make_edge_info ();
-              object3d_add_edge (info->object, our_edge);
-              vertex = make_vertex3d (x1, y1, z1);
-              ODATA(our_edge) = vertex;
-              vertex = make_vertex3d (x2, y2, z2);
-              DDATA(our_edge) = vertex;
-
-              process_bscwk (curve, our_edge, info, orientation);
+              edge_info_set_round (edge_info, cx, cy, cz, nx, ny, nz, radius);
             }
           else
             {
-#ifdef DEBUG_NOT_IMPLEMENTED
-              printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
-              if (curve->IsComplex())
-                {
-                  printf ("CURVE IS COMPLEX\n");
-                }
-#endif
-              // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
-              // XXX: Various derived types of the above, e.g.:
-              //      conic is a supertype of: circle, ellipse, hyperbola, parabola
-              continue;
+              edge_info_set_round (edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
             }
 
+          UNDIR_DATA (our_edge) = edge_info;
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
+
+        }
+      else if (curve->IsComplex() || /* This is a guess - assuming complex curves are likely to be B_SPLINE_* complexes */
+               strcmp (curve->EntityName (), "B_Spline_Curve_With_Knots") == 0)
+        {
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+//          our_edge = make_edge ();
+          UNDIR_DATA (our_edge) = make_edge_info ();
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
+
+          process_bscwk (curve, our_edge, info, orientation);
         }
       else
         {
-          printf ("WARNING: found unknown edge type (%s)\n", edge->EntityName ());
-          continue;
+#ifdef DEBUG_NOT_IMPLEMENTED
+          printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
+          if (curve->IsComplex())
+            {
+              printf ("CURVE IS COMPLEX\n");
+            }
+#endif
+          // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
+          // XXX: Various derived types of the above, e.g.:
+          //      conic is a supertype of: circle, ellipse, hyperbola, parabola
+          return;
         }
+
+    }
+  else
+    {
+      printf ("WARNING: found unknown edge type (%s)\n", edge->EntityName ());
+      return;
     }
 }
 
@@ -1209,6 +1196,8 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
             {
               SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
 
+              info->current_face = make_face3d ((char *)"");
+              object3d_add_face (info->object, info->current_face);
 
 #if 0
               bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
@@ -1230,6 +1219,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
               if (strcmp (loop->EntityName (), "Edge_Loop") == 0)
                 {
                   SdaiEdge_loop *el = (SdaiEdge_loop *)loop;
+                  bool first_edge_of_contour = true;
 
                   // NB: EDGE_LOOP uses multiple inheritance from LOOP and PATH, thus needs special handling to
                   //     access the elements belonging to PATH, such as edge_list ...
@@ -1246,13 +1236,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                       SdaiOriented_edge *oe = (SdaiOriented_edge *)((EntityNode *)iter)->node;
                       /* XXX: Will it _always?_ be an SdaiOriented_edge? */
 
+                      edge_ref our_edge;
+
                       // NB: Stepcode does not compute derived attributes, so we need to look at the EDGE
                       //     "edge_element" referred to by the ORIENTED_EDGE, to find the start and end vertices
 
                       SdaiEdge *edge = oe->edge_element_ ();
                       bool orientation = oe->orientation_ ();
-
-                      g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(orientation ? 1 : 0));
 
                       if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
                           strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
@@ -1293,54 +1283,32 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                           continue;
                         }
 
-#if 0
-                      SdaiCartesian_point *edge_start_cp = (SdaiCartesian_point *)edge_start_point;
-                      SdaiCartesian_point *edge_end_cp = (SdaiCartesian_point *)edge_end_point;
+                      our_edge = (edge_ref)g_hash_table_lookup (edges_hash_set, edge);
 
-                      printf ("    Edge #%i starts at (%f, %f, %f) and ends at (%f, %f, %f)\n",
-                              edge->StepFileId (),
-                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead())->value,
-                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead()->NextNode())->value,
-                              ((RealNode *)edge_start_cp->coordinates_ ()->GetHead()->NextNode()->NextNode())->value,
-                              ((RealNode *)edge_end_cp->coordinates_ ()->GetHead())->value,
-                              ((RealNode *)edge_end_cp->coordinates_ ()->GetHead()->NextNode())->value,
-                              ((RealNode *)edge_end_cp->coordinates_ ()->GetHead()->NextNode()->NextNode())->value);
-
-                      if (strcmp (edge->EntityName (), "Edge_Curve") == 0)
+                      if (our_edge != NULL)
                         {
-                          SdaiEdge_curve *ec = (SdaiEdge_curve *)edge;
-
-                          SdaiCurve *curve = ec->edge_geometry_ ();
-                          bool same_sense = ec->same_sense_ ();
-
-                          printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
-
-                          if (strcmp (curve->EntityName (), "Line") == 0)
-                            {
-//                              printf ("WARNING: Underlying curve geometry type Line is not supported yet\n");
-//                              continue;
-                            }
-                          else if (strcmp (curve->EntityName (), "Circle") == 0)
-                            {
-//                              printf ("WARNING: Underlying curve geometry type circle is not supported yet\n");
-//                              continue;
-                            }
-                          else
-                            {
-                              printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
-                              // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
-                              // XXX: Various derived types of the above, e.g.:
-                              //      conic is a supertype of: circle, ellipse, hyperbola, parabola
-                              continue;
-                            }
-
+                          /* Already processed this edge (but hopefully in the other direction!) */
                         }
                       else
                         {
-                          printf ("WARNING: found unknown edge type (%s)\n", edge->EntityName ());
-                          continue;
+                          our_edge = make_edge ();
+
+                          process_edge_geometry (edge, our_edge, info);
+
+                          //g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(orientation ? 1 : 0));
+
+                          /* Populate edge geometry (?)... or do we leave processing until later */
                         }
-#endif
+
+                    if (orientation)
+                      our_edge = SYM(our_edge);
+
+                    if (first_edge_of_contour)
+                      {
+                        info->current_contour = make_contour3d (our_edge);
+                        face3d_add_contour (info->current_face, info->current_contour);
+                        first_edge_of_contour = false;
+                      }
 
                     }
 
@@ -1353,8 +1321,6 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
             }
 
         }
-
-        process_edges (edges_hash_set, info); //object);
 
         /* Deal with edges hash set */
         g_hash_table_destroy (edges_hash_set);

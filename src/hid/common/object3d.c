@@ -378,6 +378,27 @@ draw_quad_edge (edge_ref e, void *data)
   glEnd ();
 }
 
+static void
+draw_contour (contour3d *contour, void *data)
+{
+  edge_ref e;
+
+  e = contour->first_edge;
+
+  do
+    {
+      draw_quad_edge (e, NULL);
+    }
+  while ((e = LNEXT(e)) != contour->first_edge);
+}
+
+static void
+draw_face (face3d *face, void *data)
+{
+  g_list_foreach (face->contours, (GFunc)draw_contour, NULL);
+
+}
+
 void
 object3d_draw (object3d *object)
 {
@@ -385,7 +406,10 @@ object3d_draw (object3d *object)
 
 //  quad_enum ((edge_ref)object->edges->data, draw_quad_edge, NULL);
 //  printf ("BEGIN DRAW...\n");
-  g_list_foreach (object->edges, (GFunc)draw_quad_edge, NULL);
+//  g_list_foreach (object->edges, (GFunc)draw_quad_edge, NULL);
+
+  g_list_foreach (object->faces, (GFunc)draw_face, NULL);
+
 //  printf ("....ENDED\n");
 }
 
