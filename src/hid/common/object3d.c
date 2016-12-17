@@ -1737,7 +1737,7 @@ object3d_from_copper_layers_within_area (POLYAREA *area)
 
   min_copper_group = MIN (bottom_group, top_group);
   max_copper_group = MAX (bottom_group, top_group);
-  group_step = max_copper_group - min_copper_group;
+//  group_step = max_copper_group - min_copper_group; // OUTER LAYERS ONLY
 
   group_m_polyarea = calloc (max_copper_group + 1, sizeof (POLYAREA *));
 

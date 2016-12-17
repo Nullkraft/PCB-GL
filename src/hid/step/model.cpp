@@ -353,8 +353,14 @@ transform_vector (double m[4][4], double *x, double *y, double *z)
   *z = new_z;
 }
 
+static double
+distance (double a[3], double b[3])
+{
+  return hypot(hypot(a[0] - b[0], a[1] - b[1]), a[2] - b[2]);
+}
+
 static void
-process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, process_step_info *info)
+process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, process_step_info *info, bool orientation)
 {
   /* Code using lazy binding approach, since many of the B_SPLINE_* types we will encounter
    * are used in complex entities.. no sense witing code to handle them twice
@@ -631,6 +637,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
        * General bezier has: KNOTS 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, ..., n, n, n, n
        */
 
+#warning INVOKE THE PROPER CASE!!
       if (1/* UNIFORM CASE */)
         start_knot = -b_spline_curve_degree;
       else if (0/* QUASI UNIFORM CASE */)
@@ -646,6 +653,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
           int multiplicity;
           bool first_or_last = (k == 0) || (k = num_knots - b_spline_curve_degree - 1);
 
+#warning INVOKE THE PROPER CASE!!
           if (1/* UNIFORM CASE */)
             multiplicity = 1;
           else if (0/* QUASI UNIFORM CASE */)
@@ -676,6 +684,37 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
             our_edge_info->knots[k] = k_iter->value;
         }
     }
+
+
+  double v1_[3];
+  double v2_[3];
+
+  vertex3d *v1;
+  vertex3d *v2;
+
+  if (orientation)
+    {
+      v1 = (vertex3d *)ODATA(our_edge);
+      v2 = (vertex3d *)DDATA(our_edge);
+    }
+  else
+    {
+      v2 = (vertex3d *)ODATA(our_edge);
+      v1 = (vertex3d *)DDATA(our_edge);
+    }
+
+  v1_[0] = v1->x;
+  v1_[1] = v1->y;
+  v1_[2] = v1->z;
+
+  v2_[0] = v2->x;
+  v2_[1] = v2->y;
+  v2_[2] = v2->z;
+
+  double dist1 = distance(v1_, &our_edge_info->control_points[0]);
+  double dist2 = distance(v2_, &our_edge_info->control_points[(num_control_points - 1)*3]);
+
+  printf ("End point to first control point distances %f and %f\n", dist1, dist2);
 }
 
 static void
@@ -807,7 +846,7 @@ process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *
 
               our_edge = make_edge ();
               edge_info = make_edge_info ();
-              if (!kludge) //(same_sense)
+              if (orientation) //(!kludge) //(same_sense)
                 {
                   edge_info_set_round (edge_info, cx, cy, cz, nx, ny, nz, radius);
                 }
@@ -841,7 +880,7 @@ process_edges (GHashTable *edges_hash_set, process_step_info *info) //object3d *
               vertex = make_vertex3d (x2, y2, z2);
               DDATA(our_edge) = vertex;
 
-              process_bscwk (curve, our_edge, info);
+              process_bscwk (curve, our_edge, info, orientation);
             }
           else
             {
@@ -929,6 +968,10 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
   find_all_srr_rrwt_with_rep_1 (instance_list, &srr_rrwt_list, 0, sr);
+
+  /* XXX: Encountered some models where the child was rep1, the parent rep2??.
+   *      E.g. from Samtec, ERM5-075-02.0-L-DV-TR.stp
+   */
 
   for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
     {
@@ -1193,28 +1236,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                       SdaiEdge *edge = oe->edge_element_ ();
                       bool orientation = oe->orientation_ ();
 
-                      if (on_plane)
-                        {
-                          if (fs->same_sense_())
-                            {
-                              if (orientation)
-                                g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(1));
-                              else
-                                g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(1));
-                            }
-                          else
-                            {
-                              if (orientation)
-                                g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(1));
-                              else
-                                g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(1));
-                            }
-                        }
-                      else
-                        {
-                          g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(1));
-                        }
-
+                      g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(orientation ? 1 : 0));
 
                       if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
                           strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
