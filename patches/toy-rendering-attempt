@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    b49510eaffbd93e70ca3f0423a1b57129f739d21
+Top:    6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -731,7 +731,7 @@ index 7a8b5df..4594824 100644
  void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
 new file mode 100644
-index 0000000..919bf84
+index 0000000..ad1644c
 --- /dev/null
 +++ b/src/hid/step/model.cpp
 @@ -0,0 +1,1549 @@
@@ -1462,7 +1462,7 @@ index 0000000..919bf84
 +
 +  if (dist1 > 0.01 || dist2 > 0.02)
 +    {
-+      printf ("Entity #%i end point to first control point distances %f and %f\n", 
++      printf ("Entity #%i end point to first control point distances %f and %f\n",
 +              dist1, dist2);
 +    }
 +}
