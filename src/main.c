@@ -77,6 +77,7 @@
 extern void stroke_init (void);
 #endif
 
+int debug_integer;
 
 /* ----------------------------------------------------------------------
  * initialize signal and error handlers
