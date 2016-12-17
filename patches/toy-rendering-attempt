@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    16924a8e4cfb1d7980b49901668e6140e4b51ed0
+Top:    b49510eaffbd93e70ca3f0423a1b57129f739d21
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -731,10 +731,10 @@ index 7a8b5df..4594824 100644
  void export_step_assembly (const char *filename, GList *assembly_models);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
 new file mode 100644
-index 0000000..0ee479c
+index 0000000..919bf84
 --- /dev/null
 +++ b/src/hid/step/model.cpp
-@@ -0,0 +1,1531 @@
+@@ -0,0 +1,1549 @@
 +/*
 + *                            COPYRIGHT
 + *
@@ -798,14 +798,20 @@ index 0000000..0ee479c
 +# include <unistd.h>
 +#endif
 +
-+#if 1
++#if 0
 +#  define DEBUG_PRODUCT_DEFINITION_SEARCH
 +#  define DEBUG_CHILD_REMOVAL
 +#  define DEBUG_PRODUCT_DEFINITION
++#  define DEBUG_B_SPLINE_CURVES
++#  define DEBUG_ASSEMBLY_TRAVERSAL
++#  define DEBUG_TRANSFORMS
 +#else
 +#  undef DEBUG_PRODUCT_DEFINITION_SEARCH
 +#  undef DEBUG_CHILD_REMOVAL
 +#  undef DEBUG_PRODUCT_DEFINITION
++#  undef DEBUG_B_SPLINE_CURVES
++#  undef DEBUG_ASSEMBLY_TRAVERSAL
++#  undef DEBUG_TRANSFORMS
 +#endif
 +
 +#if 1
@@ -1252,8 +1258,8 @@ index 0000000..0ee479c
 +      entity = stepcomplex;
 +    }
 +
++#ifdef DEBUG_B_SPLINE_CURVES
 +  /* Now we see what we found .... */
-+
 +  printf ("------\n");
 +  printf ("b_spline_curve_degree = %i\n",b_spline_curve_degree);
 +  printf ("control_points = %p\n",control_points);
@@ -1278,6 +1284,7 @@ index 0000000..0ee479c
 +  if (knots != NULL) {
 +    printf ("Number of knots = %i\n", knots->EntryCount ());
 +  }
++#endif
 +
 +  if ((knot_multiplicities == NULL) !=
 +      (knots == NULL))
@@ -1303,7 +1310,9 @@ index 0000000..0ee479c
 +  num_control_points = control_points->EntryCount ();
 +
 +  if (weights != NULL) {
++#ifdef DEBUG_B_SPLINE_CURVES
 +    printf ("Number of weights = %i\n", weights->EntryCount ());
++#endif
 +
 +    if (weights->EntryCount () != num_control_points)
 +      {
@@ -1313,13 +1322,13 @@ index 0000000..0ee479c
 +
 +  num_knots = num_control_points + b_spline_curve_degree + 1;
 +
++#ifdef DEBUG_B_SPLINE_CURVES
 +  printf ("------\n");
++#endif
 +
 +  our_edge_info->is_bspline = true;
 +  our_edge_info->degree = b_spline_curve_degree;
 +  our_edge_info->num_control_points = num_control_points;
-+
-+  /* XXX: TODO: Iterate over control points, knots, weights etc.. filling in these details */
 +
 +  our_edge_info->control_points = g_new(double, num_control_points * 3);
 +  our_edge_info->weights =        g_new(double, num_control_points);
@@ -1451,7 +1460,11 @@ index 0000000..0ee479c
 +  double dist1 = distance(v1_, &our_edge_info->control_points[0]);
 +  double dist2 = distance(v2_, &our_edge_info->control_points[(num_control_points - 1)*3]);
 +
-+  printf ("End point to first control point distances %f and %f\n", dist1, dist2);
++  if (dist1 > 0.01 || dist2 > 0.02)
++    {
++      printf ("Entity #%i end point to first control point distances %f and %f\n", 
++              dist1, dist2);
++    }
 +}
 +
 +static void
@@ -1537,8 +1550,8 @@ index 0000000..0ee479c
 +          bool same_sense = ec->same_sense_ ();
 +
 +#ifdef DEBUG_NOT_IMPLEMENTED
-+          if (!same_sense)
-+            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
++//          if (!same_sense)
++//            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
 +#endif
 +
 +#if 0
@@ -1589,7 +1602,6 @@ index 0000000..0ee479c
 +                }
 +              else
 +                {
-+                  printf ("URM................\n");
 +                  edge_info_set_round (edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
 +                }
 +
@@ -1749,12 +1761,14 @@ index 0000000..0ee479c
 +      ry = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
 +      rz = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 +
++#ifdef DEBUG_TRANSFORMS
 +      printf ("child axis o: (%f, %f, %f)\n"
 +              "           a: (%f, %f, %f)\n"
 +              "           r: (%f, %f, %f)\n",
 +              ox, oy, oz,
 +              ax, ay, az,
 +              rx, ry, rz);
++#endif
 +
 +      /* XXX: Looking only at the target vector.. need to find some examples where the parent transform coordinate system is not unity to get this correct */
 +      rotate_basis (info->current_transform, ax, ay, az, rx, ry, rz);
@@ -1772,6 +1786,7 @@ index 0000000..0ee479c
 +      ry = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
 +      rz = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 +
++#ifdef DEBUG_TRANSFORMS
 +      printf ("parent axis o: (%f, %f, %f)\n"
 +              "            a: (%f, %f, %f)\n"
 +              "            r: (%f, %f, %f)\n",
@@ -1779,6 +1794,7 @@ index 0000000..0ee479c
 +              ax, ay, az,
 +              rx, ry, rz);
 +      printf ("\n");
++#endif
 +
 +      rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
 +      translate_origin (info->current_transform, -ox, -oy, -oz);
@@ -1858,12 +1874,12 @@ index 0000000..0ee479c
 +
 +  for (msb_list::iterator iter = msb_list.begin (); iter != msb_list.end (); iter++)
 +    {
-+      std::cout << "Found MANIFOLD_SOLID_BREP; processing" << std::endl;
++//      std::cout << "Found MANIFOLD_SOLID_BREP; processing" << std::endl;
 +      SdaiClosed_shell *cs = (*iter)->outer_ ();
 +
 +      /* XXX: Need to check if msb is actually an instance of BREP_WITH_VOIDS, whereupon we also need to iterate over the void shell(s) */
 +
-+      std::cout << "Closed shell is " << cs << std::endl;
++//      std::cout << "Closed shell is " << cs << std::endl;
 +
 +      /* NB: NULLs give g_direct_hash and g_direct_equal */
 +      edges_hash_set = g_hash_table_new (NULL, NULL);
@@ -2086,7 +2102,9 @@ index 0000000..0ee479c
 +
 +  for (mi_list::iterator iter = mi_list.begin (); iter != mi_list.end (); iter++)
 +    {
++#ifdef DEBUG_ASSEMBLY_TRAVERSAL
 +      std::cout << "Found MAPPED_ITEM; processing" << std::endl;
++#endif
 +      SdaiMapped_item *mi = (*iter);
 +
 +      SdaiRepresentation_map *rm = dynamic_cast<SdaiRepresentation_map *>(mi->mapping_source_());
@@ -2189,7 +2207,7 @@ index 0000000..0ee479c
 +  step_model *step_model;
 +  process_step_info info;
 +
-+  printf ("step_model_to_shape_master(\"%s\")\n", filename);
++//  printf ("step_model_to_shape_master(\"%s\")\n", filename);
 +
 +  Registry * registry = new Registry (SchemaInit);
 +  InstMgr * instance_list = new InstMgr (/* ownsInstance = */1);
