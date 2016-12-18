@@ -54,6 +54,8 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
 #include "hid/common/draw_helpers.h"
 #include "hid/common/trackball.h"
 
+#include "hid/common/object3d_gl.h"
+
 #ifdef HAVE_LIBDMALLOC
 #include <dmalloc.h>
 #endif
@@ -2117,7 +2119,7 @@ via_hole_cyl_callback (const BoxType * b, void *cl)
 }
 
 static void
-hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
+hidgl_draw_step_model_instance (struct assembly_model_instance *instance, bool selected)
 {
   render_priv *priv = gport->render_priv;
   step_model *step_model = instance->model->step_model;
@@ -2177,7 +2179,7 @@ hidgl_draw_step_model_instance (struct assembly_model_instance *instance)
                 -STEP_TO_COORD_Y (PCB, step_model->oy),
                 -STEP_TO_COORD_Z (PCB, step_model->oz));
 
-  object3d_draw (step_model->object);
+  object3d_draw (Output.fgGC, step_model->object, selected);
 
   hidgl_flush_triangles (priv->hidgl);
 
@@ -2195,7 +2197,7 @@ E_package_callback (const BoxType * b, void *cl)
 
   if (element->assembly_model_instance != NULL)
     {
-      hidgl_draw_step_model_instance (element->assembly_model_instance);
+      hidgl_draw_step_model_instance (element->assembly_model_instance, TEST_FLAG (SELECTEDFLAG, element));
     }
 
   if (FRONT (element))
@@ -2771,21 +2773,26 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     hidgl_flush_triangles (priv->hidgl);
   }
 
-//  glEnable (GL_LIGHTING);
+  glEnable (GL_LIGHTING);
 
   glShadeModel (GL_SMOOTH);
 
-//  glEnable (GL_LIGHT0);
+  glEnable (GL_LIGHT0);
 
   /* XXX: FIX OUR NORMALS */
-  glEnable (GL_NORMALIZE);
+//  glEnable (GL_NORMALIZE);
 //  glEnable (GL_RESCALE_NORMAL);
 
   glDepthFunc (GL_LESS);
   glDisable (GL_STENCIL_TEST);
 
-  glEnable (GL_CULL_FACE);
+  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
   glCullFace (GL_BACK);
+
+  glEnable (GL_COLOR_MATERIAL);
+
+  // Front material ambient and diffuse colors track glColor
+  glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
 
   if (1) {
     GLfloat global_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -2808,12 +2815,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 //    GLfloat position[] = {0.5, -1., 1., 0.};
 //    GLfloat position[] = {0.0, -0.5, 1., 0.};
     GLfloat position[] = {0.0, 0.0, 1., 0.};
+//    GLfloat position[] = {0.0, 0.0, 10., 1.};
     GLfloat abspos = sqrt (position[0] * position[0] +
                            position[1] * position[1] +
                            position[2] * position[2]);
-    position[0] /= abspos;
-    position[1] /= abspos;
-    position[2] /= abspos;
+//    position[0] /= abspos;
+//    position[1] /= abspos;
+//    position[2] /= abspos;
     glPushMatrix ();
     glLoadIdentity ();
     glLightfv (GL_LIGHT0, GL_POSITION, position);
@@ -2835,9 +2843,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   glDisable (GL_LIGHTING);
 
   draw_crosshair (Output.fgGC, priv);
-  //object3d_draw_debug ();
+  //object3d_draw_debug (Output.fgGC);
   if (step_read_test != NULL)
-    object3d_draw (step_read_test);
+    object3d_draw (Output.fgGC, step_read_test, false);
 
   hidgl_flush_triangles (priv->hidgl);
 
