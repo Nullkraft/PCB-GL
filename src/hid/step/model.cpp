@@ -1298,7 +1298,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                       if (our_edge != 0)
                         {
                           /* Already processed this edge (but hopefully in the other direction!) */
-                          our_edge = SYM(our_edge);
+//                          our_edge = SYM(our_edge);
                         }
                       else
                         {
@@ -1316,14 +1316,16 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                            *     when processing / rendering. (Which we do by spotting the poitner manipulation
                            *     done by SYM on the original make_edge() pointer
                            */
-//                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
-                          process_edge_geometry (edge, orientation, our_edge, info);
+                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
+//                          process_edge_geometry (edge, orientation, our_edge, info);
 
                           g_hash_table_insert (edges_hash_set, edge, (void *)our_edge);
                         }
 
-//                      if (!orientation)
-//                        our_edge = SYM(our_edge);
+#if 1
+                      if (!orientation)
+                        our_edge = SYM(our_edge);
+#endif
 
                       if (first_edge_of_contour == 0)
                         {
