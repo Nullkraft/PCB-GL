@@ -1,5 +1,5 @@
 Bottom: 6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
-Top:    1c9bf2375155d5c9d914baf56cb906e522136d68
+Top:    e05e2cac2eacb0e6ffef8e465a40c7decbb5d78f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-17 18:49:04 +0000
 
@@ -229,7 +229,7 @@ index e8ef1d8..86c003b 100644
  
    /* ghidgui->mode_buttons_frame was created above in the call to
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
-index ad1644c..47a3691 100644
+index ad1644c..35c5072 100644
 --- a/src/hid/step/model.cpp
 +++ b/src/hid/step/model.cpp
 @@ -192,6 +192,8 @@ find_mapped_item (SdaiShape_representation *sr,
@@ -659,7 +659,7 @@ index ad1644c..47a3691 100644
                        if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
                            strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
                          {
-@@ -1293,57 +1293,75 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1293,57 +1293,77 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                            continue;
                          }
  
@@ -708,7 +708,7 @@ index ad1644c..47a3691 100644
 +                      if (our_edge != 0)
 +                        {
 +                          /* Already processed this edge (but hopefully in the other direction!) */
-+                          our_edge = SYM(our_edge);
++//                          our_edge = SYM(our_edge);
                          }
                        else
                          {
@@ -728,14 +728,16 @@ index ad1644c..47a3691 100644
 +                           *     when processing / rendering. (Which we do by spotting the poitner manipulation
 +                           *     done by SYM on the original make_edge() pointer
 +                           */
-+//                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
-+                          process_edge_geometry (edge, orientation, our_edge, info);
++                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
++//                          process_edge_geometry (edge, orientation, our_edge, info);
 +
 +                          g_hash_table_insert (edges_hash_set, edge, (void *)our_edge);
 +                        }
 +
-+//                      if (!orientation)
-+//                        our_edge = SYM(our_edge);
++#if 1
++                      if (!orientation)
++                        our_edge = SYM(our_edge);
++#endif
 +
 +                      if (first_edge_of_contour == 0)
 +                        {
@@ -777,7 +779,7 @@ index ad1644c..47a3691 100644
                  }
                else
                  {
-@@ -1351,11 +1369,9 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1351,11 +1371,9 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                    continue;
                  }
              }
