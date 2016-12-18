@@ -1,5 +1,5 @@
 Bottom: 6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
-Top:    e05e2cac2eacb0e6ffef8e465a40c7decbb5d78f
+Top:    8650f4763da9678f45ed3863879e1b4497004405
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-17 18:49:04 +0000
 
@@ -169,10 +169,35 @@ index 4837b11..a90a51e 100644
  }
  
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index d4127bc..c79113b 100644
+index d4127bc..fce8341 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2818,9 +2818,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2344,6 +2344,7 @@ ghid_draw_everything (BoxType *drawn_area)
+ 
+ #if 1
+     if (!global_view_2d && is_this_physical && is_next_physical) {
++      glDepthMask (FALSE); // Temporary kludge - lets us see objects through the sides of the board
+       cyl_info.from_layer = drawn_groups[i];
+       cyl_info.to_layer = drawn_groups[i - 1];
+       cyl_info.scale = gport->view.coord_per_px;
+@@ -2352,6 +2353,7 @@ ghid_draw_everything (BoxType *drawn_area)
+       ghid_draw_outline_between_layers (cyl_info.from_layer, cyl_info.to_layer, drawn_area);
+       if (PCB->PinOn) r_search (PCB->Data->pin_tree, drawn_area, NULL, pin_hole_cyl_callback, &cyl_info);
+       if (PCB->ViaOn) r_search (PCB->Data->via_tree, drawn_area, NULL, via_hole_cyl_callback, &cyl_info);
++      glDepthMask (TRUE); // Temporary kludge - lets us see objects through the sides of the board
+     }
+ #endif
+   }
+@@ -2773,7 +2775,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ 
+   glShadeModel (GL_SMOOTH);
+ 
+-  glEnable (GL_LIGHT0);
++//  glEnable (GL_LIGHT0);
+ 
+   /* XXX: FIX OUR NORMALS */
+   glEnable (GL_NORMALIZE);
+@@ -2818,9 +2820,14 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      glPopMatrix ();
    }
  
