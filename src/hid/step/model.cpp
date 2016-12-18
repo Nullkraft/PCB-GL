@@ -375,6 +375,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
    */
 
   edge_info *our_edge_info = (edge_info *)UNDIR_DATA(our_edge);
+  our_edge_info->is_placeholder = true; /* Highlight for now */
 
   SDAI_Application_instance *entity = start_entity;
   STEPcomplex *stepcomplex = NULL;
@@ -728,18 +729,18 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
   if (dist1 > 0.01 || dist2 > 0.02)
     {
       printf ("Entity #%i end point to first control point distances %f and %f\n",
-              dist1, dist2);
+              start_entity->StepFileId (), dist1, dist2);
     }
 }
 
 static void
-process_edge_geometry (SdaiEdge *edge, edge_ref our_edge, process_step_info *info)
+process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, process_step_info *info)
 {
   GHashTableIter iter;
   vertex3d *vertex;
   double x1, y1, z1;
   double x2, y2, z2;
-  bool orientation = true;
+  edge_info *our_edge_info = (edge_info *)UNDIR_DATA(our_edge);
 
   if (strcmp (edge->edge_start_ ()->EntityName (), "Vertex_Point") != 0 ||
       strcmp (edge->edge_end_   ()->EntityName (), "Vertex_Point") != 0)
@@ -816,8 +817,6 @@ process_edge_geometry (SdaiEdge *edge, edge_ref our_edge, process_step_info *inf
           transform_vertex (info->current_transform, &x1, &y1, &z1);
           transform_vertex (info->current_transform, &x2, &y2, &z2);
 
-//          our_edge = make_edge ();
-          UNDIR_DATA (our_edge) = make_edge_info ();
           object3d_add_edge (info->object, our_edge);
           vertex = make_vertex3d (x1, y1, z1);
           ODATA(our_edge) = vertex;
@@ -839,26 +838,21 @@ process_edge_geometry (SdaiEdge *edge, edge_ref our_edge, process_step_info *inf
 
           double radius = circle->radius_();
 
-          edge_info *edge_info;
-
           transform_vertex (info->current_transform, &cx, &cy, &cz);
           transform_vertex (info->current_transform, &x1, &y1, &z1);
           transform_vertex (info->current_transform, &x2, &y2, &z2);
 
           transform_vector (info->current_transform, &nx, &ny, &nz);
 
-//          our_edge = make_edge ();
-          edge_info = make_edge_info ();
           if (orientation)
             {
-              edge_info_set_round (edge_info, cx, cy, cz, nx, ny, nz, radius);
+              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
             }
           else
             {
-              edge_info_set_round (edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
+              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
             }
 
-          UNDIR_DATA (our_edge) = edge_info;
           object3d_add_edge (info->object, our_edge);
           vertex = make_vertex3d (x1, y1, z1);
           ODATA(our_edge) = vertex;
@@ -872,8 +866,6 @@ process_edge_geometry (SdaiEdge *edge, edge_ref our_edge, process_step_info *inf
           transform_vertex (info->current_transform, &x1, &y1, &z1);
           transform_vertex (info->current_transform, &x2, &y2, &z2);
 
-//          our_edge = make_edge ();
-          UNDIR_DATA (our_edge) = make_edge_info ();
           object3d_add_edge (info->object, our_edge);
           vertex = make_vertex3d (x1, y1, z1);
           ODATA(our_edge) = vertex;
@@ -884,6 +876,7 @@ process_edge_geometry (SdaiEdge *edge, edge_ref our_edge, process_step_info *inf
         }
       else
         {
+          our_edge_info->is_placeholder = true;
 #ifdef DEBUG_NOT_IMPLEMENTED
           printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
           if (curve->IsComplex())
@@ -1074,13 +1067,31 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
   return step_model;
 }
 
+static void
+debug_edge (edge_ref edge, const char *message)
+{
+  edge_ref e = edge;
+  edge_info *info;
+
+  printf ("%s\n", message);
+  info = (edge_info *)UNDIR_DATA(e);
+  printf ("e: %p (%i%s)\n", e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
+  while ((e = ONEXT(e)) != edge)
+    {
+      info = (edge_info *)UNDIR_DATA(e);
+      printf ("next: %p (%i%s)\n", e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
+    }
+}
+
+static int edge_no = 0;
+
 static step_model *
 process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, process_step_info *info)
 {
   step_model *step_model;
 //  object3d *object;
   GHashTable *edges_hash_set;
-  bool on_plane;
+  int face_count = 0;
 
   // If sr is an exact match for the step entity SHAPE_REPRESENTATION (not a subclass), call the specific hander
   if (strcmp (sr->EntityName (), "Shape_Representation") == 0)
@@ -1158,8 +1169,6 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
           std::cout << "Face " << face->name_ ().c_str () << " has surface of type " << surface->EntityName () << " and same_sense = " << fs->same_sense_ () << std::endl;
 #endif
 
-          on_plane = false;
-
           if (surface->IsComplex ())
             {
 #ifdef DEBUG_NOT_IMPLEMENTED
@@ -1168,7 +1177,6 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
             }
           else if (strcmp (surface->EntityName (), "Plane") == 0)
             {
-              on_plane = true;
 //              printf ("WARNING: planar surfaces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
@@ -1190,14 +1198,14 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 #endif
             }
 
+          info->current_face = make_face3d ((char *)"");
+          object3d_add_face (info->object, info->current_face);
+
           for (SingleLinkNode *iter = fs->bounds_ ()->GetHead ();
                iter != NULL;
                iter = iter->NextNode ())
             {
               SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
-
-              info->current_face = make_face3d ((char *)"");
-              object3d_add_face (info->object, info->current_face);
 
 #if 0
               bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
@@ -1216,10 +1224,12 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 #if 0
               std::cout << "loop #" << loop->StepFileId () << ", of type " << loop->EntityName () << ":" << std::endl;
 #endif
+//              printf ("FACE LOOP\n");
               if (strcmp (loop->EntityName (), "Edge_Loop") == 0)
                 {
                   SdaiEdge_loop *el = (SdaiEdge_loop *)loop;
-                  bool first_edge_of_contour = true;
+                  edge_ref first_edge_of_contour = 0;
+                  edge_ref previous_edge_of_contour = 0;
 
                   // NB: EDGE_LOOP uses multiple inheritance from LOOP and PATH, thus needs special handling to
                   //     access the elements belonging to PATH, such as edge_list ...
@@ -1285,33 +1295,73 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 
                       our_edge = (edge_ref)g_hash_table_lookup (edges_hash_set, edge);
 
-                      if (our_edge != NULL)
+                      if (our_edge != 0)
                         {
                           /* Already processed this edge (but hopefully in the other direction!) */
+                          our_edge = SYM(our_edge);
                         }
                       else
                         {
                           our_edge = make_edge ();
 
-                          process_edge_geometry (edge, our_edge, info);
+                          /* Temporary debug hack */
+                          edge_info *our_edge_info = make_edge_info ();
+                          our_edge_info->edge_identifier = ++edge_no;
+                          UNDIR_DATA(our_edge) = our_edge_info;
 
-                          //g_hash_table_insert (edges_hash_set, edge, GINT_TO_POINTER(orientation ? 1 : 0));
+                          /* Populate edge geometry
+                           *
+                           * NB: Forcing orientation to true, so we create the "forward" direction oriented edge
+                           *     with the non'SYM'd edge pointer. This lets us spot the reversed edges correctly
+                           *     when processing / rendering. (Which we do by spotting the poitner manipulation
+                           *     done by SYM on the original make_edge() pointer
+                           */
+//                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
+                          process_edge_geometry (edge, orientation, our_edge, info);
 
-                          /* Populate edge geometry (?)... or do we leave processing until later */
+                          g_hash_table_insert (edges_hash_set, edge, (void *)our_edge);
                         }
 
-                    if (orientation)
-                      our_edge = SYM(our_edge);
+//                      if (!orientation)
+//                        our_edge = SYM(our_edge);
 
-                    if (first_edge_of_contour)
-                      {
-                        info->current_contour = make_contour3d (our_edge);
-                        face3d_add_contour (info->current_face, info->current_contour);
-                        first_edge_of_contour = false;
-                      }
+                      if (first_edge_of_contour == 0)
+                        {
+                          info->current_contour = make_contour3d (our_edge);
+                          face3d_add_contour (info->current_face, info->current_contour);
+                          first_edge_of_contour = our_edge;
+                        }
 
+#if 0
+                      printf ("EDGE: (%f, %f, %f)-(%f, %f, %f)\n",
+                              ((vertex3d *)ODATA(our_edge))->x,
+                              ((vertex3d *)ODATA(our_edge))->y,
+                              ((vertex3d *)ODATA(our_edge))->x,
+                              ((vertex3d *)DDATA(our_edge))->x,
+                              ((vertex3d *)DDATA(our_edge))->y,
+                              ((vertex3d *)DDATA(our_edge))->x);
+#endif
+
+                      if (previous_edge_of_contour != 0)
+                        {
+                          /* XXX: Hopefully link up the edges around this face contour */
+//                          debug_edge (our_edge, "before splice");
+//                          splice (SYM(previous_edge_of_contour), our_edge);
+                          splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
+//                          splice (previous_edge_of_contour, SYM(our_edge));
+//                          debug_edge (our_edge, "after splice");
+                        }
+
+                      /* Stash reference to this edge for linking next time */
+                      previous_edge_of_contour = our_edge;
                     }
 
+                  /* XXX: Hopefully link up the edges around this face contour */
+//                  debug_edge (first_edge_of_contour, "before splice");
+//                  splice (SYM(previous_edge_of_contour), first_edge_of_contour);
+                  splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
+//                  splice (previous_edge_of_contour, SYM(first_edge_of_contour));
+//                  debug_edge (first_edge_of_contour, "after splice");
                 }
               else
                 {
@@ -1319,7 +1369,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                   continue;
                 }
             }
-
+          face_count ++;
         }
 
         /* Deal with edges hash set */

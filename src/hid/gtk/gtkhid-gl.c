@@ -2818,8 +2818,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     glPopMatrix ();
   }
 
+//  glDisable (GL_DEPTH_TEST); /* TEST */
+  glDepthMask (FALSE); /* TEST */
+
   if (!global_view_2d)
     ghid_draw_packages (&region);
+
+  glDepthMask (TRUE); /* TEST */
 
   glDisable (GL_CULL_FACE);
   glDisable (GL_DEPTH_TEST);
