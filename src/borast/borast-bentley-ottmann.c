@@ -1501,6 +1501,67 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
 }
 
 borast_status_t
+bo_poly_to_traps_no_draw (POLYAREA *poly, borast_traps_t *traps)
+{
+  int intersections;
+  borast_bo_start_event_t stack_events[BORAST_STACK_ARRAY_LENGTH (borast_bo_start_event_t)];
+  borast_bo_start_event_t *events;
+  borast_bo_event_t *stack_event_ptrs[ARRAY_LENGTH (stack_events) + 1];
+  borast_bo_event_t **event_ptrs;
+  int num_events = 0;
+  int i;
+  int n;
+  POLYAREA *pa;
+  PLINE *contour;
+
+  pa = poly;
+  do {
+    for (contour = pa->contours; contour != NULL; contour = contour->next)
+      num_events += contour->Count;
+    /* FIXME: Remove horizontal edges? */
+    break;
+  } while ((pa = pa->f) != poly);
+
+  if (unlikely (0 == num_events))
+      return BORAST_STATUS_SUCCESS;
+
+  events = stack_events;
+  event_ptrs = stack_event_ptrs;
+  if (num_events > ARRAY_LENGTH (stack_events)) {
+      events = _borast_malloc_ab_plus_c (num_events,
+                                        sizeof (borast_bo_start_event_t) +
+                                        sizeof (borast_bo_event_t *),
+                                        sizeof (borast_bo_event_t *));
+      if (unlikely (events == NULL))
+          return BORAST_STATUS_NO_MEMORY;
+
+      event_ptrs = (borast_bo_event_t **) (events + num_events);
+  }
+
+  i = 0;
+
+  poly_area_to_start_events (poly, events, event_ptrs, &i);
+
+  /* XXX: This would be the convenient place to throw in multiple
+   * passes of the Bentley-Ottmann algorithm. It would merely
+   * require storing the results of each pass into a temporary
+   * borast_traps_t. */
+  _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                               num_events,
+                                               traps,
+                                               &intersections);
+
+#if DEBUG_TRAPS
+  dump_traps (traps, "bo-polygon-out.txt");
+#endif
+
+  if (events != stack_events)
+      free (events);
+
+  return BORAST_STATUS_SUCCESS;
+}
+
+borast_status_t
 bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
 {
   int intersections;
