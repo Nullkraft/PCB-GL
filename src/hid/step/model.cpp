@@ -97,8 +97,8 @@ typedef std::list<SdaiMapped_item *> mi_list;
 
 SdaiProduct_definition *
 read_model_from_file (Registry *registry,
-                        InstMgr *instance_list,
-                        const char *filename)
+                      InstMgr *instance_list,
+                      const char *filename)
 {
   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 
@@ -187,6 +187,23 @@ find_mapped_item (SdaiShape_representation *sr,
 
       iter = iter->NextNode ();
     }
+}
+
+static void
+unpack_axis_geom (SdaiAxis2_placement_3d *axis,
+                  double *ox, double *oy, double *oz,
+                  double *ax, double *ay, double *az,
+                  double *rx, double *ry, double *rz)
+{
+  *ox = ((RealNode *)axis->location_ ()->coordinates_ ()->GetHead ())->value;
+  *oy = ((RealNode *)axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+  *oz = ((RealNode *)axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+  *ax = ((RealNode *)axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+  *ay = ((RealNode *)axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+  *az = ((RealNode *)axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+  *rx = ((RealNode *)axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
+  *ry = ((RealNode *)axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+  *rz = ((RealNode *)axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 }
 
 typedef struct process_step_info {
@@ -364,7 +381,7 @@ transform_vector (double m[4][4], double *x, double *y, double *z)
 static double
 distance (double a[3], double b[3])
 {
-  return hypot(hypot(a[0] - b[0], a[1] - b[1]), a[2] - b[2]);
+  return hypot (hypot (a[0] - b[0], a[1] - b[1]), a[2] - b[2]);
 }
 
 static void
@@ -375,7 +392,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
    */
 
   edge_info *our_edge_info = (edge_info *)UNDIR_DATA(our_edge);
-  our_edge_info->is_placeholder = true; /* Highlight for now */
+//  our_edge_info->is_placeholder = true; /* Highlight for now */
 
   SDAI_Application_instance *entity = start_entity;
   STEPcomplex *stepcomplex = NULL;
@@ -803,10 +820,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
       SdaiCurve *curve = ec->edge_geometry_ ();
       bool same_sense = ec->same_sense_ ();
 
-#ifdef DEBUG_NOT_IMPLEMENTED
-//          if (!same_sense)
-//            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
-#endif
+      our_edge_info->same_sense = same_sense;
 
 #if 0
       printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
@@ -844,7 +858,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
 
           transform_vector (info->current_transform, &nx, &ny, &nz);
 
-          if (orientation)
+          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
             {
               edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
             }
@@ -852,6 +866,44 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
             {
               edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
             }
+
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
+
+        }
+      else if (strcmp (curve->EntityName (), "Ellipse") == 0)
+        {
+          SdaiEllipse *ellipse = (SdaiEllipse *)curve;
+          double cx = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
+          double cy = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+          double cz = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+          double nx = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+          double ny = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+          double nz = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+          our_edge_info->is_placeholder = true;
+#if 0 /* NOT YET IMPLEMENTED */
+          double radius = circle->radius_();
+
+          transform_vertex (info->current_transform, &cx, &cy, &cz);
+
+          transform_vector (info->current_transform, &nx, &ny, &nz);
+
+          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
+            {
+              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
+            }
+          else
+            {
+              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
+            }
+#endif
 
           object3d_add_edge (info->object, our_edge);
           vertex = make_vertex3d (x1, y1, z1);
@@ -887,6 +939,18 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
           // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
           // XXX: Various derived types of the above, e.g.:
           //      conic is a supertype of: circle, ellipse, hyperbola, parabola
+
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+          our_edge_info->is_placeholder = true;
+
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
+
           return;
         }
 
@@ -940,7 +1004,9 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
   srr_list srr_list;
 
   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
-  find_all_srr_with_rep_1 (instance_list, &srr_list, 0, sr);
+  find_all_srr_with_rep_1_or_2 (instance_list, &srr_list, 0, sr);
+
+  bool processed_any = false;
 
   for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
     {
@@ -949,20 +1015,32 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
       SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
 
+      /* Catch the silly case where the model confuses rep_1 and rep_2 */
+      if (child_sr == sr)
+        child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_1_ ());
+
       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
       /* XXX: Do something with the result */
       // Leave existing transformation
       process_sr_or_subtype (instance_list, child_sr, info);
+      processed_any = true;
     }
 
+  /* Kludge... don't look for the complex transformed relationships if we already found a simple one. */
+  if (processed_any)
+    return step_model;
 
   srr_rrwt_list srr_rrwt_list;
 
   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
-  find_all_srr_rrwt_with_rep_1 (instance_list, &srr_rrwt_list, 0, sr);
+  find_all_srr_rrwt_with_rep_1_or_2 (instance_list, &srr_rrwt_list, 0, sr);
 
   /* XXX: Encountered some models where the child was rep1, the parent rep2??.
    *      E.g. from Samtec, ERM5-075-02.0-L-DV-TR.stp
+   */
+
+  /* XXX: Should probably use the NAUO stuff to figure out and follow the assembly structure,
+   *      not just guess at what to include based upon finding SHAPE_REPRESENTATION_RELATIONSHIPs.
    */
 
   for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
@@ -984,8 +1062,16 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
       copy_4x4 (info->current_transform, backup_transform);
 
-      child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
-      parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+      if (item->forwards)
+        {
+          child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
+          parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+        }
+      else
+        {
+          child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+          parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
+        }
 
       if (parent_axis == NULL ||
           child_axis == NULL)
@@ -994,15 +1080,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
           continue;
         }
 
-      ox = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ())->value;
-      oy = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
-      oz = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      ax = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
-      ay = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      az = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      rx = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
-      ry = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      rz = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      unpack_axis_geom (child_axis, &ox, &oy, &oz, &ax, &ay, &az, &rx, &ry, &rz);
 
 #ifdef DEBUG_TRANSFORMS
       printf ("child axis o: (%f, %f, %f)\n"
@@ -1019,15 +1097,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
       /* Is this in the correct order? */
       translate_origin (info->current_transform, ox, oy, oz);
 
-      ox = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ())->value;
-      oy = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
-      oz = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      ax = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
-      ay = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      az = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      rx = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
-      ry = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      rz = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      unpack_axis_geom (parent_axis, &ox, &oy, &oz, &ax, &ay, &az, &rx, &ry, &rz);
 
 #ifdef DEBUG_TRANSFORMS
       printf ("parent axis o: (%f, %f, %f)\n"
@@ -1159,15 +1229,17 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
             }
 
           /* NB: ADVANCED_FACE is a FACE_SURFACE, which has SdaiSurface *face_geometry_ (), and Boolean same_sense_ () */
-          // SdaiAdvanced_face *af = (SdaiAdvanced_face *) face;
+          //SdaiAdvanced_face *af = (SdaiAdvanced_face *) face;
           /* NB: FACE_SURFACE is a FACE, which has EntityAggreate bounds_ (), whos' members are SdaiFace_bound *  */
           SdaiFace_surface *fs = (SdaiFace_surface *) face;
 
           SdaiSurface *surface = fs->face_geometry_ ();
-
 #if 0
           std::cout << "Face " << face->name_ ().c_str () << " has surface of type " << surface->EntityName () << " and same_sense = " << fs->same_sense_ () << std::endl;
 #endif
+
+          info->current_face = make_face3d ((char *)"");
+          object3d_add_face (info->object, info->current_face);
 
           if (surface->IsComplex ())
             {
@@ -1177,15 +1249,105 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
             }
           else if (strcmp (surface->EntityName (), "Plane") == 0)
             {
+              SdaiPlane *plane = dynamic_cast<SdaiPlane *>(surface);
+
 //              printf ("WARNING: planar surfaces are not supported yet\n");
+
+              unpack_axis_geom (plane->position_ (),
+                                &info->current_face->ox,
+                                &info->current_face->oy,
+                                &info->current_face->oz,
+                                &info->current_face->ax,
+                                &info->current_face->ay,
+                                &info->current_face->az,
+                                &info->current_face->rx,
+                                &info->current_face->ry,
+                                &info->current_face->rz);
+
+              transform_vertex (info->current_transform,
+                                &info->current_face->ox,
+                                &info->current_face->oy,
+                                &info->current_face->oz);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->ax,
+                                &info->current_face->ay,
+                                &info->current_face->az);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->rx,
+                                &info->current_face->ry,
+                                &info->current_face->rz);
+
+              info->current_face->is_planar = true;
+
+              info->current_face->nx = info->current_face->ax;
+              info->current_face->ny = info->current_face->ay;
+              info->current_face->nz = info->current_face->az;
+
+              if (!fs->same_sense_ ())
+                {
+                  info->current_face->nx = -info->current_face->nx;
+                  info->current_face->ny = -info->current_face->ny;
+                  info->current_face->nz = -info->current_face->nz;
+
+                  /* XXX: Could use face->surface_orientation_reversed ? */
+//                  printf ("Not same sense, flipping normal\n");
+                }
+
+              info->current_face->surface_orientation_reversed = false;
             }
           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
             {
-//              printf ("WARNING: cylindrical suraces are not supported yet\n");
+              SdaiCylindrical_surface *cylinder = dynamic_cast<SdaiCylindrical_surface *>(surface);
+//              printf ("WARNING: cylindrical surfaces are not supported yet\n");
+
+              unpack_axis_geom (cylinder->position_ (),
+                                &info->current_face->ox,
+                                &info->current_face->oy,
+                                &info->current_face->oz,
+                                &info->current_face->ax,
+                                &info->current_face->ay,
+                                &info->current_face->az,
+                                &info->current_face->rx,
+                                &info->current_face->ry,
+                                &info->current_face->rz);
+
+              transform_vertex (info->current_transform,
+                                &info->current_face->ox,
+                                &info->current_face->oy,
+                                &info->current_face->oz);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->ax,
+                                &info->current_face->ay,
+                                &info->current_face->az);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->rx,
+                                &info->current_face->ry,
+                                &info->current_face->rz);
+
+              info->current_face->is_cylindrical = true;
+              info->current_face->radius = cylinder->radius_ ();
+
+              if (fs->same_sense_ ())
+                {
+                  info->current_face->surface_orientation_reversed = false;
+                }
+              else
+                {
+                  info->current_face->surface_orientation_reversed = true;
+                }
+
+            }
+          else if (strcmp (surface->EntityName (), "Conical_Surface") == 0)
+            {
+//              printf ("WARNING: conical surfaces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
             {
-//              printf ("WARNING: toroidal suraces are not supported yet\n");
+//              printf ("WARNING: toroidal surfaces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
             {
@@ -1198,14 +1360,12 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 #endif
             }
 
-          info->current_face = make_face3d ((char *)"");
-          object3d_add_face (info->object, info->current_face);
-
           for (SingleLinkNode *iter = fs->bounds_ ()->GetHead ();
                iter != NULL;
                iter = iter->NextNode ())
             {
               SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
+              bool face_bound_orientation = fb->orientation_ ();
 
 #if 0
               bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
@@ -1329,7 +1489,10 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 
                       if (first_edge_of_contour == 0)
                         {
-                          info->current_contour = make_contour3d (our_edge);
+                          if (face_bound_orientation)
+                            info->current_contour = make_contour3d (our_edge);
+                          else
+                            info->current_contour = make_contour3d (SYM(our_edge));
                           face3d_add_contour (info->current_face, info->current_contour);
                           first_edge_of_contour = our_edge;
                         }
@@ -1346,24 +1509,22 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 
                       if (previous_edge_of_contour != 0)
                         {
-                          /* XXX: Hopefully link up the edges around this face contour */
-//                          debug_edge (our_edge, "before splice");
-//                          splice (SYM(previous_edge_of_contour), our_edge);
-                          splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
-//                          splice (previous_edge_of_contour, SYM(our_edge));
-//                          debug_edge (our_edge, "after splice");
+                          /* Link up the edges around this face contour */
+                          if (face_bound_orientation)
+                            splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
+                          else
+                            splice (OPREV(our_edge), SYM(previous_edge_of_contour));
                         }
 
                       /* Stash reference to this edge for linking next time */
                       previous_edge_of_contour = our_edge;
                     }
 
-                  /* XXX: Hopefully link up the edges around this face contour */
-//                  debug_edge (first_edge_of_contour, "before splice");
-//                  splice (SYM(previous_edge_of_contour), first_edge_of_contour);
-                  splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
-//                  splice (previous_edge_of_contour, SYM(first_edge_of_contour));
-//                  debug_edge (first_edge_of_contour, "after splice");
+                  /* Link up the edges around this face contour */
+                  if (face_bound_orientation)
+                    splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
+                  else
+                    splice (OPREV(first_edge_of_contour), SYM(previous_edge_of_contour));
                 }
               else
                 {
@@ -1441,29 +1602,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
           continue;
         }
 
-      ox = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ())->value;
-      oy = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
-      oz = ((RealNode *)child_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      ax = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
-      ay = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      az = ((RealNode *)child_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      rx = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
-      ry = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      rz = ((RealNode *)child_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      unpack_axis_geom (child_axis, &ox, &oy, &oz, &ax, &ay, &az, &rx, &ry, &rz);
 
       /* XXX: Looking only at the target vector.. need to find some examples where the parent transform coordinate system is not unity to get this correct */
       rotate_basis (info->current_transform, ax, ay, az, rx, ry, rz);
       translate_origin (info->current_transform, ox, oy, oz);
 
-      ox = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ())->value;
-      oy = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
-      oz = ((RealNode *)parent_axis->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      ax = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ())->value;
-      ay = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      az = ((RealNode *)parent_axis->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
-      rx = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ())->value;
-      ry = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
-      rz = ((RealNode *)parent_axis->ref_direction_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+      unpack_axis_geom (parent_axis, &ox, &oy, &oz, &ax, &ay, &az, &rx, &ry, &rz);
 
       translate_origin (info->current_transform, -ox, -oy, -oz);
       rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
