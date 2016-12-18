@@ -1,0 +1,43 @@
+Bottom: 1c9bf2375155d5c9d914baf56cb906e522136d68
+Top:    e05e2cac2eacb0e6ffef8e465a40c7decbb5d78f
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-18 14:13:47 +0000
+
+Refresh of try-to-deal-with-faces-as-well
+
+---
+
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index 47a3691..35c5072 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -1298,7 +1298,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+                       if (our_edge != 0)
+                         {
+                           /* Already processed this edge (but hopefully in the other direction!) */
+-                          our_edge = SYM(our_edge);
++//                          our_edge = SYM(our_edge);
+                         }
+                       else
+                         {
+@@ -1316,14 +1316,16 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+                            *     when processing / rendering. (Which we do by spotting the poitner manipulation
+                            *     done by SYM on the original make_edge() pointer
+                            */
+-//                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
+-                          process_edge_geometry (edge, orientation, our_edge, info);
++                          process_edge_geometry (edge, true /*orientation*/, our_edge, info);
++//                          process_edge_geometry (edge, orientation, our_edge, info);
+ 
+                           g_hash_table_insert (edges_hash_set, edge, (void *)our_edge);
+                         }
+ 
+-//                      if (!orientation)
+-//                        our_edge = SYM(our_edge);
++#if 1
++                      if (!orientation)
++                        our_edge = SYM(our_edge);
++#endif
+ 
+                       if (first_edge_of_contour == 0)
+                         {
