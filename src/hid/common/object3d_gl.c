@@ -364,7 +364,7 @@ draw_quad_edge (edge_ref e, void *data)
 
           glEnd ();
 
-          glDepthMask (FALSE);
+//          glDepthMask (FALSE);
           return;
         }
     }
@@ -378,7 +378,7 @@ draw_quad_edge (edge_ref e, void *data)
               STEP_Y_TO_COORD (PCB, y2),
               STEP_X_TO_COORD (PCB, z2));
   glEnd ();
-  glDepthMask (FALSE);
+//  glDepthMask (FALSE);
 }
 
 static void
@@ -412,20 +412,31 @@ draw_contour (contour3d *contour, void *data)
 static int face_no;
 
 static void
+draw_face_edges (face3d *face, void *data)
+{
+  struct draw_info *info = data;
+
+  info->debug_face = (face_no == debug_integer);
+  g_list_foreach (face->contours, (GFunc)draw_contour, info);
+
+  face_no++;
+}
+
+static void
 draw_face (face3d *face, void *data)
 {
   struct draw_info *info = data;
 
   face3d_fill (info->gc, face, info->selected);
 
-  info->debug_face = (face_no == debug_integer);
-
+//  info->debug_face = (face_no == debug_integer);
+//
 //  return;
-
+//
 //  if (face->contours != NULL)
-//      draw_contour (face->contours->data, NULL);
+//      draw_contour (face->contours->data, info);
 //  printf ("Drawing face\n");
-  g_list_foreach (face->contours, (GFunc)draw_contour, info);
+//  g_list_foreach (face->contours, (GFunc)draw_contour, info);
 
   face_no++;
 }
@@ -451,7 +462,9 @@ object3d_draw (hidGC gc, object3d *object, bool selected)
 //  printf ("\nDrawing object\n");
 
   face_no = 0;
+  g_list_foreach (object->faces, (GFunc)draw_face_edges, &info);
 
+  face_no = 0;
   g_list_foreach (object->faces, (GFunc)draw_face, &info);
 
 //  printf ("....ENDED\n");
