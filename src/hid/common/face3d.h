@@ -8,6 +8,8 @@ typedef struct {
   GList *contours;
   char *name;
 
+  bool is_planar;
+
   /* For cylindrical surfaces */
   bool is_cylindrical;
   double cx, cy, cz; /* A point on the axis */
@@ -24,6 +26,7 @@ typedef struct {
   /* Rendering cache */
   int tristrip_num_vertices;
   float *tristrip_vertices;
+  bool triangulate_failed;
 } face3d;
 
 face3d *make_face3d (char *name);

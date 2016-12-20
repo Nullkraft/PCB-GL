@@ -109,10 +109,16 @@ ensure_tristrip (face3d *face)
   VNODE *node;
   PLINE *p_contour = NULL;
   POLYAREA *poly;
+  PLINE *dummy_contour;
   borast_traps_t traps;
+  bool found_outer_contour = false;
 
   /* Nothing to do if vertices are already cached */
   if (face->tristrip_vertices != NULL)
+    return;
+
+  /* Don't waste time if we failed last time */
+  if (face->triangulate_failed)
     return;
 
   if (face->is_cylindrical)
@@ -121,161 +127,51 @@ ensure_tristrip (face3d *face)
 //  if (face->is_b_spline)
 //    return;
 
-  /* Outer contour */ /* XXX: NOT ALWAYS IT WOULD SEEM! */
-//  contour = &ace->contours->data;
-
   poly = poly_Create ();
   if (poly == NULL)
     return;
 
+  /* Create a dummy outer contour (so we don't have to worry about the order below..
+   * when we encounter the outer contour, we substitute this dummy one for it.
+   */
+  p_v[0] = 0;
+  p_v[1] = 0;
+  node = poly_CreateNode (p_v);
+  dummy_contour = poly_NewContour (node);
+  dummy_contour->Flags.orient = PLF_DIR;
+  poly_InclContour (poly, dummy_contour);
+
   for (c_iter = face->contours; c_iter != NULL; c_iter = g_list_next (c_iter))
     {
       contour = c_iter->data;
-      bool hole = false; /* XXX ??? */
 
       e = contour->first_edge;
 
       do
         {
           edge_info *info = UNDIR_DATA (e);
-          double ex, ey, ez;
-          double x, y, z;
           float u, v;
+          bool backwards_edge;
 
-          ex = ((vertex3d *)DDATA(e))->x;
-          ey = ((vertex3d *)DDATA(e))->y;
-          ez = ((vertex3d *)DDATA(e))->z;
+          /* XXX: Do this without breaking abstraction? */
+          /* Detect SYM edges, reverse the circle normal */
+          backwards_edge = ((e & 2) == 2);
 
-          if (info->is_round)
+          edge_ensure_linearised (e);
+
+          for (i = 0; i < info->num_linearised_vertices - 1; i++)
             {
-              int i;
-              double sx, sy, sz;
-              double cx, cy, cz;
-              double nx, ny, nz;
-              double refx, refy, refz;
-              double endx, endy, endz;
-              double ortx, orty, ortz;
-              double cosa, sina;
-              double recip_length;
-              double da;
-              int segs;
-              double angle_step;
+              int vertex_idx = i;
 
-              sx = ((vertex3d *)ODATA(e))->x;
-              sy = ((vertex3d *)ODATA(e))->y;
-              sz = ((vertex3d *)ODATA(e))->z;
+              if (backwards_edge)
+                vertex_idx = info->num_linearised_vertices - 1 - i;
 
-              cx = ((edge_info *)UNDIR_DATA(e))->cx;
-              cy = ((edge_info *)UNDIR_DATA(e))->cy;
-              cz = ((edge_info *)UNDIR_DATA(e))->cz;
+              plane_xyz_to_uv (face,
+                               info->linearised_vertices[vertex_idx * 3 + 0],
+                               info->linearised_vertices[vertex_idx * 3 + 1],
+                               info->linearised_vertices[vertex_idx * 3 + 2],
+                               &u, &v);
 
-              nx = ((edge_info *)UNDIR_DATA(e))->nx;
-              ny = ((edge_info *)UNDIR_DATA(e))->ny;
-              nz = ((edge_info *)UNDIR_DATA(e))->nz;
-
-              /* XXX: Do this without breaking abstraction? */
-              /* Detect SYM edges, reverse the circle normal */
-              if ((e & 2) == 2)
-                {
-                  nx = -nx;
-                  ny = -ny;
-                  nz = -nz;
-                }
-
-              /* STEP MAY ACTUALLY SPECIFY A DIFFERENT REF DIRECTION, BUT FOR NOW, LETS ASSUME IT POINTS
-               * TOWARDS THE FIRST POINT. (We don't record the STEP ref direction in our data-structure at the moment).
-               */
-              refx = sx - cx;
-              refy = sy - cy;
-              refz = sz - cz;
-
-              /* Normalise refx */
-              recip_length = 1. / hypot (hypot (refx, refy), refz);
-              refx *= recip_length;
-              refy *= recip_length;
-              refz *= recip_length;
-
-              endx = ex - cx;
-              endy = ey - cy;
-              endz = ez - cz;
-
-              /* Normalise endx */
-              recip_length = 1. / hypot (hypot (endx, endy), endz);
-              endx *= recip_length;
-              endy *= recip_length;
-              endz *= recip_length;
-
-              /* ref cross normal */
-              /* ort will be orthogonal to normal and ref vector */
-              ortx = ny * refz - nz * refy;
-              orty = nz * refx - nx * refz;
-              ortz = nx * refy - ny * refx;
-
-              /* Cosine is dot product of ref (normalised) and end (normalised) */
-              cosa = refx * endx + refy * endy + refz * endz; // cos (phi)
-              /* Sine is dot product of ort (normalised) and end (normalised) */
-              sina = ortx * endx + orty * endy + ortz * endz; // sin (phi) = cos (phi - 90)
-
-              if (sx == ex &&
-                  sy == ey &&
-                  sz == ez)
-                {
-                  da = 2.0 * M_PI;
-                }
-              else
-                {
-                  /* Delta angled */
-                  da = atan2 (sina, cosa);
-
-                  if (da < 0.0)
-                    da += 2.0 * M_PI;
-                }
-
-              /* Scale up ref and ort to the actual vector length */
-              refx *= info->radius;
-              refy *= info->radius;
-              refz *= info->radius;
-
-              ortx *= info->radius;
-              orty *= info->radius;
-              ortz *= info->radius;
-
-              segs = CIRC_SEGS_D * da / (2.0 * M_PI);
-              segs = MAX(segs, 1);
-              angle_step = da / (double)segs;
-
-              for (i = 0; i < segs; i++)
-                {
-                  cosa = cos ((i + 1) * angle_step);
-                  sina = sin ((i + 1) * angle_step);
-                  x = info->cx + refx * cosa + ortx * sina;
-                  y = info->cy + refy * cosa + orty * sina;
-                  z = info->cz + refz * cosa + ortz * sina;
-
-                  plane_xyz_to_uv (face, x, y, z, &u, &v);
-
-                  /* XXX: Arbitrary scaling from parameter space to coords, assuming parameter space approx mm (which is likely wrong */
-                  p_v[0] = MM_TO_COORD (u);
-                  p_v[1] = MM_TO_COORD (v);
-                  node = poly_CreateNode (p_v);
-
-                  if (p_contour == NULL)
-                    {
-                      if ((p_contour = poly_NewContour (node)) == NULL)
-                        return;
-                    }
-                  else
-                    {
-                      poly_InclVertex (p_contour->head.prev, node);
-                    }
-                }
-            }
-          else
-            {
-              /* Straight line case */
-              plane_xyz_to_uv (face, ex, ey, ez, &u, &v);
-
-              /* XXX: Arbitrary scaling from parameter space to coords, assuming parameter space approx mm (which is likely wrong */
               p_v[0] = MM_TO_COORD (u);
               p_v[1] = MM_TO_COORD (v);
               node = poly_CreateNode (p_v);
@@ -290,19 +186,58 @@ ensure_tristrip (face3d *face)
                   poly_InclVertex (p_contour->head.prev, node);
                 }
             }
+
         }
       while ((e = LNEXT(e)) != contour->first_edge);
 
       poly_PreContour (p_contour, FALSE);
 
       /* make sure it is a positive contour (outer) or negative (hole) */
-      if (p_contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
-        poly_InvContour (p_contour);
+//      if (p_contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
+//      poly_InvContour (p_contour);
 
-      poly_InclContour (poly, p_contour);
-      contour = NULL;
+      if (p_contour->Flags.orient == PLF_DIR)
+        {
+          PLINE *old_outer;
 
+          /* Found the outer contour */
+          if (found_outer_contour)
+            {
+              printf ("FOUND TWO OUTER CONTOURS FOR PLANAR FACE.. WILL END BADLY!\n");
+#if 1
+              face->triangulate_failed = true;
+              return;
+#endif
+            }
+
+          p_contour->next = poly->contours->next;
+          old_outer = poly->contours;
+          poly->contours = p_contour;
+
+          found_outer_contour = true;
+        }
+      else
+        {
+          if (!poly_InclContour (poly, p_contour))
+            {
+              printf ("Contour dropped - oops!\n");
+              poly_DelContour (&p_contour);
+            }
+        }
+      p_contour = NULL;
+
+      /* XXX: Assumption of outline first, holes second seems to be false! */
+//      hole = true;
     }
+
+  if (!found_outer_contour)
+    {
+      printf ("DID NOT FIND OUTER CONTOUR... BADNESS\n");
+      face->triangulate_failed = true;
+      return;
+    }
+
+  poly_DelContour (&dummy_contour);
 
   /* XXX: Need to tesselate the polygon */
   _borast_traps_init (&traps);
@@ -326,12 +261,15 @@ ensure_tristrip (face3d *face)
     }
   }
 
+  poly_Free (&poly);
+
   if (num_uv_points == 0) {
 //    printf ("Strange, contour didn't tesselate\n");
+    face->triangulate_failed = true;
     return;
   }
 
-  printf ("Tesselated with %i uv points\n", num_uv_points);
+//  printf ("Tesselated with %i uv points\n", num_uv_points);
 
   uv_points = g_new0 (float, 2 * num_uv_points);
 
@@ -395,6 +333,8 @@ ensure_tristrip (face3d *face)
                       &face->tristrip_vertices[vertex_comp + 2]);
       vertex_comp += 3;
     }
+
+  g_free (uv_points);
 }
 
 void
@@ -408,13 +348,20 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
   int i;
   int vertex_comp;
 
+  /* We only know how to deal with planar faces for now */
+  if (!face->is_planar)
+    return;
+
   if (selected)
     hidgl_flush_triangles (hidgl);
 
   ensure_tristrip (face);
 
 //  glColor4f (1.0f, 0.0f, 0.0f, 0.3f);
-  glColor4f (1.0f, 0.0f, 0.0f, 1.0f);
+  if (selected)
+    glColor4f (0.0f, 1.0f, 1.0f, 1.0f);
+  else
+    glColor4f (0.8f, 0.8f, 0.8f, 1.0f);
 
   hidgl_ensure_vertex_space (gc, face->tristrip_num_vertices);
 

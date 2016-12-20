@@ -428,6 +428,7 @@ draw_face (face3d *face, void *data)
   struct draw_info *info = data;
 
   face3d_fill (info->gc, face, info->selected);
+//  face3d_fill (info->gc, face, (face_no == debug_integer));
 
 //  info->debug_face = (face_no == debug_integer);
 //

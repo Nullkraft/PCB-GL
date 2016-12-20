@@ -97,8 +97,8 @@ typedef std::list<SdaiMapped_item *> mi_list;
 
 SdaiProduct_definition *
 read_model_from_file (Registry *registry,
-                        InstMgr *instance_list,
-                        const char *filename)
+                      InstMgr *instance_list,
+                      const char *filename)
 {
   STEPfile sfile = STEPfile (*registry, *instance_list, "", false);
 
@@ -381,7 +381,7 @@ transform_vector (double m[4][4], double *x, double *y, double *z)
 static double
 distance (double a[3], double b[3])
 {
-  return hypot(hypot(a[0] - b[0], a[1] - b[1]), a[2] - b[2]);
+  return hypot (hypot (a[0] - b[0], a[1] - b[1]), a[2] - b[2]);
 }
 
 static void
@@ -1160,12 +1160,11 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
             }
 
           /* NB: ADVANCED_FACE is a FACE_SURFACE, which has SdaiSurface *face_geometry_ (), and Boolean same_sense_ () */
-          // SdaiAdvanced_face *af = (SdaiAdvanced_face *) face;
+          //SdaiAdvanced_face *af = (SdaiAdvanced_face *) face;
           /* NB: FACE_SURFACE is a FACE, which has EntityAggreate bounds_ (), whos' members are SdaiFace_bound *  */
           SdaiFace_surface *fs = (SdaiFace_surface *) face;
 
           SdaiSurface *surface = fs->face_geometry_ ();
-
 #if 0
           std::cout << "Face " << face->name_ ().c_str () << " has surface of type " << surface->EntityName () << " and same_sense = " << fs->same_sense_ () << std::endl;
 #endif
@@ -1196,9 +1195,35 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                                 &info->current_face->ry,
                                 &info->current_face->rz);
 
+              transform_vertex (info->current_transform,
+                                &info->current_face->ox,
+                                &info->current_face->oy,
+                                &info->current_face->oz);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->ax,
+                                &info->current_face->ay,
+                                &info->current_face->az);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->rx,
+                                &info->current_face->ry,
+                                &info->current_face->rz);
+
+              info->current_face->is_planar = true;
+
               info->current_face->nx = info->current_face->ax;
               info->current_face->ny = info->current_face->ay;
               info->current_face->nz = info->current_face->az;
+
+              if (!fs->same_sense_ ())
+                {
+                  info->current_face->nx = -info->current_face->nx;
+                  info->current_face->ny = -info->current_face->ny;
+                  info->current_face->nz = -info->current_face->nz;
+
+//                  printf ("Not same sense, flipping normal\n");
+                }
             }
           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
             {
@@ -1216,6 +1241,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                                 &info->current_face->ry,
                                 &info->current_face->rz);
 
+              info->current_face->is_cylindrical = true;
               info->current_face->radius = cylinder->radius_ ();
             }
           else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
