@@ -1,6 +1,7 @@
 #include <glib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include <math.h>
 
@@ -248,22 +249,42 @@ sample_circle (edge_ref e)
 static void
 sample_line (edge_ref e)
 {
+  edge_info *info = UNDIR_DATA(e);
   double x, y, z;
 
   allocate_linearised_vertices (e, 2);
 
-  x = ((vertex3d *)ODATA(e))->x;
-  y = ((vertex3d *)ODATA(e))->y;
-  z = ((vertex3d *)ODATA(e))->z;
+  if (info->same_sense)
+    {
+      x = ((vertex3d *)ODATA(e))->x;
+      y = ((vertex3d *)ODATA(e))->y;
+      z = ((vertex3d *)ODATA(e))->z;
 
-  add_vertex (e, x, y, z);
+      add_vertex (e, x, y, z);
 
-  x = ((vertex3d *)DDATA(e))->x;
-  y = ((vertex3d *)DDATA(e))->y;
-  z = ((vertex3d *)DDATA(e))->z;
+      x = ((vertex3d *)DDATA(e))->x;
+      y = ((vertex3d *)DDATA(e))->y;
+      z = ((vertex3d *)DDATA(e))->z;
 
-  add_vertex (e, x, y, z);
-  /* Leave end-point */
+      add_vertex (e, x, y, z);
+    }
+  else
+    {
+      /* Unusual, but somtimes occurs */
+      //printf ("****************************************************\n");
+
+      x = ((vertex3d *)DDATA(e))->x;
+      y = ((vertex3d *)DDATA(e))->y;
+      z = ((vertex3d *)DDATA(e))->z;
+
+      add_vertex (e, x, y, z);
+
+      x = ((vertex3d *)ODATA(e))->x;
+      y = ((vertex3d *)ODATA(e))->y;
+      z = ((vertex3d *)ODATA(e))->z;
+
+      add_vertex (e, x, y, z);
+    }
 }
 
 void

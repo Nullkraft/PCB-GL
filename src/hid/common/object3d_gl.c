@@ -365,7 +365,7 @@ draw_quad_edge (edge_ref e, void *data)
 
           glEnd ();
 
-          glDepthMask (FALSE);
+//          glDepthMask (FALSE);
           return;
         }
     }
@@ -379,7 +379,7 @@ draw_quad_edge (edge_ref e, void *data)
               STEP_Y_TO_COORD (PCB, y2),
               STEP_X_TO_COORD (PCB, z2));
   glEnd ();
-  glDepthMask (FALSE);
+//  glDepthMask (FALSE);
 }
 
 static void
@@ -464,8 +464,12 @@ object3d_draw (hidGC gc, object3d *object, bool selected)
 
 //  printf ("\nDrawing object\n");
 
+  glDisable(GL_LIGHTING); /* XXX: HACK */
+
   face_no = 0;
   g_list_foreach (object->faces, (GFunc)draw_face_edges, &info);
+
+  glEnable(GL_LIGHTING); /* XXX: HACK */
 
   face_no = 0;
   g_list_foreach (object->faces, (GFunc)draw_face, &info);

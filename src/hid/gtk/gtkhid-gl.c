@@ -2829,7 +2829,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
   }
 
 //  glDisable (GL_DEPTH_TEST); /* TEST */
-  glDepthMask (FALSE); /* TEST */
+//  glDepthMask (FALSE); /* TEST */
 
   if (!global_view_2d)
     ghid_draw_packages (&region);

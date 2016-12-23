@@ -874,6 +874,44 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
           DDATA(our_edge) = vertex;
 
         }
+      else if (strcmp (curve->EntityName (), "Ellipse") == 0)
+        {
+          SdaiEllipse *ellipse = (SdaiEllipse *)curve;
+          double cx = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
+          double cy = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+          double cz = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+          double nx = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+          double ny = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+          double nz = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+          our_edge_info->is_placeholder = true;
+#if 0 /* NOT YET IMPLEMENTED */
+          double radius = circle->radius_();
+
+          transform_vertex (info->current_transform, &cx, &cy, &cz);
+
+          transform_vector (info->current_transform, &nx, &ny, &nz);
+
+          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
+            {
+              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
+            }
+          else
+            {
+              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
+            }
+#endif
+
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
+
+        }
       else if (curve->IsComplex() || /* This is a guess - assuming complex curves are likely to be B_SPLINE_* complexes */
                strcmp (curve->EntityName (), "B_Spline_Curve_With_Knots") == 0)
         {
@@ -901,6 +939,18 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
           // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
           // XXX: Various derived types of the above, e.g.:
           //      conic is a supertype of: circle, ellipse, hyperbola, parabola
+
+          transform_vertex (info->current_transform, &x1, &y1, &z1);
+          transform_vertex (info->current_transform, &x2, &y2, &z2);
+
+          our_edge_info->is_placeholder = true;
+
+          object3d_add_edge (info->object, our_edge);
+          vertex = make_vertex3d (x1, y1, z1);
+          ODATA(our_edge) = vertex;
+          vertex = make_vertex3d (x2, y2, z2);
+          DDATA(our_edge) = vertex;
+
           return;
         }
 
@@ -1241,8 +1291,11 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                   info->current_face->ny = -info->current_face->ny;
                   info->current_face->nz = -info->current_face->nz;
 
+                  /* XXX: Could use face->surface_orientation_reversed ? */
 //                  printf ("Not same sense, flipping normal\n");
                 }
+
+              info->current_face->surface_orientation_reversed = false;
             }
           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
             {
@@ -1260,8 +1313,33 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                                 &info->current_face->ry,
                                 &info->current_face->rz);
 
+              transform_vertex (info->current_transform,
+                                &info->current_face->ox,
+                                &info->current_face->oy,
+                                &info->current_face->oz);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->ax,
+                                &info->current_face->ay,
+                                &info->current_face->az);
+
+              transform_vector (info->current_transform,
+                                &info->current_face->rx,
+                                &info->current_face->ry,
+                                &info->current_face->rz);
+
               info->current_face->is_cylindrical = true;
               info->current_face->radius = cylinder->radius_ ();
+
+              if (fs->same_sense_ ())
+                {
+                  info->current_face->surface_orientation_reversed = false;
+                }
+              else
+                {
+                  info->current_face->surface_orientation_reversed = true;
+                }
+
             }
           else if (strcmp (surface->EntityName (), "Conical_Surface") == 0)
             {
