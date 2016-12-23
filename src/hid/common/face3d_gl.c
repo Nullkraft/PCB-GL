@@ -255,7 +255,7 @@ ensure_tristrip (face3d *face)
     x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
 
     if ((x1 == x2) || (x3 == x4)) {
-      num_uv_points += 5; /* Three vertices + repeated start and end */
+      num_uv_points += 5 + 1; /* Three vertices + repeated start and end, extra repeat to sync backface culling */
     } else {
       num_uv_points += 6; /* Four vertices + repeated start and end */
     }
@@ -285,28 +285,36 @@ ensure_tristrip (face3d *face)
 
     if (x1 == x2) {
       /* NB: Repeated first virtex to separate from other tri-strip */
+#if 1
       uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
       uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
       uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
-      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
-      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
       /* NB: Repeated last virtex to separate from other tri-strip */
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      /* NB: Extra repeated vertex to keep backface culling in sync */
+#endif
     } else if (x3 == x4) {
       /* NB: Repeated first virtex to separate from other tri-strip */
+#if 1
       uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
       uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
       uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
-      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
-      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
       /* NB: Repeated last virtex to separate from other tri-strip */
+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
+      /* NB: Extra repeated vertex to keep backface culling in sync */
+#endif
     } else {
       /* NB: Repeated first virtex to separate from other tri-strip */
-      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
-      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
       uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
       uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
-      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
-      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
       /* NB: Repeated last virtex to separate from other tri-strip */
     }
   }
@@ -352,16 +360,18 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
   if (!face->is_planar)
     return;
 
-  if (selected)
-    hidgl_flush_triangles (hidgl);
+  hidgl_flush_triangles (hidgl);
 
   ensure_tristrip (face);
 
-//  glColor4f (1.0f, 0.0f, 0.0f, 0.3f);
-  if (selected)
-    glColor4f (0.0f, 1.0f, 1.0f, 1.0f);
+  glNormal3f (face->nx, -face->ny, face->nz); /* XXX: Note the -ny */
+
+  if (face->is_debug)
+    glColor4f (1.0f, 0.0f, 0.0f, 0.5f);
+  else if (selected)
+    glColor4f (0.0f, 1.0f, 1.0f, 0.5f);
   else
-    glColor4f (0.8f, 0.8f, 0.8f, 1.0f);
+    glColor4f (0.8f, 0.8f, 0.8f, 0.5f);
 
   hidgl_ensure_vertex_space (gc, face->tristrip_num_vertices);
 
@@ -384,4 +394,6 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 #endif
 
   hidgl_flush_triangles (hidgl);
+
+  glDisable(GL_AUTO_NORMAL); /* Quick hack test */
 }

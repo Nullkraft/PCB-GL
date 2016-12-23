@@ -2773,21 +2773,26 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
     hidgl_flush_triangles (priv->hidgl);
   }
 
-//  glEnable (GL_LIGHTING);
+  glEnable (GL_LIGHTING);
 
   glShadeModel (GL_SMOOTH);
 
-//  glEnable (GL_LIGHT0);
+  glEnable (GL_LIGHT0);
 
   /* XXX: FIX OUR NORMALS */
-  glEnable (GL_NORMALIZE);
+//  glEnable (GL_NORMALIZE);
 //  glEnable (GL_RESCALE_NORMAL);
 
   glDepthFunc (GL_LESS);
   glDisable (GL_STENCIL_TEST);
 
-//  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
+  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
   glCullFace (GL_BACK);
+
+  glEnable (GL_COLOR_MATERIAL);
+
+  // Front material ambient and diffuse colors track glColor
+  glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
 
   if (1) {
     GLfloat global_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -2810,12 +2815,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
 //    GLfloat position[] = {0.5, -1., 1., 0.};
 //    GLfloat position[] = {0.0, -0.5, 1., 0.};
     GLfloat position[] = {0.0, 0.0, 1., 0.};
+//    GLfloat position[] = {0.0, 0.0, 10., 1.};
     GLfloat abspos = sqrt (position[0] * position[0] +
                            position[1] * position[1] +
                            position[2] * position[2]);
-    position[0] /= abspos;
-    position[1] /= abspos;
-    position[2] /= abspos;
+//    position[0] /= abspos;
+//    position[1] /= abspos;
+//    position[2] /= abspos;
     glPushMatrix ();
     glLoadIdentity ();
     glLightfv (GL_LIGHT0, GL_POSITION, position);

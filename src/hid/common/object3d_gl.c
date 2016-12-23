@@ -212,8 +212,9 @@ draw_quad_edge (edge_ref e, void *data)
       edge_info *info = UNDIR_DATA(e);
 
 
-//        if (info->is_placeholder)
-        if (d_info->debug_face)
+        if (!d_info->selected &&
+            (info->is_placeholder ||
+            d_info->debug_face))
           {
             glColor4f (1.0, 0.0, 0.0, 1.0);
             glDepthMask (TRUE);
@@ -364,7 +365,7 @@ draw_quad_edge (edge_ref e, void *data)
 
           glEnd ();
 
-//          glDepthMask (FALSE);
+          glDepthMask (FALSE);
           return;
         }
     }
@@ -378,7 +379,7 @@ draw_quad_edge (edge_ref e, void *data)
               STEP_Y_TO_COORD (PCB, y2),
               STEP_X_TO_COORD (PCB, z2));
   glEnd ();
-//  glDepthMask (FALSE);
+  glDepthMask (FALSE);
 }
 
 static void
@@ -427,6 +428,7 @@ draw_face (face3d *face, void *data)
 {
   struct draw_info *info = data;
 
+  face->is_debug = (face_no == debug_integer);
   face3d_fill (info->gc, face, info->selected);
 //  face3d_fill (info->gc, face, (face_no == debug_integer));
 

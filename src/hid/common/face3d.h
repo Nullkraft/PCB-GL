@@ -27,6 +27,8 @@ typedef struct {
   int tristrip_num_vertices;
   float *tristrip_vertices;
   bool triangulate_failed;
+
+  bool is_debug;
 } face3d;
 
 face3d *make_face3d (char *name);

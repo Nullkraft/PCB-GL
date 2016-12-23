@@ -392,7 +392,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
    */
 
   edge_info *our_edge_info = (edge_info *)UNDIR_DATA(our_edge);
-  our_edge_info->is_placeholder = true; /* Highlight for now */
+//  our_edge_info->is_placeholder = true; /* Highlight for now */
 
   SDAI_Application_instance *entity = start_entity;
   STEPcomplex *stepcomplex = NULL;
@@ -820,10 +820,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
       SdaiCurve *curve = ec->edge_geometry_ ();
       bool same_sense = ec->same_sense_ ();
 
-#ifdef DEBUG_NOT_IMPLEMENTED
-//          if (!same_sense)
-//            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
-#endif
+      our_edge_info->same_sense = same_sense;
 
 #if 0
       printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
@@ -861,7 +858,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
 
           transform_vector (info->current_transform, &nx, &ny, &nz);
 
-          if (orientation)
+          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
             {
               edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
             }
@@ -957,7 +954,9 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
   srr_list srr_list;
 
   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
-  find_all_srr_with_rep_1 (instance_list, &srr_list, 0, sr);
+  find_all_srr_with_rep_1_or_2 (instance_list, &srr_list, 0, sr);
+
+  bool processed_any = false;
 
   for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
     {
@@ -966,20 +965,32 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
       SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
 
+      /* Catch the silly case where the model confuses rep_1 and rep_2 */
+      if (child_sr == sr)
+        child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_1_ ());
+
       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
       /* XXX: Do something with the result */
       // Leave existing transformation
       process_sr_or_subtype (instance_list, child_sr, info);
+      processed_any = true;
     }
 
+  /* Kludge... don't look for the complex transformed relationships if we already found a simple one. */
+  if (processed_any)
+    return step_model;
 
   srr_rrwt_list srr_rrwt_list;
 
   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
-  find_all_srr_rrwt_with_rep_1 (instance_list, &srr_rrwt_list, 0, sr);
+  find_all_srr_rrwt_with_rep_1_or_2 (instance_list, &srr_rrwt_list, 0, sr);
 
   /* XXX: Encountered some models where the child was rep1, the parent rep2??.
    *      E.g. from Samtec, ERM5-075-02.0-L-DV-TR.stp
+   */
+
+  /* XXX: Should probably use the NAUO stuff to figure out and follow the assembly structure,
+   *      not just guess at what to include based upon finding SHAPE_REPRESENTATION_RELATIONSHIPs.
    */
 
   for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
@@ -1001,8 +1012,16 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
 
       copy_4x4 (info->current_transform, backup_transform);
 
-      child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
-      parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+      if (item->forwards)
+        {
+          child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
+          parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+        }
+      else
+        {
+          child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
+          parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
+        }
 
       if (parent_axis == NULL ||
           child_axis == NULL)
@@ -1228,7 +1247,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
           else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
             {
               SdaiCylindrical_surface *cylinder = dynamic_cast<SdaiCylindrical_surface *>(surface);
-//              printf ("WARNING: cylindrical suraces are not supported yet\n");
+//              printf ("WARNING: cylindrical surfaces are not supported yet\n");
 
               unpack_axis_geom (cylinder->position_ (),
                                 &info->current_face->ox,
@@ -1244,9 +1263,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
               info->current_face->is_cylindrical = true;
               info->current_face->radius = cylinder->radius_ ();
             }
+          else if (strcmp (surface->EntityName (), "Conical_Surface") == 0)
+            {
+//              printf ("WARNING: conical surfaces are not supported yet\n");
+            }
           else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
             {
-//              printf ("WARNING: toroidal suraces are not supported yet\n");
+//              printf ("WARNING: toroidal surfaces are not supported yet\n");
             }
           else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
             {
@@ -1264,6 +1287,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
                iter = iter->NextNode ())
             {
               SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
+              bool face_bound_orientation = fb->orientation_ ();
 
 #if 0
               bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
@@ -1387,7 +1411,10 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 
                       if (first_edge_of_contour == 0)
                         {
-                          info->current_contour = make_contour3d (our_edge);
+                          if (face_bound_orientation)
+                            info->current_contour = make_contour3d (our_edge);
+                          else
+                            info->current_contour = make_contour3d (SYM(our_edge));
                           face3d_add_contour (info->current_face, info->current_contour);
                           first_edge_of_contour = our_edge;
                         }
@@ -1404,24 +1431,22 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 
                       if (previous_edge_of_contour != 0)
                         {
-                          /* XXX: Hopefully link up the edges around this face contour */
-//                          debug_edge (our_edge, "before splice");
-//                          splice (SYM(previous_edge_of_contour), our_edge);
-                          splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
-//                          splice (previous_edge_of_contour, SYM(our_edge));
-//                          debug_edge (our_edge, "after splice");
+                          /* Link up the edges around this face contour */
+                          if (face_bound_orientation)
+                            splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
+                          else
+                            splice (OPREV(our_edge), SYM(previous_edge_of_contour));
                         }
 
                       /* Stash reference to this edge for linking next time */
                       previous_edge_of_contour = our_edge;
                     }
 
-                  /* XXX: Hopefully link up the edges around this face contour */
-//                  debug_edge (first_edge_of_contour, "before splice");
-//                  splice (SYM(previous_edge_of_contour), first_edge_of_contour);
-                  splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
-//                  splice (previous_edge_of_contour, SYM(first_edge_of_contour));
-//                  debug_edge (first_edge_of_contour, "after splice");
+                  /* Link up the edges around this face contour */
+                  if (face_bound_orientation)
+                    splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
+                  else
+                    splice (OPREV(first_edge_of_contour), SYM(previous_edge_of_contour));
                 }
               else
                 {

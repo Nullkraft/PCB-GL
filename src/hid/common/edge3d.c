@@ -19,6 +19,9 @@ make_edge_info (void)
 
   info = g_slice_new0 (edge_info);
 
+  /* Default this one, as it was added after most code was written */
+  info->same_sense = true;
+
   return info;
 }
 
@@ -110,9 +113,16 @@ sample_bspline (edge_ref e)
   /* Just draw the control points for now... */
   for (i = 0; i < info->num_control_points; i++)
     {
-      x = info->control_points[i * 3 + 0];
-      y = info->control_points[i * 3 + 1];
-      z = info->control_points[i * 3 + 2];
+      int cp_index;
+
+      if (info->same_sense)
+        cp_index = i;
+      else
+        cp_index = info->num_control_points - 1 - i;
+
+      x = info->control_points[cp_index * 3 + 0];
+      y = info->control_points[cp_index * 3 + 1];
+      z = info->control_points[cp_index * 3 + 2];
 
       add_vertex (e, x, y, z);
     }
@@ -152,6 +162,13 @@ sample_circle (edge_ref e)
   nx = ((edge_info *)UNDIR_DATA(e))->nx;
   ny = ((edge_info *)UNDIR_DATA(e))->ny;
   nz = ((edge_info *)UNDIR_DATA(e))->nz;
+
+  if (!info->same_sense)
+    {
+      nx = -nx;
+      ny = -ny;
+      nz = -nz;
+    }
 
   /* STEP MAY ACTUALLY SPECIFY A DIFFERENT REF DIRECTION, BUT FOR NOW, LETS ASSUME IT POINTS
    * TOWARDS THE FIRST POINT. (We don't record the STEP ref direction in our data-structure at the moment).
