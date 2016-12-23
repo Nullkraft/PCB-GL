@@ -1,5 +1,5 @@
 Bottom: 8650f4763da9678f45ed3863879e1b4497004405
-Top:    2efee406972982673daeaa8182f66569bd73d2dd
+Top:    4ff96c389e61cf12dc75174cb117cc27df207a4a
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-18 19:36:45 +0000
 
@@ -98,7 +98,7 @@ index 4f2937f..e931852 100644
  {
    int intersections;
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
-index ebcdc08..11b6579 100644
+index ebcdc08..c973860 100644
 --- a/src/hid/common/edge3d.c
 +++ b/src/hid/common/edge3d.c
 @@ -1,9 +1,17 @@
@@ -119,7 +119,17 @@ index ebcdc08..11b6579 100644
  edge_info *
  make_edge_info (void)
  {
-@@ -37,3 +45,240 @@ destroy_edge_info (edge_info *info)
+@@ -11,6 +19,9 @@ make_edge_info (void)
+ 
+   info = g_slice_new0 (edge_info);
+ 
++  /* Default this one, as it was added after most code was written */
++  info->same_sense = true;
++
+   return info;
+ }
+ 
+@@ -37,3 +48,254 @@ destroy_edge_info (edge_info *info)
  {
    g_slice_free (edge_info, info);
  }
@@ -188,9 +198,16 @@ index ebcdc08..11b6579 100644
 +  /* Just draw the control points for now... */
 +  for (i = 0; i < info->num_control_points; i++)
 +    {
-+      x = info->control_points[i * 3 + 0];
-+      y = info->control_points[i * 3 + 1];
-+      z = info->control_points[i * 3 + 2];
++      int cp_index;
++
++      if (info->same_sense)
++        cp_index = i;
++      else
++        cp_index = info->num_control_points - 1 - i;
++
++      x = info->control_points[cp_index * 3 + 0];
++      y = info->control_points[cp_index * 3 + 1];
++      z = info->control_points[cp_index * 3 + 2];
 +
 +      add_vertex (e, x, y, z);
 +    }
@@ -230,6 +247,13 @@ index ebcdc08..11b6579 100644
 +  nx = ((edge_info *)UNDIR_DATA(e))->nx;
 +  ny = ((edge_info *)UNDIR_DATA(e))->ny;
 +  nz = ((edge_info *)UNDIR_DATA(e))->nz;
++
++  if (!info->same_sense)
++    {
++      nx = -nx;
++      ny = -ny;
++      nz = -nz;
++    }
 +
 +  /* STEP MAY ACTUALLY SPECIFY A DIFFERENT REF DIRECTION, BUT FOR NOW, LETS ASSUME IT POINTS
 +   * TOWARDS THE FIRST POINT. (We don't record the STEP ref direction in our data-structure at the moment).
@@ -361,10 +385,30 @@ index ebcdc08..11b6579 100644
 +  sample_line (edge);
 +}
 diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
-index 7b26668..b77b835 100644
+index 7b26668..1259a68 100644
 --- a/src/hid/common/edge3d.h
 +++ b/src/hid/common/edge3d.h
-@@ -30,9 +30,15 @@ typedef struct
+@@ -3,6 +3,19 @@ typedef struct
+   /* For edge curves */
+   bool is_stitch; /* Allows us to identify the stitch edge along the side of a cylinder */
+ 
++  /* For curves which are defined along some primitive,
++   * such as cirular / b-spline below..
++   */
++
++  /* same_sense: true if the parameter value corresponding to the start vertex is
++   *             less than that of the end vertex. This has similar effec on
++   *             circles to flipping the defined normal.
++   *
++   * NB: As this parameter was added AFTER writing STEP emission code any edge
++   *     with this set to false will probably be broken in the emitted STEP.
++   */
++  bool same_sense;
++
+   /* For circular curves */
+   bool is_round;
+   double cx;
+@@ -30,9 +43,15 @@ typedef struct
    /* XXX: STEP specific - breaks encapsulation */
    step_id infinite_line_identifier;
    step_id edge_identifier;
@@ -417,7 +461,7 @@ index a98cda1..c794ae8 100644
  make_face3d (char *name)
  {
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index ddec03f..f690587 100644
+index ddec03f..045805b 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -1,9 +1,15 @@
@@ -436,7 +480,7 @@ index ddec03f..f690587 100644
    /* For cylindrical surfaces */
    bool is_cylindrical;
    double cx, cy, cz; /* A point on the axis */
-@@ -16,6 +22,11 @@ typedef struct {
+@@ -16,6 +22,13 @@ typedef struct {
    step_id surface_identifier;
    step_id face_identifier;
    step_id face_bound_identifier;
@@ -445,15 +489,17 @@ index ddec03f..f690587 100644
 +  int tristrip_num_vertices;
 +  float *tristrip_vertices;
 +  bool triangulate_failed;
++
++  bool is_debug;
  } face3d;
  
  face3d *make_face3d (char *name);
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
 new file mode 100644
-index 0000000..5b7f925
+index 0000000..1bb3a11
 --- /dev/null
 +++ b/src/hid/common/face3d_gl.c
-@@ -0,0 +1,387 @@
+@@ -0,0 +1,399 @@
 +#include <glib.h>
 +#include <stdbool.h>
 +
@@ -711,7 +757,7 @@ index 0000000..5b7f925
 +    x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
 +
 +    if ((x1 == x2) || (x3 == x4)) {
-+      num_uv_points += 5; /* Three vertices + repeated start and end */
++      num_uv_points += 5 + 1; /* Three vertices + repeated start and end, extra repeat to sync backface culling */
 +    } else {
 +      num_uv_points += 6; /* Four vertices + repeated start and end */
 +    }
@@ -741,28 +787,36 @@ index 0000000..5b7f925
 +
 +    if (x1 == x2) {
 +      /* NB: Repeated first virtex to separate from other tri-strip */
++#if 1
 +      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
 +      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
 +      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
-+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
-+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
 +      /* NB: Repeated last virtex to separate from other tri-strip */
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      /* NB: Extra repeated vertex to keep backface culling in sync */
++#endif
 +    } else if (x3 == x4) {
 +      /* NB: Repeated first virtex to separate from other tri-strip */
++#if 1
 +      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
 +      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
 +      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
-+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
-+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
 +      /* NB: Repeated last virtex to separate from other tri-strip */
++      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++      /* NB: Extra repeated vertex to keep backface culling in sync */
++#endif
 +    } else {
 +      /* NB: Repeated first virtex to separate from other tri-strip */
-+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
-+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
 +      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
 +      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
-+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
-+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
 +      /* NB: Repeated last virtex to separate from other tri-strip */
 +    }
 +  }
@@ -808,16 +862,18 @@ index 0000000..5b7f925
 +  if (!face->is_planar)
 +    return;
 +
-+  if (selected)
-+    hidgl_flush_triangles (hidgl);
++  hidgl_flush_triangles (hidgl);
 +
 +  ensure_tristrip (face);
 +
-+//  glColor4f (1.0f, 0.0f, 0.0f, 0.3f);
-+  if (selected)
-+    glColor4f (0.0f, 1.0f, 1.0f, 1.0f);
++  glNormal3f (face->nx, -face->ny, face->nz); /* XXX: Note the -ny */
++
++  if (face->is_debug)
++    glColor4f (1.0f, 0.0f, 0.0f, 0.5f);
++  else if (selected)
++    glColor4f (0.0f, 1.0f, 1.0f, 0.5f);
 +  else
-+    glColor4f (0.8f, 0.8f, 0.8f, 1.0f);
++    glColor4f (0.8f, 0.8f, 0.8f, 0.5f);
 +
 +  hidgl_ensure_vertex_space (gc, face->tristrip_num_vertices);
 +
@@ -840,6 +896,8 @@ index 0000000..5b7f925
 +#endif
 +
 +  hidgl_flush_triangles (hidgl);
++
++  glDisable(GL_AUTO_NORMAL); /* Quick hack test */
 +}
 diff --git a/src/hid/common/face3d_gl.h b/src/hid/common/face3d_gl.h
 new file mode 100644
@@ -1240,10 +1298,10 @@ index 3d228f6..4689664 100644
  void object3d_set_appearance (object3d *object, appearance *appear);
 diff --git a/src/hid/common/object3d_gl.c b/src/hid/common/object3d_gl.c
 new file mode 100644
-index 0000000..d350572
+index 0000000..ceb12da
 --- /dev/null
 +++ b/src/hid/common/object3d_gl.c
-@@ -0,0 +1,486 @@
+@@ -0,0 +1,488 @@
 +/* TODO ITEMS:
 + *
 + * Add PLINE simplification operation to consolidate co-circular segments for reduced geometry output.
@@ -1458,8 +1516,9 @@ index 0000000..d350572
 +      edge_info *info = UNDIR_DATA(e);
 +
 +
-+//        if (info->is_placeholder)
-+        if (d_info->debug_face)
++        if (!d_info->selected &&
++            (info->is_placeholder ||
++            d_info->debug_face))
 +          {
 +            glColor4f (1.0, 0.0, 0.0, 1.0);
 +            glDepthMask (TRUE);
@@ -1610,7 +1669,7 @@ index 0000000..d350572
 +
 +          glEnd ();
 +
-+//          glDepthMask (FALSE);
++          glDepthMask (FALSE);
 +          return;
 +        }
 +    }
@@ -1624,7 +1683,7 @@ index 0000000..d350572
 +              STEP_Y_TO_COORD (PCB, y2),
 +              STEP_X_TO_COORD (PCB, z2));
 +  glEnd ();
-+//  glDepthMask (FALSE);
++  glDepthMask (FALSE);
 +}
 +
 +static void
@@ -1673,6 +1732,7 @@ index 0000000..d350572
 +{
 +  struct draw_info *info = data;
 +
++  face->is_debug = (face_no == debug_integer);
 +  face3d_fill (info->gc, face, info->selected);
 +//  face3d_fill (info->gc, face, (face_no == debug_integer));
 +
@@ -1740,7 +1800,7 @@ index 0000000..cbf5d1a
 +void object3d_draw (hidGC gc, object3d *object, bool selected);
 +void object3d_draw_debug (hidGC gc);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index fce8341..0816807 100644
+index fce8341..32d5d2f 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -54,6 +54,8 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -1779,16 +1839,56 @@ index fce8341..0816807 100644
      }
  
    if (FRONT (element))
-@@ -2784,7 +2786,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2771,22 +2773,27 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     hidgl_flush_triangles (priv->hidgl);
+   }
+ 
+-//  glEnable (GL_LIGHTING);
++  glEnable (GL_LIGHTING);
+ 
+   glShadeModel (GL_SMOOTH);
+ 
+-//  glEnable (GL_LIGHT0);
++  glEnable (GL_LIGHT0);
+ 
+   /* XXX: FIX OUR NORMALS */
+-  glEnable (GL_NORMALIZE);
++//  glEnable (GL_NORMALIZE);
+ //  glEnable (GL_RESCALE_NORMAL);
+ 
    glDepthFunc (GL_LESS);
    glDisable (GL_STENCIL_TEST);
  
 -  glEnable (GL_CULL_FACE);
-+//  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
++  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
    glCullFace (GL_BACK);
  
++  glEnable (GL_COLOR_MATERIAL);
++
++  // Front material ambient and diffuse colors track glColor
++  glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
++
    if (1) {
-@@ -2835,9 +2837,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+     GLfloat global_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
+     glLightModelfv (GL_LIGHT_MODEL_AMBIENT, global_ambient);
+@@ -2808,12 +2815,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+ //    GLfloat position[] = {0.5, -1., 1., 0.};
+ //    GLfloat position[] = {0.0, -0.5, 1., 0.};
+     GLfloat position[] = {0.0, 0.0, 1., 0.};
++//    GLfloat position[] = {0.0, 0.0, 10., 1.};
+     GLfloat abspos = sqrt (position[0] * position[0] +
+                            position[1] * position[1] +
+                            position[2] * position[2]);
+-    position[0] /= abspos;
+-    position[1] /= abspos;
+-    position[2] /= abspos;
++//    position[0] /= abspos;
++//    position[1] /= abspos;
++//    position[2] /= abspos;
+     glPushMatrix ();
+     glLoadIdentity ();
+     glLightfv (GL_LIGHT0, GL_POSITION, position);
+@@ -2835,9 +2843,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
@@ -1801,7 +1901,7 @@ index fce8341..0816807 100644
    hidgl_flush_triangles (priv->hidgl);
  
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
-index 35c5072..a70b7c2 100644
+index 35c5072..a293067 100644
 --- a/src/hid/step/model.cpp
 +++ b/src/hid/step/model.cpp
 @@ -97,8 +97,8 @@ typedef std::list<SdaiMapped_item *> mi_list;
@@ -1848,7 +1948,103 @@ index 35c5072..a70b7c2 100644
  }
  
  static void
-@@ -994,15 +1011,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -375,7 +392,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
+    */
+ 
+   edge_info *our_edge_info = (edge_info *)UNDIR_DATA(our_edge);
+-  our_edge_info->is_placeholder = true; /* Highlight for now */
++//  our_edge_info->is_placeholder = true; /* Highlight for now */
+ 
+   SDAI_Application_instance *entity = start_entity;
+   STEPcomplex *stepcomplex = NULL;
+@@ -803,10 +820,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+       SdaiCurve *curve = ec->edge_geometry_ ();
+       bool same_sense = ec->same_sense_ ();
+ 
+-#ifdef DEBUG_NOT_IMPLEMENTED
+-//          if (!same_sense)
+-//            printf ("XXX: HAVE NOT TESTED THIS CASE.... same_sense is false\n");
+-#endif
++      our_edge_info->same_sense = same_sense;
+ 
+ #if 0
+       printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
+@@ -844,7 +858,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+ 
+           transform_vector (info->current_transform, &nx, &ny, &nz);
+ 
+-          if (orientation)
++          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
+             {
+               edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
+             }
+@@ -940,7 +954,9 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+   srr_list srr_list;
+ 
+   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
+-  find_all_srr_with_rep_1 (instance_list, &srr_list, 0, sr);
++  find_all_srr_with_rep_1_or_2 (instance_list, &srr_list, 0, sr);
++
++  bool processed_any = false;
+ 
+   for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
+     {
+@@ -949,22 +965,34 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+ 
+       SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
+ 
++      /* Catch the silly case where the model confuses rep_1 and rep_2 */
++      if (child_sr == sr)
++        child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_1_ ());
++
+       /* XXX: Actually only want to "process" the SR once per SR, then create _instances_ of it */
+       /* XXX: Do something with the result */
+       // Leave existing transformation
+       process_sr_or_subtype (instance_list, child_sr, info);
++      processed_any = true;
+     }
+ 
++  /* Kludge... don't look for the complex transformed relationships if we already found a simple one. */
++  if (processed_any)
++    return step_model;
+ 
+   srr_rrwt_list srr_rrwt_list;
+ 
+   // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
+-  find_all_srr_rrwt_with_rep_1 (instance_list, &srr_rrwt_list, 0, sr);
++  find_all_srr_rrwt_with_rep_1_or_2 (instance_list, &srr_rrwt_list, 0, sr);
+ 
+   /* XXX: Encountered some models where the child was rep1, the parent rep2??.
+    *      E.g. from Samtec, ERM5-075-02.0-L-DV-TR.stp
+    */
+ 
++  /* XXX: Should probably use the NAUO stuff to figure out and follow the assembly structure,
++   *      not just guess at what to include based upon finding SHAPE_REPRESENTATION_RELATIONSHIPs.
++   */
++
+   for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
+     {
+       double backup_transform[4][4];
+@@ -984,8 +1012,16 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+ 
+       copy_4x4 (info->current_transform, backup_transform);
+ 
+-      child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
+-      parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
++      if (item->forwards)
++        {
++          child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
++          parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
++        }
++      else
++        {
++          child_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_2_());
++          parent_axis = dynamic_cast<SdaiAxis2_placement_3d *>(idt->transform_item_1_());
++        }
+ 
+       if (parent_axis == NULL ||
+           child_axis == NULL)
+@@ -994,15 +1030,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
            continue;
          }
  
@@ -1865,7 +2061,7 @@ index 35c5072..a70b7c2 100644
  
  #ifdef DEBUG_TRANSFORMS
        printf ("child axis o: (%f, %f, %f)\n"
-@@ -1019,15 +1028,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -1019,15 +1047,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
        /* Is this in the correct order? */
        translate_origin (info->current_transform, ox, oy, oz);
  
@@ -1882,7 +2078,7 @@ index 35c5072..a70b7c2 100644
  
  #ifdef DEBUG_TRANSFORMS
        printf ("parent axis o: (%f, %f, %f)\n"
-@@ -1159,16 +1160,18 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1159,16 +1179,18 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
  
            /* NB: ADVANCED_FACE is a FACE_SURFACE, which has SdaiSurface *face_geometry_ (), and Boolean same_sense_ () */
@@ -1903,7 +2099,7 @@ index 35c5072..a70b7c2 100644
            if (surface->IsComplex ())
              {
  #ifdef DEBUG_NOT_IMPLEMENTED
-@@ -1177,11 +1180,69 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1177,15 +1199,77 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
            else if (strcmp (surface->EntityName (), "Plane") == 0)
              {
@@ -1954,8 +2150,9 @@ index 35c5072..a70b7c2 100644
              }
            else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
              {
+-//              printf ("WARNING: cylindrical suraces are not supported yet\n");
 +              SdaiCylindrical_surface *cylinder = dynamic_cast<SdaiCylindrical_surface *>(surface);
- //              printf ("WARNING: cylindrical suraces are not supported yet\n");
++//              printf ("WARNING: cylindrical surfaces are not supported yet\n");
 +
 +              unpack_axis_geom (cylinder->position_ (),
 +                                &info->current_face->ox,
@@ -1970,10 +2167,19 @@ index 35c5072..a70b7c2 100644
 +
 +              info->current_face->is_cylindrical = true;
 +              info->current_face->radius = cylinder->radius_ ();
++            }
++          else if (strcmp (surface->EntityName (), "Conical_Surface") == 0)
++            {
++//              printf ("WARNING: conical surfaces are not supported yet\n");
              }
            else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
              {
-@@ -1198,9 +1259,6 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+-//              printf ("WARNING: toroidal suraces are not supported yet\n");
++//              printf ("WARNING: toroidal surfaces are not supported yet\n");
+             }
+           else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
+             {
+@@ -1198,14 +1282,12 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
  #endif
              }
  
@@ -1983,7 +2189,60 @@ index 35c5072..a70b7c2 100644
            for (SingleLinkNode *iter = fs->bounds_ ()->GetHead ();
                 iter != NULL;
                 iter = iter->NextNode ())
-@@ -1441,29 +1499,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+             {
+               SdaiFace_bound *fb = (SdaiFace_bound *)((EntityNode *)iter)->node;
++              bool face_bound_orientation = fb->orientation_ ();
+ 
+ #if 0
+               bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
+@@ -1329,7 +1411,10 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+ 
+                       if (first_edge_of_contour == 0)
+                         {
+-                          info->current_contour = make_contour3d (our_edge);
++                          if (face_bound_orientation)
++                            info->current_contour = make_contour3d (our_edge);
++                          else
++                            info->current_contour = make_contour3d (SYM(our_edge));
+                           face3d_add_contour (info->current_face, info->current_contour);
+                           first_edge_of_contour = our_edge;
+                         }
+@@ -1346,24 +1431,22 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+ 
+                       if (previous_edge_of_contour != 0)
+                         {
+-                          /* XXX: Hopefully link up the edges around this face contour */
+-//                          debug_edge (our_edge, "before splice");
+-//                          splice (SYM(previous_edge_of_contour), our_edge);
+-                          splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
+-//                          splice (previous_edge_of_contour, SYM(our_edge));
+-//                          debug_edge (our_edge, "after splice");
++                          /* Link up the edges around this face contour */
++                          if (face_bound_orientation)
++                            splice (our_edge, OPREV(SYM(previous_edge_of_contour)));
++                          else
++                            splice (OPREV(our_edge), SYM(previous_edge_of_contour));
+                         }
+ 
+                       /* Stash reference to this edge for linking next time */
+                       previous_edge_of_contour = our_edge;
+                     }
+ 
+-                  /* XXX: Hopefully link up the edges around this face contour */
+-//                  debug_edge (first_edge_of_contour, "before splice");
+-//                  splice (SYM(previous_edge_of_contour), first_edge_of_contour);
+-                  splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
+-//                  splice (previous_edge_of_contour, SYM(first_edge_of_contour));
+-//                  debug_edge (first_edge_of_contour, "after splice");
++                  /* Link up the edges around this face contour */
++                  if (face_bound_orientation)
++                    splice (first_edge_of_contour, OPREV(SYM(previous_edge_of_contour)));
++                  else
++                    splice (OPREV(first_edge_of_contour), SYM(previous_edge_of_contour));
+                 }
+               else
+                 {
+@@ -1441,29 +1524,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
            continue;
          }
  
@@ -2015,6 +2274,121 @@ index 35c5072..a70b7c2 100644
  
        translate_origin (info->current_transform, -ox, -oy, -oz);
        rotate_basis_inverted (info->current_transform, ax, ay, az, rx, ry, rz);
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 9b78fc9..eeb73e0 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -291,7 +291,7 @@ object3d_to_step_body_fragment (step_file *step,
+       step_id ev = ((vertex3d *)DDATA (edge))->vertex_identifier;
+ 
+       /* XXX: The lookup of these edges by adding to info->edge_identifier requires the step_* functions to assign sequential identifiers */
+-      info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, true);
++      info->edge_identifier = step_edge_curve (step, "NONE", sv, ev, info->infinite_line_identifier, info->same_sense);
+       step_oriented_edge (step, "NONE", info->edge_identifier, true);  /* Add 1 to info->edge_identifier to find this (same) oriented edge */
+       step_oriented_edge (step, "NONE", info->edge_identifier, false); /* Add 2 to info->edge_identifier to find this (back) oriented edge */
+     }
+diff --git a/src/hid/step/utils.cpp b/src/hid/step/utils.cpp
+index caab465..564567f 100644
+--- a/src/hid/step/utils.cpp
++++ b/src/hid/step/utils.cpp
+@@ -292,7 +292,7 @@ find_axis2_placement_3d_in_sr (SdaiShape_representation *sr)
+ }
+ 
+ void
+-find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *rep_1)
++find_all_srr_with_rep_1_or_2( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *desired)
+ {
+   MgrNode * mnode = instance_list->FindFileId (start_after_id);
+   int search_index;
+@@ -308,9 +308,9 @@ find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_a
+                                instance_list->GetApplication_instance ("Shape_representation_relationship", search_index)))
+     {
+       SdaiRepresentation *found_rep_1 = srr->rep_1_ ();
+-#ifdef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
++//#ifdef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
+       SdaiRepresentation *found_rep_2 = srr->rep_2_ ();
+-#endif
++//#endif
+ 
+       if (srr->IsComplex())
+         {
+@@ -318,7 +318,8 @@ find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_a
+           return;
+         }
+ 
+-      if (found_rep_1 == rep_1)
++      if (found_rep_1 == desired ||
++          found_rep_2 == desired)
+         srr_list->push_back (srr);
+ 
+ #ifdef DEBUG_SHAPE_REPRESENTATION_RELATIONSHIP_SEARCH
+@@ -335,7 +336,7 @@ find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_a
+ }
+ 
+ void
+-find_all_srr_rrwt_with_rep_1( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *rep_1)
++find_all_srr_rrwt_with_rep_1_or_2( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *desired)
+ {
+   MgrNode * mnode = instance_list->FindFileId (start_after_id);
+   int search_index;
+@@ -433,7 +434,8 @@ find_all_srr_rrwt_with_rep_1( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_li
+       std::cout << std::endl;
+ #endif
+ 
+-      if (found_rep_1 == rep_1 &&
++#if 1
++      if (found_rep_1 == desired &&
+           found_srr &&
+           found_rrwt)
+         {
+@@ -441,9 +443,27 @@ find_all_srr_rrwt_with_rep_1( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_li
+ 
+           item->rep_2 = found_rep_2;
+           item->idt = idt;
++          item->forwards = true;
++
++          srr_rrwt_list->push_back (item);
++        }
++#endif
++
++#if 1
++      /* Model is confused about rep1 / rep2 case */
++      if (found_rep_2 == desired &&
++          found_srr &&
++          found_rrwt)
++        {
++          srr_rrwt *item = new srr_rrwt;
++
++          item->rep_2 = found_rep_1;
++          item->idt = idt;
++          item->forwards = false;
+ 
+           srr_rrwt_list->push_back (item);
+         }
++#endif
+ 
+       int id = entity->StepFileId ();
+       MgrNode * mnode = instance_list->FindFileId (id);
+diff --git a/src/hid/step/utils.h b/src/hid/step/utils.h
+index 1ae2f18..432ff33 100644
+--- a/src/hid/step/utils.h
++++ b/src/hid/step/utils.h
+@@ -29,6 +29,7 @@
+ typedef struct srr_rrwt {
+   SdaiRepresentation *rep_2;
+   SdaiItem_defined_transformation *idt;
++  bool forwards;
+ } srr_rrwt;
+ 
+ typedef std::list<SdaiProduct_definition *> pd_list;
+@@ -50,5 +51,5 @@ SdaiShape_representation *find_sr_for_pd (InstMgr *instance_list, SdaiProduct_de
+ 
+ SdaiAxis2_placement_3d *find_axis2_placement_3d_in_sr (SdaiShape_representation *sr);
+ 
+-void find_all_srr_with_rep_1( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *rep_1);
+-void find_all_srr_rrwt_with_rep_1( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *rep_1);
++void find_all_srr_with_rep_1_or_2( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *desired);
++void find_all_srr_rrwt_with_rep_1_or_2( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *desired);
 diff --git a/src/sweep.h b/src/sweep.h
 index e8f138f..644d70b 100644
 --- a/src/sweep.h
