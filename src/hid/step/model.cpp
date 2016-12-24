@@ -421,7 +421,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
   /* Things we take note of for futher processing.. */
 
   /* B_SPLINE_CURVE */
-  int b_spline_curve_degree;
+  int b_spline_curve_degree = 0;
   EntityAggregate *control_points = NULL;
   int num_control_points; /* (Convenience) */
 
@@ -826,6 +826,14 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
       printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
 #endif
 
+      if (strcmp (curve->EntityName (), "Surface_Curve") == 0)
+        {
+          SdaiSurface_curve *sc = (SdaiSurface_curve *)curve;
+
+          /* Hopefully we can just point curve at the (presumed) 3D curve */
+          curve = sc->curve_3d_ ();
+        }
+
       if (strcmp (curve->EntityName (), "Line") == 0)
         {
           transform_vertex (info->current_transform, &x1, &y1, &z1);
@@ -843,12 +851,20 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
       else if (strcmp (curve->EntityName (), "Circle") == 0)
         {
           SdaiCircle *circle = (SdaiCircle *)curve;
+          double cx, cy, cz;
+          double nx, ny, nz;
+          double rx, ry, rz;
+
+          SdaiAxis2_placement_3d *placement = *circle->position_ ();
+          unpack_axis_geom (placement, &cx, &cy, &cz, &nx, &ny, &nz, &rx, &ry, &rz);
+#if 0
           double cx = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
           double cy = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
           double cz = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
           double nx = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
           double ny = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
           double nz = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+#endif
 
           double radius = circle->radius_();
 
@@ -860,11 +876,11 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
 
           if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
             {
-              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
+              edge_info_set_round2 (our_edge_info, cx, cy, cz, nx, ny, nz, rx, ry, rz, radius);
             }
           else
             {
-              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
+              edge_info_set_round2 (our_edge_info, cx, cy, cz, -nx, -ny, -nz, rx, ry, rz, radius);
             }
 
           object3d_add_edge (info->object, our_edge);
@@ -877,19 +893,28 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
       else if (strcmp (curve->EntityName (), "Ellipse") == 0)
         {
           SdaiEllipse *ellipse = (SdaiEllipse *)curve;
+          double cx, cy, cz;
+          double nx, ny, nz;
+          double rx, ry, rz;
+
+          SdaiAxis2_placement_3d *placement = *ellipse->position_ ();
+          unpack_axis_geom (placement, &cx, &cy, &cz, &nx, &ny, &nz, &rx, &ry, &rz);
+#if 0
           double cx = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
           double cy = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
           double cz = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
           double nx = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
           double ny = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
           double nz = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+#endif
 
           transform_vertex (info->current_transform, &x1, &y1, &z1);
           transform_vertex (info->current_transform, &x2, &y2, &z2);
 
-          our_edge_info->is_placeholder = true;
-#if 0 /* NOT YET IMPLEMENTED */
-          double radius = circle->radius_();
+          our_edge_info->is_ellipse = true;
+
+          double radius1 = ellipse->semi_axis_1_ ();
+          double radius2 = ellipse->semi_axis_2_ ();
 
           transform_vertex (info->current_transform, &cx, &cy, &cz);
 
@@ -897,13 +922,13 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
 
           if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
             {
-              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
+              edge_info_set_round2 (our_edge_info, cx, cy, cz, nx, ny, nz, rx, ry, rz, radius1);
             }
           else
             {
-              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
+              edge_info_set_round2 (our_edge_info, cx, cy, cz, -nx, -ny, -nz, rx, ry, rz, radius1);
             }
-#endif
+          our_edge_info->radius2 = radius2;
 
           object3d_add_edge (info->object, our_edge);
           vertex = make_vertex3d (x1, y1, z1);
@@ -928,7 +953,6 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
         }
       else
         {
-          our_edge_info->is_placeholder = true;
 #ifdef DEBUG_NOT_IMPLEMENTED
           printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
           if (curve->IsComplex())
@@ -1145,11 +1169,11 @@ debug_edge (edge_ref edge, const char *message)
 
   printf ("%s\n", message);
   info = (edge_info *)UNDIR_DATA(e);
-  printf ("e: %p (%i%s)\n", e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
+  printf ("e: %p (%i%s)\n", (void *)e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
   while ((e = ONEXT(e)) != edge)
     {
       info = (edge_info *)UNDIR_DATA(e);
-      printf ("next: %p (%i%s)\n", e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
+      printf ("next: %p (%i%s)\n", (void *)e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
     }
 }
 
@@ -1239,6 +1263,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
 #endif
 
           info->current_face = make_face3d ((char *)"");
+          info->current_face->face_identifier = fs->StepFileId ();
           object3d_add_face (info->object, info->current_face);
 
           if (surface->IsComplex ())

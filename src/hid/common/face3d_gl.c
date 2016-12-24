@@ -70,8 +70,6 @@ emit_tristrip (face3d *face)
 {
   GLfloat *data_pointer = NULL;
 
-  int count;
-
 //  CHECK_IS_IN_CONTEXT ();
 
   if (face->tristrip_num_vertices == 0)
@@ -199,6 +197,336 @@ cylinder_uv_to_xyz_and_normal (face3d *face, float u, float v, float *x, float *
     }
 }
 
+static void
+cylinder_bo_add_edge (borast_t *bo,
+                      double lu, double lv,
+                      double  u, double  v,
+                      bool is_outer)
+{
+  /* XXX: Not absolutely sure about this! */
+  if (fabs (u - lu) > fabs (u + 360.0f - lu))
+    {
+#if 1
+      bo_add_edge (bo,
+                   MM_TO_COORD (lv), MM_TO_COORD (lu),
+                   MM_TO_COORD ( v), MM_TO_COORD ( u + 360.0f),
+                   is_outer);
+#endif
+#if 1
+      bo_add_edge (bo,
+                   MM_TO_COORD (lv), MM_TO_COORD (lu - 360.0f),
+                   MM_TO_COORD ( v), MM_TO_COORD ( u),
+                   is_outer);
+#endif
+    }
+  else if (fabs (u - lu) > fabs (u - 360.0f - lu))
+    {
+#if 1
+      bo_add_edge (bo,
+                   MM_TO_COORD (lv), MM_TO_COORD (lu),
+                   MM_TO_COORD ( v), MM_TO_COORD ( u - 360.0f),
+                   is_outer);
+#endif
+#if 1
+      bo_add_edge (bo,
+                   MM_TO_COORD (lv), MM_TO_COORD (lu + 360.0f),
+                   MM_TO_COORD ( v), MM_TO_COORD ( u),
+                   is_outer);
+#endif
+    }
+  else
+    {
+      bo_add_edge (bo,
+                   MM_TO_COORD (lv), MM_TO_COORD (lu),
+                   MM_TO_COORD ( v), MM_TO_COORD ( u),
+                   is_outer);
+    }
+
+}
+static void
+cylinder_ensure_tristrip (face3d *face)
+{
+  GList *c_iter;
+  int num_uv_points;
+  float *uv_points;
+  int i;
+  int vertex_comp;
+  contour3d *contour;
+  edge_ref e;
+  int x1, x2, x3, x4, y_top, y_bot;
+//  Vector p_v;
+//  VNODE *node;
+//  PLINE *p_contour = NULL;
+//  POLYAREA *poly;
+//  PLINE *dummy_contour;
+  borast_t *bo;
+  borast_traps_t traps;
+//  bool found_outer_contour = false;
+//  float u, v;
+  int edge_count = 0;
+
+  /* Nothing to do if vertices are already cached */
+  if (face->tristrip_vertices != NULL)
+    return;
+
+  /* Don't waste time if we failed last time */
+  if (face->triangulate_failed)
+    return;
+
+  if (!face->is_cylindrical)
+    return;
+
+#if 0
+  poly = poly_Create ();
+  if (poly == NULL)
+    return;
+#endif
+
+  /* Count up the number of edges space is required for */
+  for (c_iter = face->contours; c_iter != NULL; c_iter = g_list_next (c_iter))
+    {
+      contour = c_iter->data;
+      e = contour->first_edge;
+
+      do
+        {
+          edge_info *info = UNDIR_DATA (e);
+
+          edge_ensure_linearised (e);
+          edge_count += info->num_linearised_vertices;
+        }
+      while ((e = LNEXT(e)) != contour->first_edge);
+
+    }
+
+  /* Worst case, we need 2x number of edges, since we repeat any which span the u=0, u=360 wrap-around. */
+  bo = bo_init (2 * edge_count);
+
+  /* Throw the edges to the rasteriser */
+  for (c_iter = face->contours; c_iter != NULL; c_iter = g_list_next (c_iter))
+    {
+      float fu = 0.0f, fv = 0.0f;
+      float lu = 0.0f, lv = 0.0f;
+      float u, v;
+      bool first_vertex = true;
+      bool is_outer;
+      float wobble = 0.0f;
+
+      /* XXX: How can we tell if a contour is inner or outer??? */
+      is_outer = true;
+
+      contour = c_iter->data;
+      e = contour->first_edge;
+
+      do
+        {
+          edge_info *info = UNDIR_DATA (e);
+          bool backwards_edge;
+
+          /* XXX: Do this without breaking abstraction? */
+          /* Detect SYM edges, reverse the circle normal */
+          backwards_edge = ((e & 2) == 2);
+
+          edge_ensure_linearised (e);
+
+          for (i = 0; i < info->num_linearised_vertices - 1; i++)
+            {
+              int vertex_idx = i;
+
+              if (backwards_edge)
+                vertex_idx = info->num_linearised_vertices - 1 - i;
+
+              cylinder_xyz_to_uv (face,
+                                  info->linearised_vertices[vertex_idx * 3 + 0],
+                                  info->linearised_vertices[vertex_idx * 3 + 1],
+                                  info->linearised_vertices[vertex_idx * 3 + 2],
+                                  &u, &v);
+
+              if (first_vertex)
+                {
+                  fu = u;
+                  fv = v + wobble;
+                }
+              else
+                {
+//                  wobble = 0.1f - wobble;
+
+                  cylinder_bo_add_edge (bo,
+                                        lu, lv,
+                                         u,  v + wobble,
+                                        is_outer);
+                }
+
+              lu = u;
+              lv = v + wobble;
+              first_vertex = false;
+            }
+
+        }
+      while ((e = LNEXT(e)) != contour->first_edge);
+
+//      wobble = 0.1f - wobble;
+
+      cylinder_bo_add_edge (bo,
+                            lu, lv,
+                            fu, fv,
+                            is_outer);
+
+//      if (!face->surface_orientation_reversed)
+//        poly_InvContour (p_contour);
+
+    }
+
+  /* XXX: Need to tesselate the polygon */
+
+  _borast_traps_init (&traps);
+  bo_tesselate_to_traps (bo, false /* Don't combine adjacent y traps */,  &traps);
+
+  bo_free (bo);
+
+  num_uv_points = 0;
+
+  for (i = 0; i < traps.num_traps; i++) {
+    y_top = traps.traps[i].top;
+    y_bot = traps.traps[i].bottom;
+
+    x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+    x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+    x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+    x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+
+    if ((x1 == x2) || (x3 == x4)) {
+      num_uv_points += 5 + 1; /* Three vertices + repeated start and end, extra repeat to sync backface culling */
+    } else {
+      num_uv_points += 6; /* Four vertices + repeated start and end */
+    }
+  }
+
+  if (num_uv_points == 0) {
+    printf ("Strange, contour didn't tesselate\n");
+    face->triangulate_failed = true;
+    return;
+  }
+
+//  printf ("Tesselated with %i uv points\n", num_uv_points);
+
+  uv_points = g_new0 (float, 2 * num_uv_points);
+
+  vertex_comp = 0;
+  num_uv_points = 0;
+
+  for (i = 0; i < traps.num_traps; i++) {
+    y_top = traps.traps[i].top;
+    y_bot = traps.traps[i].bottom;
+
+    /* NB: ybot > ytop, as this is all derived from a screen-space rasteriser with 0,0 in the top left */
+
+    /* Exclude strips entirely above or below the 0 <= u <= 360 range */
+    if (y_bot < MM_TO_COORD (0.0f))
+      continue;
+
+    if (y_top > MM_TO_COORD (360.0f))
+      continue;
+
+    /* Clamp evaluation coordinates otherwise (strips straddling the boundary)
+     * NB: Due to input parameter-space geometry duplication, the bit we trim
+     *     here will be duplicated on the other side of the wrap-around anyway
+     */
+    y_top = MAX(MM_TO_COORD(0.0f), y_top);
+    y_bot = MIN(y_bot, MM_TO_COORD(360.0f));
+
+
+    if (face->surface_orientation_reversed)
+      {
+        x2 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+        x1 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+        x4 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+        x3 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+      }
+    else
+      {
+        x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+        x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+        x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+        x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+      }
+
+    if (x1 == x2) {
+      /* NB: Repeated first virtex to separate from other tri-strip */
+#if 1
+      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      /* NB: Repeated last virtex to separate from other tri-strip */
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      /* NB: Extra repeated vertex to keep backface culling in sync */
+
+      num_uv_points += 6;
+#endif
+    } else if (x3 == x4) {
+      /* NB: Repeated first virtex to separate from other tri-strip */
+#if 1
+      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      /* NB: Repeated last virtex to separate from other tri-strip */
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      /* NB: Extra repeated vertex to keep backface culling in sync */
+
+      num_uv_points += 6;
+#endif
+    } else {
+      /* NB: Repeated first virtex to separate from other tri-strip */
+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+      /* NB: Repeated last virtex to separate from other tri-strip */
+
+      num_uv_points += 6;
+    }
+  }
+
+  _borast_traps_fini (&traps);
+
+  /* XXX: Would it be better to use the original vertices?
+   *      Rather than converting to u-v coordinates and back.
+   *      Probably at least need to use the u-v points to
+   *      perform the triangulation.
+   */
+
+  face->tristrip_num_vertices = num_uv_points;
+  face->tristrip_vertices = g_new0 (float, BUFFER_STRIDE * num_uv_points);
+
+  vertex_comp = 0;
+  for (i = 0; i < num_uv_points; i++)
+    {
+      cylinder_uv_to_xyz_and_normal(face,
+                                    /* uv */
+                                    COORD_TO_MM (uv_points[2 * i + 1]), /* Inverse of arbitrary transformation above */
+                                    COORD_TO_MM (uv_points[2 * i + 0]), /* Inverse of arbitrary transformation above */
+                                    /* xyz */
+                                    &face->tristrip_vertices[vertex_comp + 0],
+                                    &face->tristrip_vertices[vertex_comp + 1],
+                                    &face->tristrip_vertices[vertex_comp + 2],
+                                    /* Vertex normal */
+                                    &face->tristrip_vertices[vertex_comp + 3],
+                                    &face->tristrip_vertices[vertex_comp + 4],
+                                    &face->tristrip_vertices[vertex_comp + 5]);
+
+      vertex_comp += BUFFER_STRIDE;
+    }
+
+  g_free (uv_points);
+}
+
+#if 0
 static void
 cylinder_ensure_tristrip (face3d *face)
 {
@@ -374,50 +702,13 @@ cylinder_ensure_tristrip (face3d *face)
 
   if (!found_outer_contour)
     {
-      printf ("DID NOT FIND OUTER CONTOUR... BADNESS\n");
+      printf ("(CYLINDER) DID NOT FIND OUTER CONTOUR... BADNESS #%i\n", face->face_identifier);
       face->triangulate_failed = true;
+      face->is_debug = true;
       return;
     }
 
   poly_DelContour (&dummy_contour);
-#endif
-
-#if 0
-  v = 0.0;
-  for (i = 0; i <= 360; i+= 10)
-    {
-      u = i;
-      p_v[0] = MM_TO_COORD (v) + i; /* + i is a hack to keep the tesselator from combining strips across y */
-      p_v[1] = MM_TO_COORD (u);
-      node = poly_CreateNode (p_v);
-
-      if (p_contour == NULL)
-        {
-          if ((p_contour = poly_NewContour (node)) == NULL)
-            return;
-        }
-      else
-        {
-          poly_InclVertex (p_contour->head.prev, node);
-        }
-    }
-
-  v = -10.0;
-  for (i = 360; i >= 0; i-= 10)
-    {
-      u = i;
-      p_v[0] = MM_TO_COORD (v); // + i; /* + i is a hack to keep the tesselator from combining strips across y */
-      p_v[1] = MM_TO_COORD (u);
-      node = poly_CreateNode (p_v);
-      poly_InclVertex (p_contour->head.prev, node);
-    }
-
-    poly_PreContour (p_contour, FALSE);
-    if (!poly_InclContour (poly, p_contour))
-      {
-        printf ("Contour dropped - oops!\n");
-        poly_DelContour (&p_contour);
-      }
 #endif
 
   /* XXX: Need to tesselate the polygon */
@@ -550,6 +841,7 @@ cylinder_ensure_tristrip (face3d *face)
 
   g_free (uv_points);
 }
+#endif
 
 static void
 plane_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
@@ -683,20 +975,18 @@ plane_ensure_tristrip (face3d *face)
 
       if (p_contour->Flags.orient == PLF_DIR)
         {
-          PLINE *old_outer;
+//          PLINE *old_outer;
 
           /* Found the outer contour */
           if (found_outer_contour)
             {
               printf ("FOUND TWO OUTER CONTOURS FOR PLANAR FACE.. WILL END BADLY!\n");
-#if 1
               face->triangulate_failed = true;
               return;
-#endif
             }
 
           p_contour->next = poly->contours->next;
-          old_outer = poly->contours;
+//          old_outer = poly->contours;
           poly->contours = p_contour;
 
           found_outer_contour = true;
@@ -717,7 +1007,7 @@ plane_ensure_tristrip (face3d *face)
 
   if (!found_outer_contour)
     {
-      printf ("DID NOT FIND OUTER CONTOUR... BADNESS\n");
+      printf ("(PLANE) DID NOT FIND OUTER CONTOUR... BADNESS\n");
       face->triangulate_failed = true;
       return;
     }
@@ -844,8 +1134,6 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 #ifdef MEMCPY_VERTEX_DATA
   hidgl_priv *priv = hidgl->priv;
 #endif
-  int i;
-  int vertex_comp;
 
   hidgl_flush_triangles (hidgl);
 
@@ -871,31 +1159,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 //    glColor4f (0.0f, 1.0f, 0.0f, 0.5f);
   else
     glColor4f (0.8f, 0.8f, 0.8f, 1.0f);
+//    glColor4f (0.8f, 0.8f, 0.8f, 0.3f);
 
-#if 0
-  hidgl_ensure_vertex_space (gc, face->tristrip_num_vertices);
-
-#ifdef MEMCPY_VERTEX_DATA
-  memcpy (&priv->buffer.triangle_array[priv->buffer.coord_comp_count],
-          face->tristrip_vertices,
-          sizeof (float) * 5 * face->tristrip_num_vertices);
-  priv->buffer.coord_comp_count += 5 * face->tristrip_num_vertices;
-  priv->buffer.vertex_count += face->tristrip_num_vertices;
-
-#else
-  vertex_comp = 0;
-  for (i = 0; i < face->tristrip_num_vertices; i++) {
-    float x, y, z;
-    x = face->tristrip_vertices[vertex_comp++];
-    y = face->tristrip_vertices[vertex_comp++];
-    z = face->tristrip_vertices[vertex_comp++];
-    hidgl_add_vertex_3D_tex (gc, x, y, z, 0.0, 0.0);
-  }
-#endif
-#endif
-
-//  hidgl_flush_triangles (hidgl);
   emit_tristrip (face);
-
-//  glDisable(GL_AUTO_NORMAL); /* Quick hack test */
 }

@@ -2235,7 +2235,9 @@ E_package_callback (const BoxType * b, void *cl)
 static void
 ghid_draw_packages (BoxType *drawn_area)
 {
-  r_search (PCB->Data->element_tree, drawn_area, NULL, E_package_callback, NULL);
+  /* XXX: 3D model may be on-screen, even if drawn_area doesn't include its projection on the board */
+//  r_search (PCB->Data->element_tree, drawn_area, NULL, E_package_callback, NULL);
+  r_search (PCB->Data->element_tree, NULL, NULL, E_package_callback, NULL);
 }
 
 void
