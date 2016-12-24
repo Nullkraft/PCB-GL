@@ -1,5 +1,5 @@
 Bottom: 8650f4763da9678f45ed3863879e1b4497004405
-Top:    05826333d3a88d5e00bd733048092c680b3fca1f
+Top:    56a72f6a5b4505ea2b40c4f89ecb49677029ee53
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-18 19:36:45 +0000
 
@@ -26,10 +26,54 @@ index 8c9e089..ccbd5e4 100644
  	hid/common/quad.h \
  	hid/common/step_id.h \
 diff --git a/src/borast/borast-bentley-ottmann.c b/src/borast/borast-bentley-ottmann.c
-index 4f2937f..e931852 100644
+index 4f2937f..e4b9427 100644
 --- a/src/borast/borast-bentley-ottmann.c
 +++ b/src/borast/borast-bentley-ottmann.c
-@@ -1501,6 +1501,67 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+@@ -134,6 +134,14 @@ typedef struct _borast_bo_sweep_line {
+     borast_bo_edge_t *current_edge;
+ } borast_bo_sweep_line_t;
+ 
++/* A rasteriser instance */
++struct _borast {
++  borast_bo_start_event_t *events;
++  borast_bo_event_t **event_ptrs;
++  int num_events;
++  int max_events;
++};
++
+ 
+ /*static*/ borast_fixed_t
+ _line_compute_intersection_x_for_y (const borast_line_t *line,
+@@ -1154,7 +1162,8 @@ static borast_status_t
+ _borast_bentley_ottmann_tessellate_bo_edges (borast_bo_event_t   **start_events,
+                                             int                  num_events,
+                                             borast_traps_t       *traps,
+-                                            int                 *num_intersections)
++                                            int                  *num_intersections,
++                                            bool                 combine_y_traps)
+ {
+     borast_status_t status = BORAST_STATUS_SUCCESS; /* silence compiler */
+     int intersection_count = 0;
+@@ -1237,7 +1246,7 @@ _borast_bentley_ottmann_tessellate_bo_edges (borast_bo_event_t   **start_events,
+             /* XXX change to an infinitesimal lengthening rule */
+             for (left = sweep_line.stopped; left; left = left->next) {
+                 if (e1->edge.top <= left->edge.bottom &&
+-                    edges_colinear (e1, left))
++                 combine_y_traps && edges_colinear (e1, left))
+                 {
+                     e1->deferred_trap = left->deferred_trap;
+                     if (left->prev != NULL)
+@@ -1440,7 +1449,8 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
+   _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                num_events,
+                                                traps,
+-                                               &intersections);
++                                               &intersections,
++                                               true);
+ 
+   for (n = 0; n < traps->num_traps; n++) {
+     int x1, y1, x2, y2, x3, y3, x4, y4;
+@@ -1501,6 +1511,67 @@ bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps)
  }
  
  borast_status_t
@@ -42,7 +86,6 @@ index 4f2937f..e931852 100644
 +  borast_bo_event_t **event_ptrs;
 +  int num_events = 0;
 +  int i;
-+  int n;
 +  POLYAREA *pa;
 +  PLINE *contour;
 +
@@ -81,7 +124,8 @@ index 4f2937f..e931852 100644
 +  _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
 +                                               num_events,
 +                                               traps,
-+                                               &intersections);
++                                               &intersections,
++                                               true);
 +
 +#if DEBUG_TRAPS
 +  dump_traps (traps, "bo-polygon-out.txt");
@@ -97,8 +141,149 @@ index 4f2937f..e931852 100644
  bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
  {
    int intersections;
+@@ -1541,7 +1612,8 @@ bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps)
+   _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                               num_events,
+                                               traps,
+-                                              &intersections);
++                                              &intersections,
++                                              true);
+ 
+   for (n = 0; n < traps->num_traps; n++) {
+     int x1, y1, x2, y2, x3, y3, x4, y4;
+@@ -1630,7 +1702,8 @@ bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
+    _borast_bentley_ottmann_tessellate_bo_edges (event_ptrs,
+                                                 num_events,
+                                                 traps,
+-                                                &intersections);
++                                                &intersections,
++                                                true);
+ 
+ #if DEBUG_TRAPS
+   dump_traps (traps, "bo-polygon-out.txt");
+@@ -1641,3 +1714,120 @@ bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps)
+ 
+   return BORAST_STATUS_SUCCESS;
+ }
++
++
++borast_t *
++bo_init (int max_num_edges)
++{
++  borast_t *bo = malloc (sizeof (borast_t));
++  if (unlikely (bo == NULL)) {
++      return NULL;
++  }
++
++  bo->events = _borast_malloc_ab_plus_c (max_num_edges,
++                                         sizeof (borast_bo_start_event_t) +
++                                         sizeof (borast_bo_event_t *),
++                                         sizeof (borast_bo_event_t *));
++      if (unlikely (bo->events == NULL)) {
++          free (bo);
++          return NULL;
++      }
++
++  bo->event_ptrs = (borast_bo_event_t **) (bo->events + max_num_edges);
++  bo->num_events = 0;
++  bo->max_events = max_num_edges;
++
++  return bo;
++}
++
++
++void
++bo_add_edge (borast_t *bo,
++             Coord sx, Coord sy,
++             Coord ex, Coord ey,
++             bool outer_contour)
++{
++  int i = bo->num_events;
++
++  Coord x1, y1, x2, y2;
++  borast_edge_t borast_edge;
++
++  /* Silently drop edges if more are added than we allocated storage for */
++  if (bo->num_events == bo->max_events)
++    return;
++
++  /* Node is between bv->point[0,1] and bv->next->point[0,1] */
++
++  if (sy == ey) {
++      if (sx < ex) {
++        x1 = sx;
++        y1 = sy;
++        x2 = ex;
++        y2 = ey;
++      } else {
++        x1 = ex;
++        y1 = ey;
++        x2 = sx;
++        y2 = sy;
++      }
++  } else if (sy < ey) {
++    x1 = sx;
++    y1 = sy;
++    x2 = ex;
++    y2 = ey;
++  } else {
++    x1 = ex;
++    y1 = ey;
++    x2 = sx;
++    y2 = sy;
++  }
++
++  borast_edge.line.p1.x = x1;
++  borast_edge.line.p1.y = y1;
++  borast_edge.line.p2.x = x2;
++  borast_edge.line.p2.y = y2;
++  borast_edge.top = y1;
++  borast_edge.bottom = y2;
++  borast_edge.dir = outer_contour ? 1 : -1;
++
++  bo->event_ptrs[i] = (borast_bo_event_t *) &bo->events[i];
++
++  bo->events[i].type = BORAST_BO_EVENT_TYPE_START;
++  bo->events[i].point.y = borast_edge.line.p1.y;
++  bo->events[i].point.x = borast_edge.line.p1.x;
++
++  bo->events[i].edge.edge = borast_edge;
++  bo->events[i].edge.deferred_trap.right = NULL;
++  bo->events[i].edge.prev = NULL;
++  bo->events[i].edge.next = NULL;
++  i++;
++
++  bo->num_events = i;
++}
++
++
++borast_status_t
++bo_tesselate_to_traps (borast_t *bo, bool combine_y_traps, borast_traps_t *traps)
++{
++  int intersections;
++
++  /* XXX: This would be the convenient place to throw in multiple
++   * passes of the Bentley-Ottmann algorithm. It would merely
++   * require storing the results of each pass into a temporary
++   * borast_traps_t. */
++  _borast_bentley_ottmann_tessellate_bo_edges (bo->event_ptrs,
++                                               bo->num_events,
++                                               traps,
++                                               &intersections,
++                                               combine_y_traps);
++
++  return BORAST_STATUS_SUCCESS;
++}
++
++
++void
++bo_free (borast_t *bo)
++{
++  free (bo->events);
++  free (bo);
++}
 diff --git a/src/hid/common/edge3d.c b/src/hid/common/edge3d.c
-index ebcdc08..97f564d 100644
+index ebcdc08..026fc9f 100644
 --- a/src/hid/common/edge3d.c
 +++ b/src/hid/common/edge3d.c
 @@ -1,9 +1,18 @@
@@ -130,7 +315,34 @@ index ebcdc08..97f564d 100644
    return info;
  }
  
-@@ -37,3 +49,274 @@ destroy_edge_info (edge_info *info)
+@@ -27,6 +39,26 @@ edge_info_set_round (edge_info *info, double cx, double cy, double cz, double nx
+   info->radius = radius;
+ }
+ 
++void
++edge_info_set_round2 (edge_info *info,
++                      double cx, double cy, double cz,
++                      double nx, double ny, double nz,
++                      double rx, double ry, double rz,
++                      double radius)
++{
++  info->is_round = true;
++  info->cx = cx;
++  info->cy = cy;
++  info->cz = cz;
++  info->nx = nx;
++  info->ny = ny;
++  info->nz = nz;
++  info->rx = rx;
++  info->ry = ry;
++  info->rz = rz;
++  info->radius = radius;
++}
++
+ void edge_info_set_stitch (edge_info *info)
+ {
+   info->is_stitch = true;
+@@ -37,3 +69,427 @@ destroy_edge_info (edge_info *info)
  {
    g_slice_free (edge_info, info);
  }
@@ -212,6 +424,148 @@ index ebcdc08..97f564d 100644
 +
 +      add_vertex (e, x, y, z);
 +    }
++}
++
++static void
++sample_ellipse (edge_ref e)
++{
++  edge_info *info = UNDIR_DATA(e);
++  int i;
++  double x1, y1, z1;
++  double x2, y2, z2;
++  double cx, cy, cz;
++  double nx, ny, nz;
++  double rx, ry, rz;
++  double startx, starty, startz;
++  double endx, endy, endz;
++  double ortx, orty, ortz;
++  double cosa;
++  double sina;
++  double recip_length;
++  double sa;
++  double da;
++  int segs;
++  double angle_step;
++
++  x1 = ((vertex3d *)ODATA(e))->x;
++  y1 = ((vertex3d *)ODATA(e))->y;
++  z1 = ((vertex3d *)ODATA(e))->z;
++
++  x2 = ((vertex3d *)DDATA(e))->x;
++  y2 = ((vertex3d *)DDATA(e))->y;
++  z2 = ((vertex3d *)DDATA(e))->z;
++
++  cx = ((edge_info *)UNDIR_DATA(e))->cx;
++  cy = ((edge_info *)UNDIR_DATA(e))->cy;
++  cz = ((edge_info *)UNDIR_DATA(e))->cz;
++
++  nx = ((edge_info *)UNDIR_DATA(e))->nx;
++  ny = ((edge_info *)UNDIR_DATA(e))->ny;
++  nz = ((edge_info *)UNDIR_DATA(e))->nz;
++
++  rx = ((edge_info *)UNDIR_DATA(e))->rx;
++  ry = ((edge_info *)UNDIR_DATA(e))->ry;
++  rz = ((edge_info *)UNDIR_DATA(e))->rz;
++
++  if (!info->same_sense)
++    {
++      nx = -nx;
++      ny = -ny;
++      nz = -nz;
++    }
++
++  startx = x1 - cx;
++  starty = y1 - cy;
++  startz = z1 - cz;
++
++  /* Normalise startx */
++  recip_length = 1. / hypot (hypot (startx, starty), startz);
++  startx *= recip_length;
++  starty *= recip_length;
++  startz *= recip_length;
++
++
++  /* Find start angle (w.r.t. ellipse parameterisation */
++
++  /* start cross normal */
++  /* ort will be orthogonal to normal and r vector */
++  ortx = ny * rz - nz * ry;
++  orty = nz * rx - nx * rz;
++  ortz = nx * ry - ny * rx;
++
++  /* Cosine is dot product of start (normalised) and start (normalised) */
++  cosa = rx * startx + ry * starty + rz * startz; // cos (phi)
++  /* Sine is dot product of ort (normalised) and start (normalised) */
++  sina = ortx * startx + orty * starty + ortz * startz; // sin (phi) = cos (phi - 90)
++
++  /* Start angle */
++  sa = atan2 (sina, cosa);
++
++  if (sa < 0.0)
++    sa += 2.0 * M_PI;
++
++  endx = x2 - cx;
++  endy = y2 - cy;
++  endz = z2 - cz;
++
++  /* Normalise endx */
++  recip_length = 1. / hypot (hypot (endx, endy), endz);
++  endx *= recip_length;
++  endy *= recip_length;
++  endz *= recip_length;
++
++  /* Find delta angle */
++
++  /* start cross normal */
++  /* ort will be orthogonal to normal and start vector */
++  ortx = ny * startz - nz * starty;
++  orty = nz * startx - nx * startz;
++  ortz = nx * starty - ny * startx;
++
++  /* Cosine is dot product of start (normalised) and end (normalised) */
++  cosa = startx * endx + starty * endy + startz * endz; // cos (phi)
++  /* Sine is dot product of ort (normalised) and end (normalised) */
++  sina = ortx * endx + orty * endy + ortz * endz; // sin (phi) = cos (phi - 90)
++
++  if (x1 == x2 &&
++      y1 == y2 &&
++      z1 == z2)
++    {
++      da = 2.0 * M_PI;
++    }
++  else
++    {
++      /* Delta angled */
++      da = atan2 (sina, cosa);
++
++      if (da < 0.0)
++        da += 2.0 * M_PI;
++    }
++
++  /* Scale up ref and ort to the actual vector length */
++  rx *= info->radius;
++  ry *= info->radius;
++  rz *= info->radius;
++
++  ortx *= info->radius2;
++  orty *= info->radius2;
++  ortz *= info->radius2;
++
++  segs = CIRC_SEGS_D * da / (2.0 * M_PI);
++  segs = MAX(segs, 1);
++  angle_step = da / (double)segs;
++
++  allocate_linearised_vertices (e, segs + 1);
++
++  for (i = 0; i <= segs; i++)
++    {
++      cosa = cos (sa + i * angle_step);
++      sina = sin (sa + i * angle_step);
++      add_vertex (e, info->cx + rx * cosa + ortx * sina,
++                     info->cy + ry * cosa + orty * sina,
++                     info->cz + rz * cosa + ortz * sina);
++    }
++
 +}
 +
 +static void
@@ -339,7 +693,10 @@ index ebcdc08..97f564d 100644
 +
 +  allocate_linearised_vertices (e, 2);
 +
-+  if (info->same_sense)
++// NB: Commented, as the same_sense flag only affects parameter space traversal of the line.
++//     Since we are sampling the line start and end-point (which have been given explicitly),
++//     there is no need to swap the ordering when same_sense is false.
++//  if (info->same_sense)
 +    {
 +      x = ((vertex3d *)ODATA(e))->x;
 +      y = ((vertex3d *)ODATA(e))->y;
@@ -353,6 +710,7 @@ index ebcdc08..97f564d 100644
 +
 +      add_vertex (e, x, y, z);
 +    }
++#if 0
 +  else
 +    {
 +      /* Unusual, but somtimes occurs */
@@ -370,6 +728,7 @@ index ebcdc08..97f564d 100644
 +
 +      add_vertex (e, x, y, z);
 +    }
++#endif
 +}
 +
 +void
@@ -402,11 +761,17 @@ index ebcdc08..97f564d 100644
 +      return;
 +    }
 +
++  if (info->is_ellipse)
++    {
++      sample_ellipse (edge);
++      return;
++    }
++
 +  /* Must be linear */
 +  sample_line (edge);
 +}
 diff --git a/src/hid/common/edge3d.h b/src/hid/common/edge3d.h
-index 7b26668..1259a68 100644
+index 7b26668..2e27bd7 100644
 --- a/src/hid/common/edge3d.h
 +++ b/src/hid/common/edge3d.h
 @@ -3,6 +3,19 @@ typedef struct
@@ -429,7 +794,23 @@ index 7b26668..1259a68 100644
    /* For circular curves */
    bool is_round;
    double cx;
-@@ -30,9 +43,15 @@ typedef struct
+@@ -11,8 +24,15 @@ typedef struct
+   double nx;
+   double ny;
+   double nz;
++  double rx;
++  double ry;
++  double rz;
+   double radius;
+ 
++  /* For ellipse (in addition to circular items above */
++  bool is_ellipse;
++  double radius2;
++
+   /* For b-splines */
+   bool is_bspline;
+   int degree;
+@@ -30,9 +50,16 @@ typedef struct
    /* XXX: STEP specific - breaks encapsulation */
    step_id infinite_line_identifier;
    step_id edge_identifier;
@@ -442,6 +823,7 @@ index 7b26668..1259a68 100644
  
  edge_info *make_edge_info (void);
  void edge_info_set_round (edge_info *info, double cx, double cy, double cz, double nx, double ny, double nz, double radius);
++void edge_info_set_round2 (edge_info *info, double cx, double cy, double cz, double nx, double ny, double nz, double rx, double ry, double rz, double radius);
  void edge_info_set_stitch (edge_info *info);
  void destroy_edge_info (edge_info *info);
 +void edge_ensure_linearised (edge_ref edge);
@@ -517,10 +899,10 @@ index ddec03f..045805b 100644
  face3d *make_face3d (char *name);
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
 new file mode 100644
-index 0000000..3f8f936
+index 0000000..d0e6721
 --- /dev/null
 +++ b/src/hid/common/face3d_gl.c
-@@ -0,0 +1,901 @@
+@@ -0,0 +1,1165 @@
 +#include <glib.h>
 +#include <stdbool.h>
 +
@@ -592,8 +974,6 @@ index 0000000..3f8f936
 +emit_tristrip (face3d *face)
 +{
 +  GLfloat *data_pointer = NULL;
-+
-+  int count;
 +
 +//  CHECK_IS_IN_CONTEXT ();
 +
@@ -722,6 +1102,336 @@ index 0000000..3f8f936
 +    }
 +}
 +
++static void
++cylinder_bo_add_edge (borast_t *bo,
++                      double lu, double lv,
++                      double  u, double  v,
++                      bool is_outer)
++{
++  /* XXX: Not absolutely sure about this! */
++  if (fabs (u - lu) > fabs (u + 360.0f - lu))
++    {
++#if 1
++      bo_add_edge (bo,
++                   MM_TO_COORD (lv), MM_TO_COORD (lu),
++                   MM_TO_COORD ( v), MM_TO_COORD ( u + 360.0f),
++                   is_outer);
++#endif
++#if 1
++      bo_add_edge (bo,
++                   MM_TO_COORD (lv), MM_TO_COORD (lu - 360.0f),
++                   MM_TO_COORD ( v), MM_TO_COORD ( u),
++                   is_outer);
++#endif
++    }
++  else if (fabs (u - lu) > fabs (u - 360.0f - lu))
++    {
++#if 1
++      bo_add_edge (bo,
++                   MM_TO_COORD (lv), MM_TO_COORD (lu),
++                   MM_TO_COORD ( v), MM_TO_COORD ( u - 360.0f),
++                   is_outer);
++#endif
++#if 1
++      bo_add_edge (bo,
++                   MM_TO_COORD (lv), MM_TO_COORD (lu + 360.0f),
++                   MM_TO_COORD ( v), MM_TO_COORD ( u),
++                   is_outer);
++#endif
++    }
++  else
++    {
++      bo_add_edge (bo,
++                   MM_TO_COORD (lv), MM_TO_COORD (lu),
++                   MM_TO_COORD ( v), MM_TO_COORD ( u),
++                   is_outer);
++    }
++
++}
++static void
++cylinder_ensure_tristrip (face3d *face)
++{
++  GList *c_iter;
++  int num_uv_points;
++  float *uv_points;
++  int i;
++  int vertex_comp;
++  contour3d *contour;
++  edge_ref e;
++  int x1, x2, x3, x4, y_top, y_bot;
++//  Vector p_v;
++//  VNODE *node;
++//  PLINE *p_contour = NULL;
++//  POLYAREA *poly;
++//  PLINE *dummy_contour;
++  borast_t *bo;
++  borast_traps_t traps;
++//  bool found_outer_contour = false;
++//  float u, v;
++  int edge_count = 0;
++
++  /* Nothing to do if vertices are already cached */
++  if (face->tristrip_vertices != NULL)
++    return;
++
++  /* Don't waste time if we failed last time */
++  if (face->triangulate_failed)
++    return;
++
++  if (!face->is_cylindrical)
++    return;
++
++#if 0
++  poly = poly_Create ();
++  if (poly == NULL)
++    return;
++#endif
++
++  /* Count up the number of edges space is required for */
++  for (c_iter = face->contours; c_iter != NULL; c_iter = g_list_next (c_iter))
++    {
++      contour = c_iter->data;
++      e = contour->first_edge;
++
++      do
++        {
++          edge_info *info = UNDIR_DATA (e);
++
++          edge_ensure_linearised (e);
++          edge_count += info->num_linearised_vertices;
++        }
++      while ((e = LNEXT(e)) != contour->first_edge);
++
++    }
++
++  /* Worst case, we need 2x number of edges, since we repeat any which span the u=0, u=360 wrap-around. */
++  bo = bo_init (2 * edge_count);
++
++  /* Throw the edges to the rasteriser */
++  for (c_iter = face->contours; c_iter != NULL; c_iter = g_list_next (c_iter))
++    {
++      float fu = 0.0f, fv = 0.0f;
++      float lu = 0.0f, lv = 0.0f;
++      float u, v;
++      bool first_vertex = true;
++      bool is_outer;
++      float wobble = 0.0f;
++
++      /* XXX: How can we tell if a contour is inner or outer??? */
++      is_outer = true;
++
++      contour = c_iter->data;
++      e = contour->first_edge;
++
++      do
++        {
++          edge_info *info = UNDIR_DATA (e);
++          bool backwards_edge;
++
++          /* XXX: Do this without breaking abstraction? */
++          /* Detect SYM edges, reverse the circle normal */
++          backwards_edge = ((e & 2) == 2);
++
++          edge_ensure_linearised (e);
++
++          for (i = 0; i < info->num_linearised_vertices - 1; i++)
++            {
++              int vertex_idx = i;
++
++              if (backwards_edge)
++                vertex_idx = info->num_linearised_vertices - 1 - i;
++
++              cylinder_xyz_to_uv (face,
++                                  info->linearised_vertices[vertex_idx * 3 + 0],
++                                  info->linearised_vertices[vertex_idx * 3 + 1],
++                                  info->linearised_vertices[vertex_idx * 3 + 2],
++                                  &u, &v);
++
++              if (first_vertex)
++                {
++                  fu = u;
++                  fv = v + wobble;
++                }
++              else
++                {
++//                  wobble = 0.1f - wobble;
++
++                  cylinder_bo_add_edge (bo,
++                                        lu, lv,
++                                         u,  v + wobble,
++                                        is_outer);
++                }
++
++              lu = u;
++              lv = v + wobble;
++              first_vertex = false;
++            }
++
++        }
++      while ((e = LNEXT(e)) != contour->first_edge);
++
++//      wobble = 0.1f - wobble;
++
++      cylinder_bo_add_edge (bo,
++                            lu, lv,
++                            fu, fv,
++                            is_outer);
++
++//      if (!face->surface_orientation_reversed)
++//        poly_InvContour (p_contour);
++
++    }
++
++  /* XXX: Need to tesselate the polygon */
++
++  _borast_traps_init (&traps);
++  bo_tesselate_to_traps (bo, false /* Don't combine adjacent y traps */,  &traps);
++
++  bo_free (bo);
++
++  num_uv_points = 0;
++
++  for (i = 0; i < traps.num_traps; i++) {
++    y_top = traps.traps[i].top;
++    y_bot = traps.traps[i].bottom;
++
++    x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++    x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++    x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++    x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++
++    if ((x1 == x2) || (x3 == x4)) {
++      num_uv_points += 5 + 1; /* Three vertices + repeated start and end, extra repeat to sync backface culling */
++    } else {
++      num_uv_points += 6; /* Four vertices + repeated start and end */
++    }
++  }
++
++  if (num_uv_points == 0) {
++    printf ("Strange, contour didn't tesselate\n");
++    face->triangulate_failed = true;
++    return;
++  }
++
++//  printf ("Tesselated with %i uv points\n", num_uv_points);
++
++  uv_points = g_new0 (float, 2 * num_uv_points);
++
++  vertex_comp = 0;
++  num_uv_points = 0;
++
++  for (i = 0; i < traps.num_traps; i++) {
++    y_top = traps.traps[i].top;
++    y_bot = traps.traps[i].bottom;
++
++    /* NB: ybot > ytop, as this is all derived from a screen-space rasteriser with 0,0 in the top left */
++
++    /* Exclude strips entirely above or below the 0 <= u <= 360 range */
++    if (y_bot < MM_TO_COORD (0.0f))
++      continue;
++
++    if (y_top > MM_TO_COORD (360.0f))
++      continue;
++
++    /* Clamp evaluation coordinates otherwise (strips straddling the boundary)
++     * NB: Due to input parameter-space geometry duplication, the bit we trim
++     *     here will be duplicated on the other side of the wrap-around anyway
++     */
++    y_top = MAX(MM_TO_COORD(0.0f), y_top);
++    y_bot = MIN(y_bot, MM_TO_COORD(360.0f));
++
++
++    if (face->surface_orientation_reversed)
++      {
++        x2 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++        x1 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++        x4 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++        x3 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++      }
++    else
++      {
++        x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
++        x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
++        x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
++        x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
++      }
++
++    if (x1 == x2) {
++      /* NB: Repeated first virtex to separate from other tri-strip */
++#if 1
++      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      /* NB: Repeated last virtex to separate from other tri-strip */
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      /* NB: Extra repeated vertex to keep backface culling in sync */
++
++      num_uv_points += 6;
++#endif
++    } else if (x3 == x4) {
++      /* NB: Repeated first virtex to separate from other tri-strip */
++#if 1
++      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      /* NB: Repeated last virtex to separate from other tri-strip */
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      /* NB: Extra repeated vertex to keep backface culling in sync */
++
++      num_uv_points += 6;
++#endif
++    } else {
++      /* NB: Repeated first virtex to separate from other tri-strip */
++      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++      /* NB: Repeated last virtex to separate from other tri-strip */
++
++      num_uv_points += 6;
++    }
++  }
++
++  _borast_traps_fini (&traps);
++
++  /* XXX: Would it be better to use the original vertices?
++   *      Rather than converting to u-v coordinates and back.
++   *      Probably at least need to use the u-v points to
++   *      perform the triangulation.
++   */
++
++  face->tristrip_num_vertices = num_uv_points;
++  face->tristrip_vertices = g_new0 (float, BUFFER_STRIDE * num_uv_points);
++
++  vertex_comp = 0;
++  for (i = 0; i < num_uv_points; i++)
++    {
++      cylinder_uv_to_xyz_and_normal(face,
++                                    /* uv */
++                                    COORD_TO_MM (uv_points[2 * i + 1]), /* Inverse of arbitrary transformation above */
++                                    COORD_TO_MM (uv_points[2 * i + 0]), /* Inverse of arbitrary transformation above */
++                                    /* xyz */
++                                    &face->tristrip_vertices[vertex_comp + 0],
++                                    &face->tristrip_vertices[vertex_comp + 1],
++                                    &face->tristrip_vertices[vertex_comp + 2],
++                                    /* Vertex normal */
++                                    &face->tristrip_vertices[vertex_comp + 3],
++                                    &face->tristrip_vertices[vertex_comp + 4],
++                                    &face->tristrip_vertices[vertex_comp + 5]);
++
++      vertex_comp += BUFFER_STRIDE;
++    }
++
++  g_free (uv_points);
++}
++
++#if 0
 +static void
 +cylinder_ensure_tristrip (face3d *face)
 +{
@@ -897,50 +1607,13 @@ index 0000000..3f8f936
 +
 +  if (!found_outer_contour)
 +    {
-+      printf ("DID NOT FIND OUTER CONTOUR... BADNESS\n");
++      printf ("(CYLINDER) DID NOT FIND OUTER CONTOUR... BADNESS #%i\n", face->face_identifier);
 +      face->triangulate_failed = true;
++      face->is_debug = true;
 +      return;
 +    }
 +
 +  poly_DelContour (&dummy_contour);
-+#endif
-+
-+#if 0
-+  v = 0.0;
-+  for (i = 0; i <= 360; i+= 10)
-+    {
-+      u = i;
-+      p_v[0] = MM_TO_COORD (v) + i; /* + i is a hack to keep the tesselator from combining strips across y */
-+      p_v[1] = MM_TO_COORD (u);
-+      node = poly_CreateNode (p_v);
-+
-+      if (p_contour == NULL)
-+        {
-+          if ((p_contour = poly_NewContour (node)) == NULL)
-+            return;
-+        }
-+      else
-+        {
-+          poly_InclVertex (p_contour->head.prev, node);
-+        }
-+    }
-+
-+  v = -10.0;
-+  for (i = 360; i >= 0; i-= 10)
-+    {
-+      u = i;
-+      p_v[0] = MM_TO_COORD (v); // + i; /* + i is a hack to keep the tesselator from combining strips across y */
-+      p_v[1] = MM_TO_COORD (u);
-+      node = poly_CreateNode (p_v);
-+      poly_InclVertex (p_contour->head.prev, node);
-+    }
-+
-+    poly_PreContour (p_contour, FALSE);
-+    if (!poly_InclContour (poly, p_contour))
-+      {
-+        printf ("Contour dropped - oops!\n");
-+        poly_DelContour (&p_contour);
-+      }
 +#endif
 +
 +  /* XXX: Need to tesselate the polygon */
@@ -1073,6 +1746,7 @@ index 0000000..3f8f936
 +
 +  g_free (uv_points);
 +}
++#endif
 +
 +static void
 +plane_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
@@ -1206,20 +1880,18 @@ index 0000000..3f8f936
 +
 +      if (p_contour->Flags.orient == PLF_DIR)
 +        {
-+          PLINE *old_outer;
++//          PLINE *old_outer;
 +
 +          /* Found the outer contour */
 +          if (found_outer_contour)
 +            {
 +              printf ("FOUND TWO OUTER CONTOURS FOR PLANAR FACE.. WILL END BADLY!\n");
-+#if 1
 +              face->triangulate_failed = true;
 +              return;
-+#endif
 +            }
 +
 +          p_contour->next = poly->contours->next;
-+          old_outer = poly->contours;
++//          old_outer = poly->contours;
 +          poly->contours = p_contour;
 +
 +          found_outer_contour = true;
@@ -1240,7 +1912,7 @@ index 0000000..3f8f936
 +
 +  if (!found_outer_contour)
 +    {
-+      printf ("DID NOT FIND OUTER CONTOUR... BADNESS\n");
++      printf ("(PLANE) DID NOT FIND OUTER CONTOUR... BADNESS\n");
 +      face->triangulate_failed = true;
 +      return;
 +    }
@@ -1367,8 +2039,6 @@ index 0000000..3f8f936
 +#ifdef MEMCPY_VERTEX_DATA
 +  hidgl_priv *priv = hidgl->priv;
 +#endif
-+  int i;
-+  int vertex_comp;
 +
 +  hidgl_flush_triangles (hidgl);
 +
@@ -1394,33 +2064,9 @@ index 0000000..3f8f936
 +//    glColor4f (0.0f, 1.0f, 0.0f, 0.5f);
 +  else
 +    glColor4f (0.8f, 0.8f, 0.8f, 1.0f);
++//    glColor4f (0.8f, 0.8f, 0.8f, 0.3f);
 +
-+#if 0
-+  hidgl_ensure_vertex_space (gc, face->tristrip_num_vertices);
-+
-+#ifdef MEMCPY_VERTEX_DATA
-+  memcpy (&priv->buffer.triangle_array[priv->buffer.coord_comp_count],
-+          face->tristrip_vertices,
-+          sizeof (float) * 5 * face->tristrip_num_vertices);
-+  priv->buffer.coord_comp_count += 5 * face->tristrip_num_vertices;
-+  priv->buffer.vertex_count += face->tristrip_num_vertices;
-+
-+#else
-+  vertex_comp = 0;
-+  for (i = 0; i < face->tristrip_num_vertices; i++) {
-+    float x, y, z;
-+    x = face->tristrip_vertices[vertex_comp++];
-+    y = face->tristrip_vertices[vertex_comp++];
-+    z = face->tristrip_vertices[vertex_comp++];
-+    hidgl_add_vertex_3D_tex (gc, x, y, z, 0.0, 0.0);
-+  }
-+#endif
-+#endif
-+
-+//  hidgl_flush_triangles (hidgl);
 +  emit_tristrip (face);
-+
-+//  glDisable(GL_AUTO_NORMAL); /* Quick hack test */
 +}
 diff --git a/src/hid/common/face3d_gl.h b/src/hid/common/face3d_gl.h
 new file mode 100644
@@ -1429,6 +2075,43 @@ index 0000000..f3599c8
 +++ b/src/hid/common/face3d_gl.h
 @@ -0,0 +1 @@
 +void face3d_fill (hidGC gc, face3d *face, bool selected);
+diff --git a/src/hid/common/hidgl.c b/src/hid/common/hidgl.c
+index 51adc6c..945ce5f 100644
+--- a/src/hid/common/hidgl.c
++++ b/src/hid/common/hidgl.c
+@@ -257,7 +257,7 @@ hidgl_flush_triangles (hidgl_instance *hidgl)
+ }
+ 
+ void
+-hidgl_ensure_vertex_space (hidGC gc, int count)
++hidgl_ensure_vertex_space (hidGC gc, unsigned int count)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+   hidgl_instance *hidgl = hidgl_gc->hidgl;
+@@ -277,7 +277,7 @@ hidgl_ensure_vertex_space (hidGC gc, int count)
+ }
+ 
+ void
+-hidgl_ensure_triangle_space (hidGC gc, int count)
++hidgl_ensure_triangle_space (hidGC gc, unsigned int count)
+ {
+   CHECK_IS_IN_CONTEXT ();
+ 
+diff --git a/src/hid/common/hidgl.h b/src/hid/common/hidgl.h
+index e2d7f67..8f2f785 100644
+--- a/src/hid/common/hidgl.h
++++ b/src/hid/common/hidgl.h
+@@ -72,8 +72,8 @@ extern hidgl_shader *circular_program;
+ extern hidgl_shader *resistor_program;
+ 
+ void hidgl_flush_triangles (hidgl_instance *hidgl);
+-void hidgl_ensure_vertex_space (hidGC gc, int count);
+-void hidgl_ensure_triangle_space (hidGC gc, int count);
++void hidgl_ensure_vertex_space (hidGC gc, unsigned int count);
++void hidgl_ensure_triangle_space (hidGC gc, unsigned int count);
+ 
+ 
+ static inline void
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
 index a90a51e..51990bc 100644
 --- a/src/hid/common/object3d.c
@@ -1821,10 +2504,10 @@ index 3d228f6..4689664 100644
  void object3d_set_appearance (object3d *object, appearance *appear);
 diff --git a/src/hid/common/object3d_gl.c b/src/hid/common/object3d_gl.c
 new file mode 100644
-index 0000000..c2c25a6
+index 0000000..644f338
 --- /dev/null
 +++ b/src/hid/common/object3d_gl.c
-@@ -0,0 +1,492 @@
+@@ -0,0 +1,299 @@
 +/* TODO ITEMS:
 + *
 + * Add PLINE simplification operation to consolidate co-circular segments for reduced geometry output.
@@ -1947,54 +2630,22 @@ index 0000000..c2c25a6
 +
 +
 +static void
-+evaluate_bspline (edge_info *info, double u, double *x, double *y, double *z)
-+{
-+//  info->
-+}
-+
-+static void
-+draw_bspline (edge_ref e)
++draw_linearised (edge_ref e)
 +{
 +  edge_info *info = UNDIR_DATA(e);
-+#if 0
-+  double x1, y1, z1;
-+  double x2, y2, z2;
-+#endif
 +  double lx, ly, lz;
 +  double x, y, z;
 +  int i;
 +
-+#if 0
-+  x1 = ((vertex3d *)ODATA(e))->x;
-+  y1 = ((vertex3d *)ODATA(e))->y;
-+  z1 = ((vertex3d *)ODATA(e))->z;
-+
-+  x2 = ((vertex3d *)DDATA(e))->x;
-+  y2 = ((vertex3d *)DDATA(e))->y;
-+  z2 = ((vertex3d *)DDATA(e))->z;
-+#endif
++  edge_ensure_linearised (e);
 +
 +  glBegin (GL_LINES);
 +
-+#if 0
-+  for (i = 0; i < 20; i++, lx = x, ly = y, lz = z) /* Pieces */
++  for (i = 0; i < info->num_linearised_vertices; i++, lx = x, ly = y, lz = z)
 +    {
-+      evaluate_bspline (edge_info, i / 20.0, &x, &y, &z);
-+
-+      if (i > 0)
-+        {
-+          glVertex3f (STEP_X_TO_COORD (PCB, lx), STEP_Y_TO_COORD (PCB, ly), STEP_Z_TO_COORD (PCB, lz));
-+          glVertex3f (STEP_X_TO_COORD (PCB,  x), STEP_Y_TO_COORD (PCB,  y), STEP_Z_TO_COORD (PCB,  z));
-+        }
-+    }
-+#endif
-+
-+  /* Just draw the control points for now... */
-+  for (i = 0; i < info->num_control_points; i++, lx = x, ly = y, lz = z) /* Pieces */
-+    {
-+      x = info->control_points[i * 3 + 0];
-+      y = info->control_points[i * 3 + 1];
-+      z = info->control_points[i * 3 + 2];
++      x = info->linearised_vertices[i * 3 + 0];
++      y = info->linearised_vertices[i * 3 + 1];
++      z = info->linearised_vertices[i * 3 + 2];
 +
 +      if (i > 0)
 +        {
@@ -2009,11 +2660,11 @@ index 0000000..c2c25a6
 +static void
 +draw_quad_edge (edge_ref e, void *data)
 +{
++  edge_info *info = UNDIR_DATA(e);
 +  struct draw_info *d_info = data;
 +  double x1, y1, z1;
 +  double x2, y2, z2;
 +  int i;
-+  bool debug = GPOINTER_TO_INT (data);
 +
 +#if 0
 +  int id = ID(e) % 12;
@@ -2021,9 +2672,11 @@ index 0000000..c2c25a6
 +  glColor3f (colors[id][0], colors[id][1], colors[id][2]);
 +#else
 +  if (d_info->selected)
-+    glColor4f (0.0, 1.0, 1., 0.5);
++    glColor4f (0.0, 1.0, 1., 1.0);
++//    glColor4f (0.0, 1.0, 1., 0.5);
 +  else
-+    glColor4f (1., 1., 1., 0.3);
++    glColor4f (0., 0., 0., 1.0);
++//    glColor4f (1., 1., 1., 0.3);
 +#endif
 +
 +  x1 = ((vertex3d *)ODATA(e))->x;
@@ -2034,178 +2687,24 @@ index 0000000..c2c25a6
 +  y2 = ((vertex3d *)DDATA(e))->y;
 +  z2 = ((vertex3d *)DDATA(e))->z;
 +
-+  if (UNDIR_DATA(e) != NULL)
++  if (info == NULL)
++    return;
++
++  if (!d_info->selected &&
++      (info->is_placeholder ||
++      d_info->debug_face))
 +    {
-+      edge_info *info = UNDIR_DATA(e);
-+
-+
-+        if (!d_info->selected &&
-+            (info->is_placeholder ||
-+            d_info->debug_face))
-+          {
-+            glColor4f (1.0, 0.0, 0.0, 1.0);
-+            glDepthMask (TRUE);
-+          }
-+
-+//      if (info->is_stitch)
-+//        return;
-+
-+      if (info->is_bspline)
-+        {
-+          draw_bspline (e);
-+          return;
-+        }
-+
-+      if (info->is_round)
-+        {
-+          int i;
-+          double cx, cy, cz;
-+          double nx, ny, nz;
-+          double refx, refy, refz;
-+          double endx, endy, endz;
-+          double ortx, orty, ortz;
-+          double cosa;
-+          double sina;
-+          double recip_length;
-+          double da;
-+          int segs;
-+          double angle_step;
-+
-+          cx = ((edge_info *)UNDIR_DATA(e))->cx;
-+          cy = ((edge_info *)UNDIR_DATA(e))->cy;
-+          cz = ((edge_info *)UNDIR_DATA(e))->cz;
-+
-+          nx = ((edge_info *)UNDIR_DATA(e))->nx;
-+          ny = ((edge_info *)UNDIR_DATA(e))->ny;
-+          nz = ((edge_info *)UNDIR_DATA(e))->nz;
-+
-+          /* XXX: Do this without breaking abstraction? */
-+          /* Detect SYM edges, reverse the circle normal */
-+          if ((e & 2) == 2)
-+            {
-+#if 0
-+              /* Option 1, just draw the forward copy, which agrees with the normal */
-+              x1 = ((vertex3d *)ODATA(SYM(e)))->x;
-+              y1 = ((vertex3d *)ODATA(SYM(e)))->y;
-+              z1 = ((vertex3d *)ODATA(SYM(e)))->z;
-+
-+              x2 = ((vertex3d *)DDATA(SYM(e)))->x;
-+              y2 = ((vertex3d *)DDATA(SYM(e)))->y;
-+              z2 = ((vertex3d *)DDATA(SYM(e)))->z;
-+#else
-+              /* Option 2, flip the normal */
-+              nx = -nx;
-+              ny = -ny;
-+              nz = -nz;
-+#endif
-+            }
-+
-+          /* STEP MAY ACTUALLY SPECIFY A DIFFERENT REF DIRECTION, BUT FOR NOW, LETS ASSUME IT POINTS
-+           * TOWARDS THE FIRST POINT. (We don't record the STEP ref direction in our data-structure at the moment).
-+           */
-+          refx = x1 - cx;
-+          refy = y1 - cy;
-+          refz = z1 - cz;
-+
-+          /* Normalise refx */
-+          recip_length = 1. / hypot (hypot (refx, refy), refz);
-+          refx *= recip_length;
-+          refy *= recip_length;
-+          refz *= recip_length;
-+
-+          endx = x2 - cx;
-+          endy = y2 - cy;
-+          endz = z2 - cz;
-+
-+          /* Normalise endx */
-+          recip_length = 1. / hypot (hypot (endx, endy), endz);
-+          endx *= recip_length;
-+          endy *= recip_length;
-+          endz *= recip_length;
-+
-+          /* ref cross normal */
-+          /* ort will be orthogonal to normal and ref vector */
-+          ortx = ny * refz - nz * refy;
-+          orty = nz * refx - nx * refz;
-+          ortz = nx * refy - ny * refx;
-+
-+          /* Cosine is dot product of ref (normalised) and end (normalised) */
-+          cosa = refx * endx + refy * endy + refz * endz; // cos (phi)
-+          /* Sine is dot product of ort (normalised) and end (normalised) */
-+          sina = ortx * endx + orty * endy + ortz * endz; // sin (phi) = cos (phi - 90)
-+
-+          if (x1 == x2 &&
-+              y1 == y2 &&
-+              z1 == z2)
-+            {
-+              da = 2.0 * M_PI;
-+            }
-+          else
-+            {
-+              /* Delta angled */
-+              da = atan2 (sina, cosa);
-+
-+              if (da < 0.0)
-+                da += 2.0 * M_PI;
-+            }
-+
-+#if 0
-+          printf ("(%f, %f, %f)  (%f, %f, %f)\n", x1, y1, z1, x2, y2, z2);
-+          printf ("ref (%f, %f, %f)\n", refx, refy, refz);
-+          printf ("end (%f, %f, %f)\n", endx, endy, endz);
-+          printf ("ort (%f, %f, %f)\n", ortx, orty, ortz);
-+          printf ("n (%f, %f, %f)\n", nx, ny, nz);
-+          printf ("cosa %f, sina %f\n", cosa, sina);
-+          printf ("Got an arc with angle %f\n", da * 180. / M_PI);
-+#endif
-+
-+          /* Scale up ref and ort to the actual vector length */
-+          refx *= info->radius;
-+          refy *= info->radius;
-+          refz *= info->radius;
-+
-+          ortx *= info->radius;
-+          orty *= info->radius;
-+          ortz *= info->radius;
-+
-+          /* XXX: NEED TO COMPUTE WHICH SEGMENT OF THE CURVE TO ACTUALLY DRAW! */
-+          segs = CIRC_SEGS_D * da / (2.0 * M_PI);
-+          segs = MAX(segs, 1);
-+          angle_step = da / (double)segs;
-+
-+          glBegin (GL_LINES);
-+
-+          for (i = 0; i < segs; i++)
-+            {
-+              cosa = cos (i * angle_step);
-+              sina = sin (i * angle_step);
-+              glVertex3f (STEP_X_TO_COORD (PCB, info->cx + refx * cosa + ortx * sina),
-+                          STEP_Y_TO_COORD (PCB, info->cy + refy * cosa + orty * sina),
-+                          STEP_Z_TO_COORD (PCB, info->cz + refz * cosa + ortz * sina));
-+
-+              cosa = cos ((i + 1) * angle_step);
-+              sina = sin ((i + 1) * angle_step);
-+              glVertex3f (STEP_X_TO_COORD (PCB, info->cx + refx * cosa + ortx * sina),
-+                          STEP_Y_TO_COORD (PCB, info->cy + refy * cosa + orty * sina),
-+                          STEP_Z_TO_COORD (PCB, info->cz + refz * cosa + ortz * sina));
-+            }
-+
-+          glEnd ();
-+
-+//          glDepthMask (FALSE);
-+          return;
-+        }
++      glColor4f (1.0, 0.0, 0.0, 1.0);
++      glDepthMask (TRUE);
++      glDisable(GL_DEPTH_TEST);
 +    }
 +
-+//  printf ("Drawing line (%f, %f, %f)-(%f, %f, %f)\n", x1, y1, z1, x2, y2, z2);
-+  glBegin (GL_LINES);
-+  glVertex3f (STEP_X_TO_COORD (PCB, x1),
-+              STEP_Y_TO_COORD (PCB, y1),
-+              STEP_X_TO_COORD (PCB, z1));
-+  glVertex3f (STEP_X_TO_COORD (PCB, x2),
-+              STEP_Y_TO_COORD (PCB, y2),
-+              STEP_X_TO_COORD (PCB, z2));
-+  glEnd ();
++//  if (info->is_stitch)
++//    return;
++
++  draw_linearised (e);
++
++    glEnable(GL_DEPTH_TEST);
 +//  glDepthMask (FALSE);
 +}
 +
@@ -2214,25 +2713,15 @@ index 0000000..c2c25a6
 +{
 +//  struct draw_info *info = data;
 +  edge_ref e;
-+  int edge_no = 0;
 +
 +  e = contour->first_edge;
-+
-+//  printf ("Drawing contour\n");
 +
 +  do
 +    {
 +      edge_info *info = UNDIR_DATA(e);
-+//      printf ("Edge %i: %p (%i%s)\n", edge_no++, e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
 +      draw_quad_edge (e, data);
 +
-+      /* Stop if e was the only edge in a face - which we re-trace */
-+      /* XXX: Probably only a development bug until we get the quad-edge links correct */
-+//      if (LNEXT(e) == SYM(e))
-+//        break;
-+
 +      /* LNEXT should take us counter-clockwise around the face */
-+      /* LPREV should take us clockwise around the face */
 +    }
 +  while ((e = LNEXT(e)) != contour->first_edge);
 +}
@@ -2245,6 +2734,7 @@ index 0000000..c2c25a6
 +  struct draw_info *info = data;
 +
 +  info->debug_face = (face_no == debug_integer);
++//  info->debug_face = face->is_debug;
 +  g_list_foreach (face->contours, (GFunc)draw_contour, info);
 +
 +  face_no++;
@@ -2327,7 +2817,7 @@ index 0000000..cbf5d1a
 +void object3d_draw (hidGC gc, object3d *object, bool selected);
 +void object3d_draw_debug (hidGC gc);
 diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index fce8341..5529f5b 100644
+index fce8341..eb22cbe 100644
 --- a/src/hid/gtk/gtkhid-gl.c
 +++ b/src/hid/gtk/gtkhid-gl.c
 @@ -54,6 +54,8 @@ extern PFNGLUSEPROGRAMPROC         glUseProgram;
@@ -2366,7 +2856,18 @@ index fce8341..5529f5b 100644
      }
  
    if (FRONT (element))
-@@ -2771,22 +2773,27 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2233,7 +2235,9 @@ E_package_callback (const BoxType * b, void *cl)
+ static void
+ ghid_draw_packages (BoxType *drawn_area)
+ {
+-  r_search (PCB->Data->element_tree, drawn_area, NULL, E_package_callback, NULL);
++  /* XXX: 3D model may be on-screen, even if drawn_area doesn't include its projection on the board */
++//  r_search (PCB->Data->element_tree, drawn_area, NULL, E_package_callback, NULL);
++  r_search (PCB->Data->element_tree, NULL, NULL, E_package_callback, NULL);
+ }
+ 
+ void
+@@ -2771,22 +2775,27 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
      hidgl_flush_triangles (priv->hidgl);
    }
  
@@ -2398,7 +2899,7 @@ index fce8341..5529f5b 100644
    if (1) {
      GLfloat global_ambient[] = {0.0f, 0.0f, 0.0f, 1.0f};
      glLightModelfv (GL_LIGHT_MODEL_AMBIENT, global_ambient);
-@@ -2808,12 +2815,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2808,12 +2817,13 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
  //    GLfloat position[] = {0.5, -1., 1., 0.};
  //    GLfloat position[] = {0.0, -0.5, 1., 0.};
      GLfloat position[] = {0.0, 0.0, 1., 0.};
@@ -2415,7 +2916,7 @@ index fce8341..5529f5b 100644
      glPushMatrix ();
      glLoadIdentity ();
      glLightfv (GL_LIGHT0, GL_POSITION, position);
-@@ -2821,7 +2829,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2821,7 +2831,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    }
  
  //  glDisable (GL_DEPTH_TEST); /* TEST */
@@ -2424,7 +2925,7 @@ index fce8341..5529f5b 100644
  
    if (!global_view_2d)
      ghid_draw_packages (&region);
-@@ -2835,9 +2843,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+@@ -2835,9 +2845,9 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
    glDisable (GL_LIGHTING);
  
    draw_crosshair (Output.fgGC, priv);
@@ -2437,7 +2938,7 @@ index fce8341..5529f5b 100644
    hidgl_flush_triangles (priv->hidgl);
  
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
-index 35c5072..c543c57 100644
+index 35c5072..f6258c8 100644
 --- a/src/hid/step/model.cpp
 +++ b/src/hid/step/model.cpp
 @@ -97,8 +97,8 @@ typedef std::list<SdaiMapped_item *> mi_list;
@@ -2493,7 +2994,16 @@ index 35c5072..c543c57 100644
  
    SDAI_Application_instance *entity = start_entity;
    STEPcomplex *stepcomplex = NULL;
-@@ -803,10 +820,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+@@ -404,7 +421,7 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
+   /* Things we take note of for futher processing.. */
+ 
+   /* B_SPLINE_CURVE */
+-  int b_spline_curve_degree;
++  int b_spline_curve_degree = 0;
+   EntityAggregate *control_points = NULL;
+   int num_control_points; /* (Convenience) */
+ 
+@@ -803,15 +820,20 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
        SdaiCurve *curve = ec->edge_geometry_ ();
        bool same_sense = ec->same_sense_ ();
  
@@ -2505,18 +3015,52 @@ index 35c5072..c543c57 100644
  
  #if 0
        printf ("         underlying curve is %s #%i, same_sense is %s\n", curve->EntityName (), curve->StepFileId(), same_sense ? "True" : "False");
-@@ -844,7 +858,44 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+ #endif
+ 
++      if (strcmp (curve->EntityName (), "Surface_Curve") == 0)
++        {
++          SdaiSurface_curve *sc = (SdaiSurface_curve *)curve;
++
++          /* Hopefully we can just point curve at the (presumed) 3D curve */
++          curve = sc->curve_3d_ ();
++        }
++
+       if (strcmp (curve->EntityName (), "Line") == 0)
+         {
+           transform_vertex (info->current_transform, &x1, &y1, &z1);
+@@ -829,12 +851,20 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+       else if (strcmp (curve->EntityName (), "Circle") == 0)
+         {
+           SdaiCircle *circle = (SdaiCircle *)curve;
++          double cx, cy, cz;
++          double nx, ny, nz;
++          double rx, ry, rz;
++
++          SdaiAxis2_placement_3d *placement = *circle->position_ ();
++          unpack_axis_geom (placement, &cx, &cy, &cz, &nx, &ny, &nz, &rx, &ry, &rz);
++#if 0
+           double cx = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
+           double cy = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
+           double cz = ((RealNode *)circle->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
+           double nx = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
+           double ny = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
+           double nz = ((RealNode *)circle->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
++#endif
+ 
+           double radius = circle->radius_();
+ 
+@@ -844,14 +874,61 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
  
            transform_vector (info->current_transform, &nx, &ny, &nz);
  
 -          if (orientation)
 +          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
 +            {
-+              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
++              edge_info_set_round2 (our_edge_info, cx, cy, cz, nx, ny, nz, rx, ry, rz, radius);
 +            }
 +          else
 +            {
-+              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
++              edge_info_set_round2 (our_edge_info, cx, cy, cz, -nx, -ny, -nz, rx, ry, rz, radius);
 +            }
 +
 +          object3d_add_edge (info->object, our_edge);
@@ -2529,19 +3073,28 @@ index 35c5072..c543c57 100644
 +      else if (strcmp (curve->EntityName (), "Ellipse") == 0)
 +        {
 +          SdaiEllipse *ellipse = (SdaiEllipse *)curve;
++          double cx, cy, cz;
++          double nx, ny, nz;
++          double rx, ry, rz;
++
++          SdaiAxis2_placement_3d *placement = *ellipse->position_ ();
++          unpack_axis_geom (placement, &cx, &cy, &cz, &nx, &ny, &nz, &rx, &ry, &rz);
++#if 0
 +          double cx = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ())->value;
 +          double cy = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ())->value;
 +          double cz = ((RealNode *)ellipse->position_ ()->location_ ()->coordinates_ ()->GetHead ()->NextNode ()->NextNode ())->value;
 +          double nx = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ())->value;
 +          double ny = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ())->value;
 +          double nz = ((RealNode *)ellipse->position_ ()->axis_ ()->direction_ratios_ ()->GetHead ()->NextNode ()->NextNode ())->value;
++#endif
 +
 +          transform_vertex (info->current_transform, &x1, &y1, &z1);
 +          transform_vertex (info->current_transform, &x2, &y2, &z2);
 +
-+          our_edge_info->is_placeholder = true;
-+#if 0 /* NOT YET IMPLEMENTED */
-+          double radius = circle->radius_();
++          our_edge_info->is_ellipse = true;
++
++          double radius1 = ellipse->semi_axis_1_ ();
++          double radius2 = ellipse->semi_axis_2_ ();
 +
 +          transform_vertex (info->current_transform, &cx, &cy, &cz);
 +
@@ -2549,17 +3102,27 @@ index 35c5072..c543c57 100644
 +
 +          if (orientation) // NOT REQUIRED, SINCE WE ADDED same_sense to the edge info ----> (orientation == same_sense)
              {
-               edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
+-              edge_info_set_round (our_edge_info, cx, cy, cz, nx, ny, nz, radius);
++              edge_info_set_round2 (our_edge_info, cx, cy, cz, nx, ny, nz, rx, ry, rz, radius1);
              }
-@@ -852,6 +903,7 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+           else
              {
-               edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
+-              edge_info_set_round (our_edge_info, cx, cy, cz, -nx, -ny, -nz, radius);
++              edge_info_set_round2 (our_edge_info, cx, cy, cz, -nx, -ny, -nz, rx, ry, rz, radius1);
              }
-+#endif
++          our_edge_info->radius2 = radius2;
  
            object3d_add_edge (info->object, our_edge);
            vertex = make_vertex3d (x1, y1, z1);
-@@ -887,6 +939,18 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+@@ -876,7 +953,6 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
+         }
+       else
+         {
+-          our_edge_info->is_placeholder = true;
+ #ifdef DEBUG_NOT_IMPLEMENTED
+           printf ("WARNING: Unhandled curve geometry type (%s), #%i\n", curve->EntityName (), curve->StepFileId ());
+           if (curve->IsComplex())
+@@ -887,6 +963,18 @@ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, proc
            // XXX: line, conic, pcurve, surface_curve, offset_curve_2d, offset_curve_3d, curve_replica
            // XXX: Various derived types of the above, e.g.:
            //      conic is a supertype of: circle, ellipse, hyperbola, parabola
@@ -2578,7 +3141,7 @@ index 35c5072..c543c57 100644
            return;
          }
  
-@@ -940,7 +1004,9 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -940,7 +1028,9 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
    srr_list srr_list;
  
    // Find all SHAPE_REPRESENTATION_RELATIONSHIP with rep_1 = sr
@@ -2589,7 +3152,7 @@ index 35c5072..c543c57 100644
  
    for (srr_list::iterator iter = srr_list.begin (); iter != srr_list.end (); iter++)
      {
-@@ -949,22 +1015,34 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -949,22 +1039,34 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
  
        SdaiShape_representation *child_sr = dynamic_cast<SdaiShape_representation *>(srr->rep_2_ ());
  
@@ -2625,7 +3188,7 @@ index 35c5072..c543c57 100644
    for (srr_rrwt_list::iterator iter = srr_rrwt_list.begin (); iter != srr_rrwt_list.end (); iter++)
      {
        double backup_transform[4][4];
-@@ -984,8 +1062,16 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -984,8 +1086,16 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
  
        copy_4x4 (info->current_transform, backup_transform);
  
@@ -2644,7 +3207,7 @@ index 35c5072..c543c57 100644
  
        if (parent_axis == NULL ||
            child_axis == NULL)
-@@ -994,15 +1080,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -994,15 +1104,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
            continue;
          }
  
@@ -2661,7 +3224,7 @@ index 35c5072..c543c57 100644
  
  #ifdef DEBUG_TRANSFORMS
        printf ("child axis o: (%f, %f, %f)\n"
-@@ -1019,15 +1097,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
+@@ -1019,15 +1121,7 @@ process_shape_representation(InstMgr *instance_list, SdaiShape_representation *s
        /* Is this in the correct order? */
        translate_origin (info->current_transform, ox, oy, oz);
  
@@ -2678,7 +3241,21 @@ index 35c5072..c543c57 100644
  
  #ifdef DEBUG_TRANSFORMS
        printf ("parent axis o: (%f, %f, %f)\n"
-@@ -1159,16 +1229,18 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1075,11 +1169,11 @@ debug_edge (edge_ref edge, const char *message)
+ 
+   printf ("%s\n", message);
+   info = (edge_info *)UNDIR_DATA(e);
+-  printf ("e: %p (%i%s)\n", e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
++  printf ("e: %p (%i%s)\n", (void *)e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
+   while ((e = ONEXT(e)) != edge)
+     {
+       info = (edge_info *)UNDIR_DATA(e);
+-      printf ("next: %p (%i%s)\n", e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
++      printf ("next: %p (%i%s)\n", (void *)e, info->edge_identifier, ((e & 2) == 2) ? "R" : "");
+     }
+ }
+ 
+@@ -1159,16 +1253,19 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
  
            /* NB: ADVANCED_FACE is a FACE_SURFACE, which has SdaiSurface *face_geometry_ (), and Boolean same_sense_ () */
@@ -2694,12 +3271,13 @@ index 35c5072..c543c57 100644
  #endif
  
 +          info->current_face = make_face3d ((char *)"");
++          info->current_face->face_identifier = fs->StepFileId ();
 +          object3d_add_face (info->object, info->current_face);
 +
            if (surface->IsComplex ())
              {
  #ifdef DEBUG_NOT_IMPLEMENTED
-@@ -1177,15 +1249,105 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1177,15 +1274,105 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
            else if (strcmp (surface->EntityName (), "Plane") == 0)
              {
@@ -2807,7 +3385,7 @@ index 35c5072..c543c57 100644
              }
            else if (strcmp (surface->EntityName (), "Spherical_Surface") == 0)
              {
-@@ -1198,14 +1360,12 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1198,14 +1385,12 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
  #endif
              }
  
@@ -2823,7 +3401,7 @@ index 35c5072..c543c57 100644
  
  #if 0
                bool is_outer_bound = (strcmp (fb->EntityName (), "Face_Outer_Bound") == 0);
-@@ -1329,7 +1489,10 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1329,7 +1514,10 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
  
                        if (first_edge_of_contour == 0)
                          {
@@ -2835,7 +3413,7 @@ index 35c5072..c543c57 100644
                            face3d_add_contour (info->current_face, info->current_contour);
                            first_edge_of_contour = our_edge;
                          }
-@@ -1346,24 +1509,22 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1346,24 +1534,22 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
  
                        if (previous_edge_of_contour != 0)
                          {
@@ -2870,7 +3448,7 @@ index 35c5072..c543c57 100644
                  }
                else
                  {
-@@ -1441,29 +1602,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1441,29 +1627,13 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
            continue;
          }
  
@@ -3018,10 +3596,10 @@ index 1ae2f18..432ff33 100644
 +void find_all_srr_with_rep_1_or_2( InstMgr *instance_list, srr_list *srr_list, int start_after_id, SdaiRepresentation *desired);
 +void find_all_srr_rrwt_with_rep_1_or_2( InstMgr *instance_list, srr_rrwt_list *srr_rrwt_list, int start_after_id, SdaiRepresentation *desired);
 diff --git a/src/sweep.h b/src/sweep.h
-index e8f138f..644d70b 100644
+index e8f138f..ffa3035 100644
 --- a/src/sweep.h
 +++ b/src/sweep.h
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,17 @@
  #include "borast/borast-traps-private.h"
  
  borast_status_t bo_poly_to_traps (hidGC gc, POLYAREA *poly, borast_traps_t *traps);
@@ -3029,3 +3607,13 @@ index e8f138f..644d70b 100644
  borast_status_t bo_contour_to_traps (hidGC gc, PLINE *contour, borast_traps_t *traps);
  borast_status_t bo_contour_to_traps_no_draw (PLINE *contour, borast_traps_t *traps);
  borast_fixed_t _line_compute_intersection_x_for_y (const borast_line_t *line, borast_fixed_t y);
++
++
++/* More naked API, not tied to polygons */
++
++typedef struct _borast borast_t;
++
++borast_t *bo_init (int max_num_edges);
++void bo_free (borast_t *bo);
++void bo_add_edge (borast_t *borast, Coord sx, Coord sy, Coord ex, Coord ey, bool outer_contour);
++borast_status_t bo_tesselate_to_traps(borast_t *borast, bool combine_y_traps, borast_traps_t *traps);
