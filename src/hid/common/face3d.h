@@ -20,6 +20,11 @@ typedef struct {
   bool is_conical;
   double semi_angle;
 
+  /* For torioidal surfaces */
+  bool is_toroidal;
+  /* NB: Use radius above for major_radius */
+  double minor_radius;
+
   appearance *appear;
 
   /* XXX: STEP specific - breaks encapsulation */
