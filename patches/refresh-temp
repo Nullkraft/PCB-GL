@@ -1,0 +1,47 @@
+Bottom: ee576fe071764f4d452e2dbbccd6d3bd9c8ddec2
+Top:    8a6ca088e1238f5a4c19ff7a77346363a92a7484
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-26 02:12:03 +0000
+
+Refresh of play-with-ligting-kludges
+
+---
+
+diff --git a/src/hid/common/object3d_gl.c b/src/hid/common/object3d_gl.c
+index 97cd278..08625d1 100644
+--- a/src/hid/common/object3d_gl.c
++++ b/src/hid/common/object3d_gl.c
+@@ -269,6 +269,8 @@ static void
+ draw_face (face3d *face, void *data)
+ {
+   struct draw_info *info = data;
++  float white[] = {0.4f, 0.4f, 0.4f};
++  float shininess[] = {10.0f};
+ 
+   face->is_debug = (face_no == debug_integer);
+ 
+@@ -285,6 +287,11 @@ draw_face (face3d *face, void *data)
+ 
+   /* Object inherited appearances? */
+ 
++  glUseProgram (0);
++
++  glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, white);
++  glMaterialfv (GL_FRONT_AND_BACK, GL_SHININESS, shininess);
++
+   face3d_fill (info->gc, face, info->selected);
+ //  face3d_fill (info->gc, face, (face_no == debug_integer));
+ 
+diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
+index f01cedb..d3f2de5 100644
+--- a/src/hid/gtk/gtkhid-gl.c
++++ b/src/hid/gtk/gtkhid-gl.c
+@@ -2805,7 +2805,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
+   if (1) {
+     GLfloat diffuse[] =  {0.6, 0.6, 0.6, 1.0};
+     GLfloat ambient[] =  {0.4, 0.4, 0.4, 1.0};
+-    GLfloat specular[] = {1.0, 1.0, 1.0, 1.0};
++    GLfloat specular[] = {0.4, 0.4, 0.4, 1.0};
+     glLightfv (GL_LIGHT0, GL_DIFFUSE,  diffuse);
+     glLightfv (GL_LIGHT0, GL_AMBIENT,  ambient);
+     glLightfv (GL_LIGHT0, GL_SPECULAR, specular);
