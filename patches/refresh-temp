@@ -1,0 +1,169 @@
+Bottom: 4b5354eb5a6d97bd683c2f0cc2e257ce350067d8
+Top:    8b7e9077287084f85de7fa7f77514f5eb1afdd8c
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-26 02:31:21 +0000
+
+Refresh of add-colour-to-step-model
+
+---
+
+diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
+index 443c163..9d3763a 100644
+--- a/src/hid/step/model.cpp
++++ b/src/hid/step/model.cpp
+@@ -194,10 +194,14 @@ find_mapped_item (SdaiShape_representation *sr,
+  *      or overriding_styled_item pointing towards the item in question,
+  *      then retrieve its styling.
+  */
+-static EntityAggregate *
+-find_styles_for_item (InstMgr *instance_list, SDAI_Application_instance *item)
++
++static GHashTable *
++build_hash_of_styled_items (InstMgr *instance_list)
+ {
+-  MgrNode * mnode = NULL; //instance_list->FindFileId (start_after_id);
++  /* NB: NULLs give g_direct_hash and g_direct_equal */
++  GHashTable *table = g_hash_table_new (NULL, NULL);
++
++  MgrNode * mnode = NULL;
+   int search_index;
+   SDAI_Application_instance *entity;
+ 
+@@ -210,26 +214,14 @@ find_styles_for_item (InstMgr *instance_list, SDAI_Application_instance *item)
+     {
+       SdaiStyled_item *si = static_cast<SdaiStyled_item *>(entity);
+ 
+-      if (si->item_ () == NULL_ENTITY)
+-        {
+-          if (!strcmp (item->EntityName (), "Advanced_Brep_Shape_Representation"))
+-            {
+-              /* Take a guess, and assume this is the only one. This might not be the case unfortunately */
+-              return si->styles_ ();
+-            }
+-        }
+-
+-      if (si->item_ () == item)
+-        {
+-          return si->styles_ ();
+-        }
++      g_hash_table_insert (table, si->item_ (), (void *)si);
+ 
+       int id = entity->StepFileId ();
+       MgrNode * mnode = instance_list->FindFileId (id);
+       search_index = instance_list->GetIndex (mnode) + 1;
+     }
+ 
+-  mnode = NULL; //instance_list->FindFileId (start_after_id);
++  mnode = NULL;
+ 
+   if (mnode == NULL)
+     search_index = 0;
+@@ -240,17 +232,42 @@ find_styles_for_item (InstMgr *instance_list, SDAI_Application_instance *item)
+     {
+       SdaiStyled_item *si = static_cast<SdaiStyled_item *>(entity);
+ 
+-      if (si->item_ () == item)
+-        {
+-          return si->styles_ ();
+-        }
++      g_hash_table_insert (table, si->item_ (), (void *)si);
+ 
+       int id = entity->StepFileId ();
+       MgrNode * mnode = instance_list->FindFileId (id);
+       search_index = instance_list->GetIndex (mnode) + 1;
+     }
+ 
+-  return NULL;
++  return table;
++}
++
++static EntityAggregate *
++find_styles_for_item (GHashTable *table, SDAI_Application_instance *item)
++{
++  /* When reading a STYLED_ITEM with item pointing to an ABSR entity (as Solidworks
++   * likes to emit, for product-wide colouring, STEPcode reads the item entity
++   * pointer as NULL_ENTITY, since ABSR doesn't match the type expected by
++   * the item property.
++   *
++   * We take a guess, and assume this is the only one - so if we look up NULL_ENTITY
++   * in the hash table, we find the correct corresponding STYLED_ITEM.
++   *
++   * XXX: This might not be the case unfortunately, e.g. an assembly with multiple
++   *      ABSR with errant STYLED_ITEM pointers associated. (Need to teach STEPcode
++   *      to store the incorrect pointer for us, or to be more lenient with this case.
++   */
++  if (!strcmp (item->EntityName (), "Advanced_Brep_Shape_Representation"))
++    {
++      item = NULL_ENTITY;
++    }
++
++  auto si = static_cast<SdaiStyled_item *>(g_hash_table_lookup (table, item));
++
++  if (si == NULL)
++    return NULL;
++
++  return si->styles_ ();
+ }
+ 
+ /* XXX: Does not pay paticularly much attention to specifics of how the STEP style
+@@ -422,6 +439,7 @@ typedef struct process_step_info {
+   face3d *current_face;
+   contour3d *current_contour;
+   double current_transform[4][4];
++  GHashTable *styled_items;
+ 
+ } process_step_info;
+ 
+@@ -963,7 +981,6 @@ process_bscwk (SDAI_Application_instance *start_entity, edge_ref our_edge, proce
+ static void
+ process_edge_geometry (SdaiEdge *edge, bool orientation, edge_ref our_edge, process_step_info *info)
+ {
+-  GHashTableIter iter;
+   vertex3d *vertex;
+   double x1, y1, z1;
+   double x2, y2, z2;
+@@ -1413,7 +1430,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+    *      so STEPcode may not correctly read the STYLED_ITEM instance. (It does type checking of the item
+    *      pointed to in the STYLED_ITEM.
+    */
+-  EntityAggregate *illegal_absr_styles = find_styles_for_item (instance_list, sr);
++  EntityAggregate *illegal_absr_styles = find_styles_for_item (info->styled_items, sr);
+   appearance *illegal_absr_appear = NULL;
+   if (illegal_absr_styles != NULL)
+     {
+@@ -1456,7 +1473,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+       /* XXX: Default to the illegal ABSR appearance (Thanks Solidworks!) */
+       info->object->appear = illegal_absr_appear;
+ 
+-      EntityAggregate *solid_styles = find_styles_for_item (instance_list, (*iter));
++      EntityAggregate *solid_styles = find_styles_for_item (info->styled_items, (*iter));
+       if (solid_styles != NULL)
+         {
+ //          printf ("Found style list for solid\n");
+@@ -1478,7 +1495,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+ 
+ //      std::cout << "Closed shell is " << cs << std::endl;
+ 
+-      EntityAggregate *shell_styles = find_styles_for_item (instance_list, cs);
++      EntityAggregate *shell_styles = find_styles_for_item (info->styled_items, cs);
+       if (shell_styles != NULL)
+         {
+ //          printf ("Found style list for shell\n");
+@@ -1501,7 +1518,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+            iter = iter->NextNode ())
+         {
+           SdaiFace *face = (SdaiFace *)((EntityNode *)iter)->node;
+-          EntityAggregate *face_styles = find_styles_for_item (instance_list, face);
++          EntityAggregate *face_styles = find_styles_for_item (info->styled_items, face);
+ 
+           /* XXX: Do we look for specific types of face at this point? (Expect ADVANCED_FACE usually?) */
+           if (strcmp (face->EntityName (), "Advanced_Face") != 0)
+@@ -1967,6 +1984,8 @@ step_model_to_shape_master (const char *filename)
+   info.object = make_object3d ((char *)"Test");
+   identity_4x4 (info.current_transform);
+ 
++  info.styled_items = build_hash_of_styled_items (instance_list);
++
+   step_model = process_sr_or_subtype (instance_list, sr, &info);
+ 
+   if (step_model != NULL)
