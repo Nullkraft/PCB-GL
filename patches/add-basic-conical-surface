@@ -1,5 +1,5 @@
-Bottom: c564118734d36f78daa12d481773151cbf30fac1
-Top:    ee576fe071764f4d452e2dbbccd6d3bd9c8ddec2
+Bottom: a44fe1a4be5bbe43e7d3548e5ef08bdac88b5cc5
+Top:    0ffe7a4f848c3d4f7a761e2addac8ee629c3d224
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-26 02:11:16 +0000
 
@@ -437,10 +437,10 @@ index bcb8d6d..1e49158 100644
      {
        /* We only know how to deal with planar and cylindrical faces for now */
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
-index 443c163..000be31 100644
+index 9d3763a..78e57a9 100644
 --- a/src/hid/step/model.cpp
 +++ b/src/hid/step/model.cpp
-@@ -1612,7 +1612,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1629,7 +1629,7 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
            else if (strcmp (surface->EntityName (), "Cylindrical_Surface") == 0)
              {
@@ -449,7 +449,7 @@ index 443c163..000be31 100644
  //              printf ("WARNING: cylindrical surfaces are not supported yet\n");
  
                unpack_axis_geom (cylinder->position_ (),
-@@ -1656,7 +1656,50 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1673,7 +1673,50 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
            else if (strcmp (surface->EntityName (), "Conical_Surface") == 0)
              {
