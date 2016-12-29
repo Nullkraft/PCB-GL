@@ -1457,10 +1457,20 @@ plane_ensure_tristrip (face3d *face)
     y_top = traps.traps[i].top;
     y_bot = traps.traps[i].bottom;
 
-    x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
-    x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
-    x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
-    x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+    if (face->surface_orientation_reversed)
+      {
+        x2 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+        x1 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+        x4 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+        x3 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+      }
+    else
+      {
+        x1 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_top);
+        x2 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_top);
+        x3 = _line_compute_intersection_x_for_y (&traps.traps[i].right, y_bot);
+        x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+      }
 
     if (x1 == x2) {
       /* NB: Repeated first virtex to separate from other tri-strip */
