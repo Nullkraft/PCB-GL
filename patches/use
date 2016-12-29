@@ -1,0 +1,16 @@
+Bottom: f33a4c4481ef4b16821ca167b262980694629e62
+Top:    f33a4c4481ef4b16821ca167b262980694629e62
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-29 13:31:25 +0000
+
+Use surface_orientation_reversed for planes
+
+This keeps implementations for various surface types more similar,
+and helps to ensure the same parameterisation of planes is used
+as in the original model. (No current reason this helps, but it
+feels like it might be a good idea in the long run).
+
+
+---
+
+
