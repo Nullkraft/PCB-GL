@@ -1,0 +1,478 @@
+Bottom: 8d971fbe9b31e1a33a7d9b7f286d626d68f8ef48
+Top:    b1c4eb2e3df2102609307c22d0fc02f3ef2b6e23
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-29 13:27:54 +0000
+
+Refresh of initial-prod-at-toroidal
+
+---
+
+diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
+index 52b4d87..a7bbf9a 100644
+--- a/src/hid/common/face3d_gl.c
++++ b/src/hid/common/face3d_gl.c
+@@ -114,7 +114,7 @@ emit_tristrip (face3d *face)
+ }
+ 
+ static void
+-toroid_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
++toroid_xyz_to_uv (face3d *face, double x, double y, double z, double *u, double *v)
+ {
+   double refx, refy, refz;
+   double ortx, orty, ortz;
+@@ -136,7 +136,7 @@ toroid_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
+ 
+   /* Magnitude of vector component between toroid center and (x,y,z) in axis direction */
+   dot = (x - face->ox) * face->ax +
+-        (y - face->oy) * face->az +
++        (y - face->oy) * face->ay +
+         (z - face->oz) * face->az;
+ 
+   /* Find the vector to x,y,z in the plane bisecting the toroid slice at z=0 */
+@@ -159,9 +159,9 @@ toroid_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
+   *u = atan2 (sinu, cosu);
+ 
+   /* Point at u, middle of toroid cross-section */
+-  mx = rayx * face->radius;
+-  my = rayy * face->radius;
+-  mz = rayz * face->radius;
++  mx = face->ox + rayx * face->radius;
++  my = face->oy + rayy * face->radius;
++  mz = face->oz + rayz * face->radius;
+ 
+   /* Find the vector to x,y,z in the plane cutting the toroid center, and passing through u */
+   vx = x - mx;
+@@ -201,7 +201,9 @@ toroid_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
+ }
+ 
+ static void
+-toroid_uv_to_xyz_and_normal (face3d *face, float u, float v, float *x, float *y, float *z,
++toroid_uv_to_xyz_and_normal (face3d *face,
++                             double u, double v,
++                             float *x, float *y, float *z,
+                              float *nx, float *ny, float *nz)
+ {
+   float ortx, orty, ortz;
+@@ -243,53 +245,106 @@ toroid_uv_to_xyz_and_normal (face3d *face, float u, float v, float *x, float *y,
+     }
+ }
+ 
+-#warning NEED TO WRAP IN TWO DIMENSIONS, NOT JUST 1x
+ static void
+-toroid_bo_add_edge (borast_t *bo,
+-                  double lu, double lv,
+-                  double  u, double  v,
+-                  bool is_outer)
++toroid_bo_add_edge_uwrap (borast_t *bo,
++                          double lu, double lv,
++                          double  u, double  v,
++                          bool is_outer)
+ {
++  double minu;
++
+   /* XXX: Not absolutely sure about this! */
+-  if (fabs (u - lu) > fabs (u + 360.0f - lu))
++  if (fabs (u - lu) > fabs (u + 360.0 - lu))
+     {
+-#if 1
+       bo_add_edge (bo,
+-                   MM_TO_COORD (lv), MM_TO_COORD (lu),
+-                   MM_TO_COORD ( v), MM_TO_COORD ( u + 360.0f),
++                   MM_TO_COORD (lu        ), MM_TO_COORD (lv),
++                   MM_TO_COORD ( u + 360.0), MM_TO_COORD ( v),
+                    is_outer);
+-#endif
+-#if 1
+       bo_add_edge (bo,
+-                   MM_TO_COORD (lv), MM_TO_COORD (lu - 360.0f),
+-                   MM_TO_COORD ( v), MM_TO_COORD ( u),
++                   MM_TO_COORD (lu - 360.0), MM_TO_COORD (lv),
++                   MM_TO_COORD ( u        ), MM_TO_COORD ( v),
++                   is_outer);
++      /* Extra edge to keep the in/out regions correct */
++//      minu = MIN (lu - 360.0, u);
++      printf ("Wrapped u edge, lu = %f, u=%f, lu-360=%f, minu=%f\n",
++             lu, u, lu - 360.0, minu);
++      minu = 0;
++      bo_add_edge (bo,
++                   MM_TO_COORD (minu), MM_TO_COORD (lv),
++                   MM_TO_COORD (minu), MM_TO_COORD (v),
+                    is_outer);
+-#endif
+     }
+-  else if (fabs (u - lu) > fabs (u - 360.0f - lu))
++  else if (fabs (u - lu) > fabs (u - 360.0 - lu))
+     {
+-#if 1
+       bo_add_edge (bo,
+-                   MM_TO_COORD (lv), MM_TO_COORD (lu),
+-                   MM_TO_COORD ( v), MM_TO_COORD ( u - 360.0f),
++                   MM_TO_COORD (lu        ), MM_TO_COORD (lv),
++                   MM_TO_COORD ( u - 360.0), MM_TO_COORD ( v),
+                    is_outer);
+-#endif
+-#if 1
+       bo_add_edge (bo,
+-                   MM_TO_COORD (lv), MM_TO_COORD (lu + 360.0f),
+-                   MM_TO_COORD ( v), MM_TO_COORD ( u),
++                   MM_TO_COORD (lu + 360.0), MM_TO_COORD (lv),
++                   MM_TO_COORD ( u        ), MM_TO_COORD ( v),
++                   is_outer);
++      /* Extra edge to keep the in/out regions correct */
++      minu = MIN (lu, u - 360.0);
++      printf ("Wrapped u edge, lu = %f, u=%f, u-360=%f, minu=%f\n",
++             lu, u, u - 360.0, minu);
++      minu = 0;
++      bo_add_edge (bo,
++                   MM_TO_COORD (minu), MM_TO_COORD (lv),
++                   MM_TO_COORD (minu), MM_TO_COORD (v),
+                    is_outer);
+-#endif
+     }
+   else
+     {
+       bo_add_edge (bo,
+-                   MM_TO_COORD (lv), MM_TO_COORD (lu),
+-                   MM_TO_COORD ( v), MM_TO_COORD ( u),
++                   MM_TO_COORD (lu), MM_TO_COORD (lv),
++                   MM_TO_COORD ( u), MM_TO_COORD ( v),
+                    is_outer);
+     }
+ 
+ }
++
++static void
++toroid_bo_add_edge (borast_t *bo,
++                  double lu, double lv,
++                  double  u, double  v,
++                  bool is_outer)
++{
++  /* XXX: Not absolutely sure about this! */
++  if (fabs (v - lv) > fabs (v + 360.0 - lv))
++    {
++      toroid_bo_add_edge_uwrap (bo,
++                                lu, lv,
++                                 u,  v + 360.0,
++                                is_outer);
++      toroid_bo_add_edge_uwrap (bo,
++                                lu, lv - 360.0,
++                                 u,  v,
++                                is_outer);
++    }
++  else if (fabs (v - lv) > fabs (v - 360.0 - lv))
++    {
++      toroid_bo_add_edge_uwrap (bo,
++                                lu, lv,
++                                 u,  v - 360.0,
++                                is_outer);
++      toroid_bo_add_edge_uwrap (bo,
++                                lu, lv + 360.0,
++                                 u,  v,
++                                is_outer);
++    }
++  else
++    {
++      toroid_bo_add_edge_uwrap (bo,
++                                lu, lv,
++                                 u,  v,
++                                is_outer);
++    }
++
++}
++
++static void plane_uv_to_xyz_and_normal (face3d *face, float u, float v, float *x, float *y, float *z, float *nx, float *ny, float *nz);
++
+ static void
+ toroid_ensure_tristrip (face3d *face)
+ {
+@@ -333,15 +388,55 @@ toroid_ensure_tristrip (face3d *face)
+ 
+     }
+ 
++#if 1
+   /* Worst case, we need 2x number of edges, since we repeat any which span the u=0, u=360 wrap-around. */
+-  bo = bo_init (2 * edge_count);
++  bo = bo_init (2 * edge_count + 2 * 37  + 2); /* NB +37 is kludge for our vertical bars */
++
++#if 1
++  {
++    int i;
++
++#if 0
++    /* Add a line at the start of our bounds to get things started */
++    bo_add_edge (bo,
++                 MM_TO_COORD(0), MM_TO_COORD(0.0),
++                 MM_TO_COORD(0), MM_TO_COORD(360.0),
++                 false);
++#endif
++
++#if 0
++    bo_add_edge (bo,
++                 MM_TO_COORD(360.0), MM_TO_COORD(0.0),
++                 MM_TO_COORD(360.0), MM_TO_COORD(360.0),
++                 false);
++#endif
++
++    for (i = 0; i <= 360; i += 10)
++      {
++        for (j = 0; j < 360; j += 10)
++          {
++            bo_add_edge (bo,
++                         MM_TO_COORD(i), MM_TO_COORD(j),
++                         MM_TO_COORD(i), MM_TO_COORD(j + 10.0),
++                         true);
++
++#if 0
++            bo_add_edge (bo,
++                         MM_TO_COORD(i + 0.01), MM_TO_COORD(j),
++                         MM_TO_COORD(i + 0.01), MM_TO_COORD(j + 10.0),
++                         false);
++#endif
++          }
++      }
++  }
++#endif
+ 
+   /* Throw the edges to the rasteriser */
+   for (c_iter = face->contours; c_iter != NULL; c_iter = g_list_next (c_iter))
+     {
+-      float fu = 0.0f, fv = 0.0f;
+-      float lu = 0.0f, lv = 0.0f;
+-      float u, v;
++      double fu = 0.0, fv = 0.0;
++      double lu = 0.0, lv = 0.0;
++      double u, v;
+       bool first_vertex = true;
+       bool is_outer;
+ 
+@@ -376,6 +471,7 @@ toroid_ensure_tristrip (face3d *face)
+                                 info->linearised_vertices[vertex_idx * 3 + 2],
+                                 &u, &v);
+ 
++#if 0
+               toroid_uv_to_xyz_and_normal (face, u, v, &x, &y, &z, &nx, &ny, &nz);
+               x = COORD_TO_STEP_X(PCB, x);
+               y = COORD_TO_STEP_Y(PCB, y);
+@@ -389,6 +485,7 @@ toroid_ensure_tristrip (face3d *face)
+                       (double)x - info->linearised_vertices[vertex_idx * 3 + 0],
+                       (double)y - info->linearised_vertices[vertex_idx * 3 + 1],
+                       (double)z - info->linearised_vertices[vertex_idx * 3 + 2]);
++#endif
+ 
+               if (first_vertex)
+                 {
+@@ -446,7 +543,8 @@ toroid_ensure_tristrip (face3d *face)
+     return;
+   }
+ 
+-  uv_points = g_new0 (float, 2 * num_uv_points);
++  uv_points = g_new0 (double, 2 * num_uv_points + 8);
++  line_indices = g_new0 (int, 10 * traps.num_traps + 8);
+ 
+   vertex_comp = 0;
+   num_uv_points = 0;
+@@ -457,12 +555,14 @@ toroid_ensure_tristrip (face3d *face)
+ 
+     /* NB: ybot > ytop, as this is all derived from a screen-space rasteriser with 0,0 in the top left */
+ 
++#if 0
+     /* Exclude strips entirely above or below the 0 <= u <= 360 range */
+     if (y_bot < MM_TO_COORD (0.0f))
+       continue;
+ 
+     if (y_top > MM_TO_COORD (360.0f))
+       continue;
++#endif
+ 
+     /* Clamp evaluation coordinates otherwise (strips straddling the boundary)
+      * NB: Due to input parameter-space geometry duplication, the bit we trim
+@@ -487,6 +587,19 @@ toroid_ensure_tristrip (face3d *face)
+         x4 = _line_compute_intersection_x_for_y (&traps.traps[i].left,  y_bot);
+       }
+ 
++#if 1
++    /* Skip pieces which wrap around the u boundary */
++    if (x1 < MM_TO_COORD(0.0) ||
++        x2 < MM_TO_COORD(0.0) ||
++        x3 < MM_TO_COORD(0.0) ||
++        x4 < MM_TO_COORD(0.0) ||
++        x1 > MM_TO_COORD(360.0) ||
++        x2 > MM_TO_COORD(360.0) ||
++        x3 > MM_TO_COORD(360.0) ||
++        x4 > MM_TO_COORD(360.0))
++      continue;
++#endif
++
+     if (x1 == x2) {
+       /* NB: Repeated first virtex to separate from other tri-strip */
+       uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
+@@ -521,11 +634,96 @@ toroid_ensure_tristrip (face3d *face)
+       uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
+       /* NB: Repeated last virtex to separate from other tri-strip */
+ 
++      line_indices[num_line_indices++] = num_uv_points + 1;
++      line_indices[num_line_indices++] = num_uv_points + 2;
++
++      line_indices[num_line_indices++] = num_uv_points + 1;
++      line_indices[num_line_indices++] = num_uv_points + 3;
++
++      /* Central line */
++      line_indices[num_line_indices++] = num_uv_points + 2;
++      line_indices[num_line_indices++] = num_uv_points + 3;
++
++      line_indices[num_line_indices++] = num_uv_points + 3;
++      line_indices[num_line_indices++] = num_uv_points + 4;
++
++      line_indices[num_line_indices++] = num_uv_points + 4;
++      line_indices[num_line_indices++] = num_uv_points + 2;
++
+       num_uv_points += 6;
+     }
+   }
+ 
++  uv_points[vertex_comp++] = MM_TO_COORD(0.0  );  uv_points[vertex_comp++] = MM_TO_COORD(0.0  );
++  uv_points[vertex_comp++] = MM_TO_COORD(0.0  );  uv_points[vertex_comp++] = MM_TO_COORD(360.0);
++  uv_points[vertex_comp++] = MM_TO_COORD(360.0);  uv_points[vertex_comp++] = MM_TO_COORD(360.0);
++  uv_points[vertex_comp++] = MM_TO_COORD(360.0);  uv_points[vertex_comp++] = MM_TO_COORD(0.0  );
++
++  line_indices[num_line_indices++] = num_uv_points + 0;
++  line_indices[num_line_indices++] = num_uv_points + 1;
++  line_indices[num_line_indices++] = num_uv_points + 1;
++  line_indices[num_line_indices++] = num_uv_points + 2;
++  line_indices[num_line_indices++] = num_uv_points + 2;
++  line_indices[num_line_indices++] = num_uv_points + 3;
++  line_indices[num_line_indices++] = num_uv_points + 3;
++  line_indices[num_line_indices++] = num_uv_points + 0;
++
++  face->line_indices = line_indices;
++  face->line_num_indices = num_line_indices;
++
+   _borast_traps_fini (&traps);
++#endif
++
++#if 0
++  num_uv_points = 6 * 36 * 36;
++  uv_points = g_new0 (double, 2 * num_uv_points);
++
++  vertex_comp = 0;
++  num_uv_points = 0;
++
++  {
++    int i, j;
++
++    for (i = 0; i < 360; i += 10) {
++      for (j = 0; j < 360; j += 10) {
++        float x1, x2, x3, x4, y_top, y_bot;
++        float x, y, z, nx, ny, nz;
++        double u, v;
++
++        x1 = MM_TO_COORD(i);  x2 = MM_TO_COORD(i + 10);
++        x4 = MM_TO_COORD(i);  x3 = MM_TO_COORD(i + 10);
++        y_top = MM_TO_COORD(j);
++        y_bot = MM_TO_COORD(j + 10);
++
++        uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++        uv_points[vertex_comp++] = x2;  uv_points[vertex_comp++] = y_top;
++        uv_points[vertex_comp++] = x3;  uv_points[vertex_comp++] = y_bot;
++        uv_points[vertex_comp++] = x1;  uv_points[vertex_comp++] = y_top;
++        uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++        uv_points[vertex_comp++] = x4;  uv_points[vertex_comp++] = y_bot;
++        num_uv_points += 6;
++
++
++        toroid_uv_to_xyz_and_normal (face, i, j, &x, &y, &z, &nx, &ny, &nz);
++        x = COORD_TO_STEP_X(PCB, x);
++        y = COORD_TO_STEP_Y(PCB, y);
++        z = COORD_TO_STEP_Z(PCB, z);
++
++        toroid_xyz_to_uv (face, x, y, z, &u, &v);
++
++        printf ("(%f, %f) -> (%f, %f, %f) -> (%f, %f)  DELTA: (%f, %f)\n",
++                (double)i, (double)j,
++                (double)x,
++                (double)y,
++                (double)z,
++                (double)u, (double)v,
++                (double)(i - u),
++                (double)(j - v));
++
++      }
++    }
++  }
++#endif
+ 
+   /* XXX: Would it be better to use the original vertices?
+    *      Rather than converting to u-v coordinates and back.
+@@ -534,15 +732,31 @@ toroid_ensure_tristrip (face3d *face)
+    */
+ 
+   face->tristrip_num_vertices = num_uv_points;
++
++  num_uv_points += 4;
+   face->tristrip_vertices = g_new0 (float, BUFFER_STRIDE * num_uv_points);
+ 
+   vertex_comp = 0;
+   for (i = 0; i < num_uv_points; i++)
+     {
++#if 1
++      plane_uv_to_xyz_and_normal (face,
++                                  COORD_TO_MM (uv_points[2 * i + 0] * 0.1),
++                                  COORD_TO_MM (uv_points[2 * i + 1] * 0.1),
++                                  &face->tristrip_vertices[vertex_comp + 0],
++                                  &face->tristrip_vertices[vertex_comp + 1],
++                                  &face->tristrip_vertices[vertex_comp + 2],
++                                  /* Vertex normal */
++                                  &face->tristrip_vertices[vertex_comp + 3],
++                                  &face->tristrip_vertices[vertex_comp + 4],
++                                  &face->tristrip_vertices[vertex_comp + 5]);
++
++      vertex_comp += BUFFER_STRIDE;
++#else
+       toroid_uv_to_xyz_and_normal (face,
+                                    /* uv */
+-                                   COORD_TO_MM (uv_points[2 * i + 1]), /* Inverse of arbitrary transformation above */
+                                    COORD_TO_MM (uv_points[2 * i + 0]), /* Inverse of arbitrary transformation above */
++                                   COORD_TO_MM (uv_points[2 * i + 1]), /* Inverse of arbitrary transformation above */
+                                    /* xyz */
+                                    &face->tristrip_vertices[vertex_comp + 0],
+                                    &face->tristrip_vertices[vertex_comp + 1],
+@@ -553,6 +767,7 @@ toroid_ensure_tristrip (face3d *face)
+                                    &face->tristrip_vertices[vertex_comp + 5]);
+ 
+       vertex_comp += BUFFER_STRIDE;
++#endif
+     }
+ 
+   g_free (uv_points);
+@@ -1973,19 +2188,19 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+ 
+   if (face->is_planar)
+     {
+-//      plane_ensure_tristrip (face);
++      plane_ensure_tristrip (face);
+     }
+   else if (face->is_cylindrical)
+     {
+-//      cylinder_ensure_tristrip (face);
++      cylinder_ensure_tristrip (face);
+     }
+   else if (face->is_conical)
+     {
+-//      cone_ensure_tristrip (face);
++      cone_ensure_tristrip (face);
+     }
+   else if (face->is_toroidal)
+     {
+-      toroid_ensure_tristrip (face);
++//      toroid_ensure_tristrip (face);
+     }
+   else
+     {
+@@ -2006,4 +2221,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+ #endif
+ 
+   emit_tristrip (face);
++
++  if (face->is_debug)
++    emit_lines (face);
+ }
