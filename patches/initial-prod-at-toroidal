@@ -1,5 +1,5 @@
-Bottom: 25291a414ceb032b6bf8af61ac4a22331acbff65
-Top:    5998db868430c61817cac4480b1c224045ca7a61
+Bottom: a7d477ea339da820007cfe364ae58cde850636b9
+Top:    d557cbd52e0d957cca09a699ac5cce3f41a29114
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-26 04:12:55 +0000
 
@@ -38,7 +38,7 @@ index 725e08b..d591add 100644
  
    bool is_debug;
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
-index 3bff13b..8b148d2 100644
+index 27cae2f..88833d6 100644
 --- a/src/hid/common/face3d_gl.c
 +++ b/src/hid/common/face3d_gl.c
 @@ -66,6 +66,38 @@
@@ -820,7 +820,7 @@ index 3bff13b..8b148d2 100644
  
        cylinder_bo_add_edge (bo,
                              lu, lv,
-@@ -1552,6 +2244,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -1562,6 +2254,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
      {
        cone_ensure_tristrip (face);
      }
@@ -831,7 +831,7 @@ index 3bff13b..8b148d2 100644
    else
      {
        /* We only know how to deal with planar and cylindrical faces for now */
-@@ -1571,4 +2267,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -1581,4 +2277,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
  #endif
  
    emit_tristrip (face);
