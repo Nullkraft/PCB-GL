@@ -1,5 +1,5 @@
-Bottom: f33a4c4481ef4b16821ca167b262980694629e62
-Top:    5998db868430c61817cac4480b1c224045ca7a61
+Bottom: 375dc988bc7c5150a68eb4df5873cb7a158e0266
+Top:    25291a414ceb032b6bf8af61ac4a22331acbff65
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-29 13:31:25 +0000
 
@@ -14,10 +14,10 @@ feels like it might be a good idea in the long run).
 ---
 
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
-index eb8b736..8b148d2 100644
+index 1e49158..3bff13b 100644
 --- a/src/hid/common/face3d_gl.c
 +++ b/src/hid/common/face3d_gl.c
-@@ -1931,9 +1931,9 @@ plane_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
+@@ -1239,9 +1239,9 @@ plane_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
  {
    double ortx, orty, ortz;
  
@@ -30,7 +30,7 @@ index eb8b736..8b148d2 100644
  
    *u = (x - face->ox) * face->rx +
         (y - face->oy) * face->ry +
-@@ -1945,17 +1945,29 @@ plane_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
+@@ -1253,17 +1253,29 @@ plane_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
  }
  
  static void
@@ -64,7 +64,7 @@ index eb8b736..8b148d2 100644
  }
  
  static void
-@@ -2054,7 +2066,8 @@ plane_ensure_tristrip (face3d *face)
+@@ -1362,7 +1374,8 @@ plane_ensure_tristrip (face3d *face)
  
        /* make sure it is a positive contour (outer) or negative (hole) */
  //      if (p_contour->Flags.orient != (hole ? PLF_INV : PLF_DIR))
@@ -74,7 +74,7 @@ index eb8b736..8b148d2 100644
  
        if (p_contour->Flags.orient == PLF_DIR)
          {
-@@ -2191,17 +2204,16 @@ plane_ensure_tristrip (face3d *face)
+@@ -1499,17 +1512,16 @@ plane_ensure_tristrip (face3d *face)
    vertex_comp = 0;
    for (i = 0; i < num_uv_points; i++)
      {
@@ -103,7 +103,7 @@ index eb8b736..8b148d2 100644
        vertex_comp += BUFFER_STRIDE;
      }
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
-index 5c35f1e..6af4534 100644
+index 78e57a9..49b075a 100644
 --- a/src/hid/step/model.cpp
 +++ b/src/hid/step/model.cpp
 @@ -1615,17 +1615,22 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
