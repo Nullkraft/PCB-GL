@@ -1,5 +1,5 @@
 Bottom: 375dc988bc7c5150a68eb4df5873cb7a158e0266
-Top:    b1c4eb2e3df2102609307c22d0fc02f3ef2b6e23
+Top:    f33a4c4481ef4b16821ca167b262980694629e62
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-26 04:12:55 +0000
 
@@ -11,7 +11,7 @@ Initial prod at toroidal surfaces
 ---
 
 diff --git a/src/hid/common/face3d.h b/src/hid/common/face3d.h
-index 725e08b..0f477ed 100644
+index 725e08b..d591add 100644
 --- a/src/hid/common/face3d.h
 +++ b/src/hid/common/face3d.h
 @@ -20,6 +20,11 @@ typedef struct {
@@ -26,11 +26,61 @@ index 725e08b..0f477ed 100644
    appearance *appear;
  
    /* XXX: STEP specific - breaks encapsulation */
+@@ -30,6 +35,10 @@ typedef struct {
+   /* Rendering cache */
+   int tristrip_num_vertices;
+   float *tristrip_vertices;
++
++  int line_num_indices;
++  int *line_indices;
++
+   bool triangulate_failed;
+ 
+   bool is_debug;
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
-index 1e49158..a7bbf9a 100644
+index 1e49158..eb8b736 100644
 --- a/src/hid/common/face3d_gl.c
 +++ b/src/hid/common/face3d_gl.c
-@@ -113,6 +113,668 @@ emit_tristrip (face3d *face)
+@@ -66,6 +66,38 @@
+ #define BUFFER_STRIDE 6 /* 3x vertex + 3x normal */
+ 
+ static void
++emit_lines (face3d *face)
++{
++  GLfloat *data_pointer = NULL;
++
++//  CHECK_IS_IN_CONTEXT ();
++
++  if (face->tristrip_num_vertices == 0)
++    return;
++
++  data_pointer = face->tristrip_vertices;
++  glVertexPointer   (3, GL_FLOAT, sizeof(GL_FLOAT) * BUFFER_STRIDE, data_pointer + 0);
++  glNormalPointer   (GL_FLOAT, sizeof(GL_FLOAT) * BUFFER_STRIDE, data_pointer + 3);
++
++//  data_pointer = face->line_indices;
++//  glIndexPointer   (GL_INT, sizeof(GL_UNSIGNED_INT), data_pointer + 0);
++
++  glEnableClientState (GL_VERTEX_ARRAY);
++  glEnableClientState (GL_NORMAL_ARRAY);
++
++  glTexCoord2f (0.0f, 0.0f);
++
++  glPushAttrib (GL_CURRENT_BIT);
++  glColor4f (1., 1., 1., 1.);
++  glDrawElements (GL_LINES, face->line_num_indices, GL_UNSIGNED_INT, face->line_indices);
++  glPopAttrib ();
++
++  glDisableClientState (GL_VERTEX_ARRAY);
++  glDisableClientState (GL_NORMAL_ARRAY);
++}
++
++
++static void
+ emit_tristrip (face3d *face)
+ {
+   GLfloat *data_pointer = NULL;
+@@ -113,6 +145,670 @@ emit_tristrip (face3d *face)
  //  glDisableClientState (GL_TEXTURE_COORD_ARRAY);
  }
  
@@ -271,8 +321,10 @@ index 1e49158..a7bbf9a 100644
 +{
 +  GList *c_iter;
 +  int num_uv_points;
-+  float *uv_points;
-+  int i;
++  double *uv_points;
++  int num_line_indices = 0;
++  unsigned int *line_indices;
++  int i, j;
 +  int vertex_comp;
 +  contour3d *contour;
 +  edge_ref e;
@@ -699,7 +751,7 @@ index 1e49158..a7bbf9a 100644
  
  static void
  cone_xyz_to_uv (face3d *face, float x, float y, float z, float *u, float *v)
-@@ -303,7 +965,6 @@ cone_ensure_tristrip (face3d *face)
+@@ -303,7 +999,6 @@ cone_ensure_tristrip (face3d *face)
        float u, v;
        bool first_vertex = true;
        bool is_outer;
@@ -707,7 +759,7 @@ index 1e49158..a7bbf9a 100644
  
        /* XXX: How can we tell if a contour is inner or outer??? */
        is_outer = true;
-@@ -338,18 +999,18 @@ cone_ensure_tristrip (face3d *face)
+@@ -338,18 +1033,18 @@ cone_ensure_tristrip (face3d *face)
                if (first_vertex)
                  {
                    fu = u;
@@ -729,7 +781,7 @@ index 1e49158..a7bbf9a 100644
                first_vertex = false;
              }
  
-@@ -701,7 +1362,6 @@ cylinder_ensure_tristrip (face3d *face)
+@@ -701,7 +1396,6 @@ cylinder_ensure_tristrip (face3d *face)
        float u, v;
        bool first_vertex = true;
        bool is_outer;
@@ -737,7 +789,7 @@ index 1e49158..a7bbf9a 100644
  
        /* XXX: How can we tell if a contour is inner or outer??? */
        is_outer = true;
-@@ -736,27 +1396,25 @@ cylinder_ensure_tristrip (face3d *face)
+@@ -736,27 +1430,25 @@ cylinder_ensure_tristrip (face3d *face)
                if (first_vertex)
                  {
                    fu = u;
@@ -768,7 +820,7 @@ index 1e49158..a7bbf9a 100644
  
        cylinder_bo_add_edge (bo,
                              lu, lv,
-@@ -1540,6 +2198,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -1540,6 +2232,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
      {
        cone_ensure_tristrip (face);
      }
@@ -779,7 +831,7 @@ index 1e49158..a7bbf9a 100644
    else
      {
        /* We only know how to deal with planar and cylindrical faces for now */
-@@ -1559,4 +2221,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -1559,4 +2255,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
  #endif
  
    emit_tristrip (face);
