@@ -1,5 +1,5 @@
-Bottom: 375dc988bc7c5150a68eb4df5873cb7a158e0266
-Top:    f33a4c4481ef4b16821ca167b262980694629e62
+Bottom: 25291a414ceb032b6bf8af61ac4a22331acbff65
+Top:    5998db868430c61817cac4480b1c224045ca7a61
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-26 04:12:55 +0000
 
@@ -38,7 +38,7 @@ index 725e08b..d591add 100644
  
    bool is_debug;
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
-index 1e49158..eb8b736 100644
+index 3bff13b..8b148d2 100644
 --- a/src/hid/common/face3d_gl.c
 +++ b/src/hid/common/face3d_gl.c
 @@ -66,6 +66,38 @@
@@ -820,7 +820,7 @@ index 1e49158..eb8b736 100644
  
        cylinder_bo_add_edge (bo,
                              lu, lv,
-@@ -1540,6 +2232,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -1552,6 +2244,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
      {
        cone_ensure_tristrip (face);
      }
@@ -831,7 +831,7 @@ index 1e49158..eb8b736 100644
    else
      {
        /* We only know how to deal with planar and cylindrical faces for now */
-@@ -1559,4 +2255,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -1571,4 +2267,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
  #endif
  
    emit_tristrip (face);
@@ -853,10 +853,10 @@ index d3f2de5..200f126 100644
  
    glEnable (GL_COLOR_MATERIAL);
 diff --git a/src/hid/step/model.cpp b/src/hid/step/model.cpp
-index 78e57a9..5c35f1e 100644
+index 49b075a..6af4534 100644
 --- a/src/hid/step/model.cpp
 +++ b/src/hid/step/model.cpp
-@@ -1720,7 +1720,48 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
+@@ -1725,7 +1725,48 @@ process_sr_or_subtype(InstMgr *instance_list, SdaiShape_representation *sr, proc
              }
            else if (strcmp (surface->EntityName (), "Toroidal_Surface") == 0)
              {
