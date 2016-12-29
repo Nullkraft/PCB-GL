@@ -134,6 +134,9 @@ emit_tristrip (face3d *face)
   glTexCoord2f (0.0f, 0.0f);
 
   glDrawArrays (GL_TRIANGLE_STRIP, 0, face->tristrip_num_vertices);
+
+//  glColor3f (1.0f, 1.0f, 1.0f);
+//  glDrawArrays (GL_LINE_STRIP, 0, face->tristrip_num_vertices);
 #if 0
   glPushAttrib (GL_CURRENT_BIT);
   glColor4f (1., 1., 1., 1.);
