@@ -35,6 +35,10 @@ typedef struct {
   /* Rendering cache */
   int tristrip_num_vertices;
   float *tristrip_vertices;
+
+  int line_num_indices;
+  int *line_indices;
+
   bool triangulate_failed;
 
   bool is_debug;

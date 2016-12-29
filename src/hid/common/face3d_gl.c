@@ -66,6 +66,38 @@
 #define BUFFER_STRIDE 6 /* 3x vertex + 3x normal */
 
 static void
+emit_lines (face3d *face)
+{
+  GLfloat *data_pointer = NULL;
+
+//  CHECK_IS_IN_CONTEXT ();
+
+  if (face->tristrip_num_vertices == 0)
+    return;
+
+  data_pointer = face->tristrip_vertices;
+  glVertexPointer   (3, GL_FLOAT, sizeof(GL_FLOAT) * BUFFER_STRIDE, data_pointer + 0);
+  glNormalPointer   (GL_FLOAT, sizeof(GL_FLOAT) * BUFFER_STRIDE, data_pointer + 3);
+
+//  data_pointer = face->line_indices;
+//  glIndexPointer   (GL_INT, sizeof(GL_UNSIGNED_INT), data_pointer + 0);
+
+  glEnableClientState (GL_VERTEX_ARRAY);
+  glEnableClientState (GL_NORMAL_ARRAY);
+
+  glTexCoord2f (0.0f, 0.0f);
+
+  glPushAttrib (GL_CURRENT_BIT);
+  glColor4f (1., 1., 1., 1.);
+  glDrawElements (GL_LINES, face->line_num_indices, GL_UNSIGNED_INT, face->line_indices);
+  glPopAttrib ();
+
+  glDisableClientState (GL_VERTEX_ARRAY);
+  glDisableClientState (GL_NORMAL_ARRAY);
+}
+
+
+static void
 emit_tristrip (face3d *face)
 {
   GLfloat *data_pointer = NULL;
@@ -350,8 +382,10 @@ toroid_ensure_tristrip (face3d *face)
 {
   GList *c_iter;
   int num_uv_points;
-  float *uv_points;
-  int i;
+  double *uv_points;
+  int num_line_indices = 0;
+  unsigned int *line_indices;
+  int i, j;
   int vertex_comp;
   contour3d *contour;
   edge_ref e;
