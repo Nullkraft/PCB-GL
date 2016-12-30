@@ -2529,9 +2529,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 {
   hidglGC hidgl_gc = (hidglGC)gc;
   hidgl_instance *hidgl = hidgl_gc->hidgl;
-#ifdef MEMCPY_VERTEX_DATA
-  hidgl_priv *priv = hidgl->priv;
-#endif
+  GLfloat matrix[16];
 
   hidgl_flush_triangles (hidgl);
 
@@ -2571,6 +2569,20 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 
   emit_tristrip (face);
 
+
+  glPushAttrib (GL_TRANSFORM_BIT);
+  glMatrixMode(GL_PROJECTION);
+
+  glPushMatrix ();
+
+  glGetFloatv (GL_PROJECTION_MATRIX, matrix);
+  matrix[10] += 1e-5;
+  glLoadMatrixf (matrix);
+
   if (face->is_debug)
     emit_lines (face);
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix ();
+  glPopAttrib ();
 }

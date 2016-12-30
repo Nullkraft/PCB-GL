@@ -315,6 +315,49 @@ draw_face (face3d *face, void *data)
 
 }
 
+/* This function is based on code from Game Programming Gems 1:
+ * http://read.pudn.com/downloads32/sourcecode/game/105186/Game%20Programming%20Gems%201/Polygonal/01Lengyel/tweaking.cpp__.htm
+ *
+ * Portions Copyright (C) Eric Lengyel, 2000
+ */
+
+static void
+push_and_tweak_projection (void)
+{
+  GLfloat matrix[16];
+  GLfloat epsilon;
+
+  glPushAttrib (GL_TRANSFORM_BIT);
+  glMatrixMode(GL_PROJECTION);
+
+  glPushMatrix ();
+
+  // Retrieve the projection matrix
+  glGetFloatv (GL_PROJECTION_MATRIX, matrix);
+
+  // Calculate epsilon with equation (7)
+//  epsilon = -2.0f * f * n * delta / ((f + n) * pz * (pz + delta));
+//  epsilon = 4.8e-7;
+  epsilon = 1e-5;
+
+  // Modify entry (3,3) of the projection matrix
+//  matrix[10] *= 1.0f + epsilon;
+  matrix[10] += epsilon;
+
+  // Send the projection matrix back to OpenGL
+  glLoadMatrixf (matrix);
+  glPopAttrib ();
+}
+
+static void
+pop_projection (void)
+{
+  glPushAttrib (GL_TRANSFORM_BIT);
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix ();
+  glPopAttrib ();
+}
+
 void
 object3d_draw (hidGC gc, object3d *object, bool selected)
 {
@@ -339,7 +382,9 @@ object3d_draw (hidGC gc, object3d *object, bool selected)
   glDisable(GL_LIGHTING); /* XXX: HACK */
 
   face_no = 0;
+  push_and_tweak_projection ();
   g_list_foreach (object->faces, (GFunc)draw_face_edges, &info);
+  pop_projection ();
 
   glEnable(GL_LIGHTING); /* XXX: HACK */
 
