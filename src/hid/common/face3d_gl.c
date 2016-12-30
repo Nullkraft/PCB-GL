@@ -2537,11 +2537,11 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 
   if (face->is_planar)
     {
-//      plane_ensure_tristrip (face);
+      plane_ensure_tristrip (face);
     }
   else if (face->is_cylindrical)
     {
-//      cylinder_ensure_tristrip (face);
+      cylinder_ensure_tristrip (face);
     }
   else if (face->is_conical)
     {
