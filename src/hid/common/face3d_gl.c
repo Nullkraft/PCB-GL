@@ -220,6 +220,15 @@ crossing_list_sort (crossing_info *info)
   qsort (info->crossings, info->num_crossings, sizeof (*info->crossings), compare_crossings);
 }
 
+/* XXX: This gives a bad guess of u coordinate near the poles... for some surface
+ *      curves, we might be able to take a better guess at the u-coordinate of
+ *      approach, e.g. on a given meridian line (u=u1), all sampled points should
+ *      lie on this line (even at the pole).
+ *
+ * XXX: We don't explicitly attempt to rectify this, or provide any edges which
+ *      make the u,v space tesselation border continuous at the pole. this might
+ *      cause artaefacts in the tesslation.
+ */
 static void
 sphere_xyz_to_uv (face3d *face, double x, double y, double z, double *u, double *v)
 {
@@ -3278,7 +3287,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
 
   if (face->is_planar)
     {
-//      plane_ensure_tristrip (face);
+      plane_ensure_tristrip (face);
     }
   else if (face->is_cylindrical)
     {
