@@ -115,8 +115,9 @@ object3d_test_init (void)
 
   object_default_edge_appearance = make_appearance();
   appearance_set_color (object_default_edge_appearance, 0.0f, 0.0f, 0.0f); /* 1.0f */
-//  appearance_set_color (object_default_edge_appearance, 1.0f, 0.0f, 1.0f); /* 1.0f */
   appearance_set_alpha (object_default_edge_appearance, 1.0f);
+//  appearance_set_color (object_default_edge_appearance, 1.0f, 1.0f, 1.0f); /* 1.0f */
+//  appearance_set_alpha (object_default_edge_appearance, 0.3f);
 
   object_debug_edge_appearance = make_appearance();
   appearance_set_color (object_debug_edge_appearance, 1.0f, 0.0f, 0.0f); /* 1.0f */
