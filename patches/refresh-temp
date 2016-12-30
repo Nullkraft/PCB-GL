@@ -1,0 +1,27 @@
+Bottom: 2de693d1bdb43261ba775061ae15c0e996e076fb
+Top:    62fa8502655608514e39be4985ee75523befc7e5
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-30 14:30:11 +0000
+
+Refresh of toroidal-surfaces-starting-to
+
+---
+
+diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
+index c35a8e5..67afedb 100644
+--- a/src/hid/common/face3d_gl.c
++++ b/src/hid/common/face3d_gl.c
+@@ -2537,11 +2537,11 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+ 
+   if (face->is_planar)
+     {
+-//      plane_ensure_tristrip (face);
++      plane_ensure_tristrip (face);
+     }
+   else if (face->is_cylindrical)
+     {
+-//      cylinder_ensure_tristrip (face);
++      cylinder_ensure_tristrip (face);
+     }
+   else if (face->is_conical)
+     {
