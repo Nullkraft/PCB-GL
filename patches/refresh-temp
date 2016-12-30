@@ -1,0 +1,108 @@
+Bottom: 62fa8502655608514e39be4985ee75523befc7e5
+Top:    fae7d40eabfd2730ef1c1d4076b9c5c3adfc06e2
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2016-12-30 15:01:10 +0000
+
+Refresh of toroidal-surfaces-starting-to
+
+---
+
+diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
+index 67afedb..9191b10 100644
+--- a/src/hid/common/face3d_gl.c
++++ b/src/hid/common/face3d_gl.c
+@@ -2529,9 +2529,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+ {
+   hidglGC hidgl_gc = (hidglGC)gc;
+   hidgl_instance *hidgl = hidgl_gc->hidgl;
+-#ifdef MEMCPY_VERTEX_DATA
+-  hidgl_priv *priv = hidgl->priv;
+-#endif
++  GLfloat matrix[16];
+ 
+   hidgl_flush_triangles (hidgl);
+ 
+@@ -2571,6 +2569,20 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+ 
+   emit_tristrip (face);
+ 
++
++  glPushAttrib (GL_TRANSFORM_BIT);
++  glMatrixMode(GL_PROJECTION);
++
++  glPushMatrix ();
++
++  glGetFloatv (GL_PROJECTION_MATRIX, matrix);
++  matrix[10] += 1e-5;
++  glLoadMatrixf (matrix);
++
+   if (face->is_debug)
+     emit_lines (face);
++
++  glMatrixMode(GL_PROJECTION);
++  glPopMatrix ();
++  glPopAttrib ();
+ }
+diff --git a/src/hid/common/object3d_gl.c b/src/hid/common/object3d_gl.c
+index 9e3c7f4..3b93861 100644
+--- a/src/hid/common/object3d_gl.c
++++ b/src/hid/common/object3d_gl.c
+@@ -315,6 +315,49 @@ draw_face (face3d *face, void *data)
+ 
+ }
+ 
++/* This function is based on code from Game Programming Gems 1:
++ * http://read.pudn.com/downloads32/sourcecode/game/105186/Game%20Programming%20Gems%201/Polygonal/01Lengyel/tweaking.cpp__.htm
++ *
++ * Portions Copyright (C) Eric Lengyel, 2000
++ */
++
++static void
++push_and_tweak_projection (void)
++{
++  GLfloat matrix[16];
++  GLfloat epsilon;
++
++  glPushAttrib (GL_TRANSFORM_BIT);
++  glMatrixMode(GL_PROJECTION);
++
++  glPushMatrix ();
++
++  // Retrieve the projection matrix
++  glGetFloatv (GL_PROJECTION_MATRIX, matrix);
++
++  // Calculate epsilon with equation (7)
++//  epsilon = -2.0f * f * n * delta / ((f + n) * pz * (pz + delta));
++//  epsilon = 4.8e-7;
++  epsilon = 1e-5;
++
++  // Modify entry (3,3) of the projection matrix
++//  matrix[10] *= 1.0f + epsilon;
++  matrix[10] += epsilon;
++
++  // Send the projection matrix back to OpenGL
++  glLoadMatrixf (matrix);
++  glPopAttrib ();
++}
++
++static void
++pop_projection (void)
++{
++  glPushAttrib (GL_TRANSFORM_BIT);
++  glMatrixMode(GL_PROJECTION);
++  glPopMatrix ();
++  glPopAttrib ();
++}
++
+ void
+ object3d_draw (hidGC gc, object3d *object, bool selected)
+ {
+@@ -339,7 +382,9 @@ object3d_draw (hidGC gc, object3d *object, bool selected)
+   glDisable(GL_LIGHTING); /* XXX: HACK */
+ 
+   face_no = 0;
++  push_and_tweak_projection ();
+   g_list_foreach (object->faces, (GFunc)draw_face_edges, &info);
++  pop_projection ();
+ 
+   glEnable(GL_LIGHTING); /* XXX: HACK */
