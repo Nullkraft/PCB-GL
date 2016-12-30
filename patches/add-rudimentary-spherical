@@ -1,5 +1,5 @@
 Bottom: fae7d40eabfd2730ef1c1d4076b9c5c3adfc06e2
-Top:    475164bb3f65645180b631c09b893235474f098b
+Top:    369725aaf1f321e7c7f077051ae8ac7e75189e8b
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-12-30 19:01:18 +0000
 
@@ -23,10 +23,10 @@ index 4e9f1d7..7e0618e 100644
  
    /* XXX: STEP specific - breaks encapsulation */
 diff --git a/src/hid/common/face3d_gl.c b/src/hid/common/face3d_gl.c
-index 9191b10..09b3d10 100644
+index 9191b10..becb0a9 100644
 --- a/src/hid/common/face3d_gl.c
 +++ b/src/hid/common/face3d_gl.c
-@@ -65,86 +65,904 @@
+@@ -65,86 +65,913 @@
  
  #define BUFFER_STRIDE 6 /* 3x vertex + 3x normal */
  
@@ -186,6 +186,15 @@ index 9191b10..09b3d10 100644
 +  qsort (info->crossings, info->num_crossings, sizeof (*info->crossings), compare_crossings);
 +}
 +
++/* XXX: This gives a bad guess of u coordinate near the poles... for some surface
++ *      curves, we might be able to take a better guess at the u-coordinate of
++ *      approach, e.g. on a given meridian line (u=u1), all sampled points should
++ *      lie on this line (even at the pole).
++ *
++ * XXX: We don't explicitly attempt to rectify this, or provide any edges which
++ *      make the u,v space tesselation border continuous at the pole. this might
++ *      cause artaefacts in the tesslation.
++ */
 +static void
 +sphere_xyz_to_uv (face3d *face, double x, double y, double z, double *u, double *v)
 +{
@@ -985,7 +994,7 @@ index 9191b10..09b3d10 100644
  static void
  toroid_xyz_to_uv (face3d *face, double x, double y, double z, double *u, double *v)
  {
-@@ -269,7 +1087,7 @@ toroid_uv_to_xyz_and_normal (face3d *face,
+@@ -269,7 +1096,7 @@ toroid_uv_to_xyz_and_normal (face3d *face,
    *ny = -(cosv * cosu * face->ry + cosv * sinu * orty + sinv * face->ay); /* XXX: Note this is minus, presumably due to PCB's coordinate space */
    *nz =  (cosv * cosu * face->rz + cosv * sinu * ortz + sinv * face->az);
  
@@ -994,7 +1003,7 @@ index 9191b10..09b3d10 100644
      {
        *nx = -*nx;
        *ny = -*ny;
-@@ -367,81 +1185,6 @@ toroid_bo_add_edge (borast_t *bo,
+@@ -367,81 +1194,6 @@ toroid_bo_add_edge (borast_t *bo,
  
  }
  
@@ -1076,16 +1085,7 @@ index 9191b10..09b3d10 100644
  static void
  toroid_ensure_tristrip (face3d *face)
  {
-@@ -2535,7 +3278,7 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
- 
-   if (face->is_planar)
-     {
--      plane_ensure_tristrip (face);
-+//      plane_ensure_tristrip (face);
-     }
-   else if (face->is_cylindrical)
-     {
-@@ -2549,6 +3292,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
+@@ -2549,6 +3301,10 @@ face3d_fill(hidGC gc, face3d *face, bool selected)
      {
        toroid_ensure_tristrip (face);
      }
