@@ -12,6 +12,20 @@ of the correct topological order.
 Skip over them! (NB: It might be possible there are cases with further degenerecies
 that this also causes inversion for?)
 
+Also - some attempts at fixing inverted spherical surface rendering.
+PROBABLY WRONG SO FAR...
+
+Need to consider topological winding order of contours which trace entirely within
+the u,v region, inside/outside. First attempt computes area - but may get it wrong
+for u,v spaces which wrap. Toroids could potentially also be affected, but at the
+moment - the attempted fix looks at spherical surfaces.
+
+Need to check that we cope with spherical surfaces bounded by a single contour,
+bisecting the surface - perhaps along a line of v=constant? (u-wrap)?
+
+Need to investigate why the tesselation looks ragged for certain facing edges
+of a hole cutout within the u,v plane. (See sphere tesselation at top of Neon.step)
+
 
 ---
 
