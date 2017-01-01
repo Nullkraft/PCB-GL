@@ -1,0 +1,18 @@
+Bottom: 13aa7e73e70281e7b96c02ff40061a04e4398bdc
+Top:    13aa7e73e70281e7b96c02ff40061a04e4398bdc
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2017-01-01 00:43:29 +0000
+
+Fix a degenerate case in tesselation start, plus some fixes and cleanups to squash in
+
+Looks like numerical imprecision as the traced contour wraps around in u,v space
+may lead to nearly coincident start/stop events on the u=0 line being sorted out
+of the correct topological order.
+
+Skip over them! (NB: It might be possible there are cases with further degenerecies
+that this also causes inversion for?)
+
+
+---
+
+
