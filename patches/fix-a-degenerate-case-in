@@ -1,5 +1,5 @@
 Bottom: 13aa7e73e70281e7b96c02ff40061a04e4398bdc
-Top:    15620b6cfa4197a0c9934c1df8f0aaef04a6e0cf
+Top:    e7c72be90e4c7eaa6b18886573d78674a9d0fe04
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-01-01 00:43:29 +0000
 
@@ -600,16 +600,3 @@ index eb5dbb5..3b363fb 100644
  
    if (face->is_debug)
      appearance_apply_gl (object_debug_face_appearance);
-diff --git a/src/hid/gtk/gtkhid-gl.c b/src/hid/gtk/gtkhid-gl.c
-index eeadf39..1c3182f 100644
---- a/src/hid/gtk/gtkhid-gl.c
-+++ b/src/hid/gtk/gtkhid-gl.c
-@@ -2788,7 +2788,7 @@ ghid_drawing_area_expose_cb (GtkWidget *widget,
-   glDepthFunc (GL_LESS);
-   glDisable (GL_STENCIL_TEST);
- 
--  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
-+//  glEnable (GL_CULL_FACE); /* XXX: Fix model face filling */
-   glCullFace (GL_BACK);
- 
-   glEnable (GL_COLOR_MATERIAL);
