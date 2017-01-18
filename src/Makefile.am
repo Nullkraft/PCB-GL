@@ -24,11 +24,9 @@ bin_PROGRAMS=	pcb
 
 if DEBUG_BUILD
 # don't disable assert()
-AM_CFLAGS= -Wno-unused-parameter
 else
-AM_CFLAGS= -DNDEBUG -Wno-unused-parameter
+AM_CFLAGS= -DNDEBUG
 endif
-
 
 PCB_SRCS = \
 	action.c \
