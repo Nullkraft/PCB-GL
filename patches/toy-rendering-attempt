@@ -1,5 +1,5 @@
 Bottom: 61e2445ecfa2a5acafb6d39c09cbe02b55700dc4
-Top:    6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
+Top:    a2c5d9a0bd1e9f6db6743a93abcef21264d5e1be
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -9,24 +9,10 @@ Toy rendering attempt
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 8c3d25a..8c9e089 100644
+index 8c3d25a..6e3d281 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -24,10 +24,12 @@ bin_PROGRAMS=	pcb
- 
- if DEBUG_BUILD
- # don't disable assert()
-+AM_CFLAGS= -Wno-unused-parameter
- else
--AM_CFLAGS= -DNDEBUG
-+AM_CFLAGS= -DNDEBUG -Wno-unused-parameter
- endif
- 
-+
- PCB_SRCS = \
- 	action.c \
- 	action.h \
-@@ -484,6 +486,8 @@ LIBSTEP_SRCS = \
+@@ -484,6 +484,8 @@ LIBSTEP_SRCS = \
  	hid/step/step.h \
  	hid/step/assembly.cpp \
  	hid/step/assembly.h \
