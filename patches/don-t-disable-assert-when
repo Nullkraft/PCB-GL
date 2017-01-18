@@ -1,5 +1,5 @@
-Bottom: a2c5d9a0bd1e9f6db6743a93abcef21264d5e1be
-Top:    6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
+Bottom: 8d408914962210f68dee36feb1e37047f1f4b585
+Top:    e7c72be90e4c7eaa6b18886573d78674a9d0fe04
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-01-18 23:51:32 +0000
 
@@ -9,7 +9,7 @@ Don't disable assert when building (clobber -NDEBUG)
 ---
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index 6e3d281..8c9e089 100644
+index 8babda1..ccbd5e4 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
 @@ -24,10 +24,12 @@ bin_PROGRAMS=	pcb
