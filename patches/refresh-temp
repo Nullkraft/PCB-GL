@@ -1,0 +1,27 @@
+Bottom: a2c5d9a0bd1e9f6db6743a93abcef21264d5e1be
+Top:    6eb0ffe1f9ccd21bca0eb1d0496b94a915924f08
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2017-01-18 23:51:34 +0000
+
+Refresh of don-t-disable-assert-when
+
+---
+
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6e3d281..8c9e089 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -24,10 +24,12 @@ bin_PROGRAMS=	pcb
+ 
+ if DEBUG_BUILD
+ # don't disable assert()
++AM_CFLAGS= -Wno-unused-parameter
+ else
+-AM_CFLAGS= -DNDEBUG
++AM_CFLAGS= -DNDEBUG -Wno-unused-parameter
+ endif
+ 
++
+ PCB_SRCS = \
+ 	action.c \
+ 	action.h \
