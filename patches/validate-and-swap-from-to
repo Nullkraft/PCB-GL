@@ -1,5 +1,5 @@
 Bottom: 5036b5c3b236703f80b551bcef283a7d1f8343c5
-Top:    ead4a19316ea90f45b643ab625170c80fb7951ac
+Top:    df587a9462d674d0c6657853a41fef4caeb729e4
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-02-19 09:01:13 +0000
 
@@ -10,7 +10,7 @@ Validate and swap from/to layers in action, not CreateViaEx
 ---
 
 diff --git a/src/action.c b/src/action.c
-index fb29d35..e3b0192 100644
+index fb29d35..ab4a822 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -1277,6 +1277,7 @@ NotifyMode (void)
@@ -26,8 +26,8 @@ index fb29d35..e3b0192 100644
  		  layer_from = GetLayerNumber (PCB->Data, lastLayer);
  		  layer_to = GetLayerNumber (PCB->Data, CURRENT);
 +
-+                  layer_from = MIN (last_layer_num, current_layer_num);
-+                  layer_to =   MAX (last_layer_num, current_layer_num);
++		  layer_from = MIN (last_layer_num, current_layer_num);
++		  layer_to =   MAX (last_layer_num, current_layer_num);
  		}
  	      else
  		{
