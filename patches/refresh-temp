@@ -1,0 +1,20 @@
+Bottom: ce944dbe18a3622dff9c189fe1ad3bfaaec0eebb
+Top:    6b987313a408f8d350bd65827b372718e1f38b53
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2017-02-19 22:17:43 +0000
+
+Refresh of add-comment-to-via_is_burried
+
+---
+
+diff --git a/src/macro.h b/src/macro.h
+index 342640f..f376f5d 100644
+--- a/src/macro.h
++++ b/src/macro.h
+@@ -483,5 +483,5 @@ extern int mem_any_set (unsigned char *, int);
+ 
+ #endif
+ 
+-#define VIA_IS_BURIED(via) (via->BuriedFrom != 0 || via->BuriedTo != 0) /*!< Despite the naming, this identifies any blind or buried via (any via which does not go right through the PCB */
++#define VIA_IS_BURIED(via) (via->BuriedFrom != 0 || via->BuriedTo != 0) /*!< Despite the naming, this identifies any blind or buried via (any via which does not go right through the PCB) */
+ #define VIA_ON_LAYER(via, layer) (layer >= via->BuriedFrom && layer <= via->BuriedTo )
