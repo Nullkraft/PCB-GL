@@ -1,5 +1,5 @@
-Bottom: 1f31d8b2223a46ace391e21fd584c144c43c5752
-Top:    45c1558e001f1138691b48d920f667702773ca9e
+Bottom: b52966e119b8c2f40cc7df0451ecd944baf56044
+Top:    e607c200a4b1320db92c4f75180f6169625aa610
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-07 18:46:50 +0000
 
@@ -9,10 +9,10 @@ Annotate the length of runt edges
 ---
 
 diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
-index 6585a31..2b4f733 100644
+index a033f89..8941693 100644
 --- a/src/hid/step/object3d_step.c
 +++ b/src/hid/step/object3d_step.c
-@@ -271,6 +271,8 @@ object3d_to_step_body_fragment (step_file *step,
+@@ -277,6 +277,8 @@ object3d_to_step_body_fragment (step_file *step,
              {
                printf ("EDGE TOO SHORT TO DETERMINE DIRECTION - GUESSING! Coords (%f, %f)\n", ov->x, ov->y);
                pcb_printf ("Approx PCB coords of short edge: %#mr, %#mr\n", (Coord)STEP_X_TO_COORD (PCB, ov->x), (Coord)STEP_Y_TO_COORD (PCB, ov->y));
