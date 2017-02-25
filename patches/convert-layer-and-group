@@ -1,5 +1,5 @@
-Bottom: 0ffc54a8c1529228da61a08e5bcf4342c9ae0d20
-Top:    6047896d1386ec4f1e0428d187e5e16fe85169a4
+Bottom: b672ea0e56ae8b97e3c5827f38b518ef4c503806
+Top:    b9134b721642511ef4a9eccadf238aac84edcf64
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 18:50:12 +0000
 
@@ -9,7 +9,7 @@ Convert layer and group indexes to Cardinal
 ---
 
 diff --git a/src/data.c b/src/data.c
-index 9d6588c..1c4c425 100644
+index 99df27a..4d003b4 100644
 --- a/src/data.c
 +++ b/src/data.c
 @@ -47,7 +47,7 @@ PCBType *PCB;			/* pointer to layout struct */
@@ -22,7 +22,7 @@ index 9d6588c..1c4c425 100644
  BufferType Buffers[MAX_BUFFER];	/* my buffers */
  LibraryType Library;		/* the library */
 diff --git a/src/data.h b/src/data.h
-index 89d9b87..2c20ab2 100644
+index b2acc2c..5b589af 100644
 --- a/src/data.h
 +++ b/src/data.h
 @@ -64,7 +64,7 @@ extern char *Progname;
@@ -35,10 +35,10 @@ index 89d9b87..2c20ab2 100644
  extern bool Bumped;
  
 diff --git a/src/global.h b/src/global.h
-index d0b3f14..c86a2f1 100644
+index e8badb6..fb9172c 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -393,7 +393,7 @@ typedef struct			/* holds all objects */
+@@ -394,7 +394,7 @@ typedef struct			/* holds all objects */
    Cardinal ViaN,		/* number of vias */
      ElementN,			/* and elements */
      RatN;			/* and rat-lines */
@@ -48,10 +48,10 @@ index d0b3f14..c86a2f1 100644
    GList *Element;
    GList *Rat;
 diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
-index e7a2720..b3b4abc 100644
+index 51990bc..828e191 100644
 --- a/src/hid/common/object3d.c
 +++ b/src/hid/common/object3d.c
-@@ -1102,13 +1102,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
+@@ -1017,13 +1017,13 @@ object3d_from_soldermask_within_area (POLYAREA *area, int side)
  }
  
  static Coord
@@ -85,7 +85,7 @@ index 3579a40..83b5ec4 100644
      return;
    layer = cbs->event->xbutton.y * (max_copper_layer + 2) / lg_height;
 diff --git a/src/misc.c b/src/misc.c
-index 643730e..0e46b98 100644
+index 804cb9f..9230b16 100644
 --- a/src/misc.c
 +++ b/src/misc.c
 @@ -96,7 +96,7 @@ static void GetGridLockCoordinates (int, void *, void *, void *,
