@@ -1,5 +1,5 @@
 Bottom: b9134b721642511ef4a9eccadf238aac84edcf64
-Top:    b9134b721642511ef4a9eccadf238aac84edcf64
+Top:    a39b1f05a9109e2a367cd28a58d142c04c263cc3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-12 17:17:39 +0000
 
@@ -8,4 +8,140 @@ Fixup some 3D code warnings
 
 ---
 
-
+diff --git a/src/hid/common/object3d.c b/src/hid/common/object3d.c
+index 828e191..90941d0 100644
+--- a/src/hid/common/object3d.c
++++ b/src/hid/common/object3d.c
+@@ -660,6 +660,9 @@ object3d_from_board_outline (void)
+ {
+   POLYAREA *board_outline = board_outline_poly (true);
+   POLYAREA *pa;
++  appearance *board_appearance;
++  appearance *top_bot_appearance;
++  GList *objects;
+ 
+ #if 0
+   return object3d_from_soldermask_within_area (board_outline, TOP_SIDE);
+@@ -678,10 +681,6 @@ object3d_from_board_outline (void)
+     }
+   while ((pa = pa->f) != board_outline);
+ 
+-  appearance *board_appearance;
+-  appearance *top_bot_appearance;
+-  GList *objects;
+-
+   board_appearance = make_appearance ();
+   top_bot_appearance = NULL;
+   appearance_set_color (board_appearance,   1.0, 1.0, 0.6);
+diff --git a/src/hid/step/object3d_step.c b/src/hid/step/object3d_step.c
+index 213607e..57d9331 100644
+--- a/src/hid/step/object3d_step.c
++++ b/src/hid/step/object3d_step.c
+@@ -393,7 +393,7 @@ step_absr_fragment (step_file *step,
+                     step_id_list styled_item_list,
+                     step_id geometric_representation_context_identifier,
+                     step_id product_definition_shape_identifier,
+-                    step_id *shape_representation,
++//                    step_id *shape_representation,
+                     step_id *shape_definition_representation,
+                     step_id *placement_axis)
+ {
+@@ -424,8 +424,8 @@ step_absr_fragment (step_file *step,
+   /* Emit references to the styled and over_ridden styled items */
+   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_list, geometric_representation_context_identifier);
+ 
+-  if (shape_representation != NULL)
+-    *shape_representation = shape_representation_identifier;
++//  if (shape_representation != NULL)
++//    *shape_representation = shape_representation_identifier;
+ 
+   if (shape_definition_representation != NULL)
+     *shape_definition_representation = shape_definition_representation_identifier;
+@@ -438,7 +438,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
+   step_file *step;
+   step_id geometric_representation_context;
+   step_id product_definition_shape;
+-  step_id shape_representation;
++//  step_id shape_representation;
+   step_id shape_definition_representation;
+   step_id comp_brep;
+   GList *object_iter;
+@@ -500,7 +500,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
+                       styled_items,
+                       geometric_representation_context,
+                       product_definition_shape,
+-                      &shape_representation,
++//                      &shape_representation,
+                       &shape_definition_representation,
+                       NULL /* placement_axis */);
+ 
+@@ -529,7 +529,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
+                       styled_item_identifiers,
+                       geometric_representation_context_identifier,
+                       product_definition_shape_identifier,
+-                      shape_representation,
++//                      NULL /* shape_representation */,
+                       shape_definition_representation,
+                       placement_axis);
+ }
+@@ -618,7 +618,7 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
+                       NULL, //styled_item_identifiers,
+                       assy_geometric_representation_context_identifier,
+                       assy_product_definition_shape_identifier,
+-                      NULL /* shape_representation */,
++//                      NULL /* shape_representation */,
+                       NULL /* shape_definition_representation */,
+                       &origin_axis); /* This is set, not NULL so is taken as an input */
+ 
+diff --git a/src/hid/step/step.c b/src/hid/step/step.c
+index 10a34e5..008cd3a 100644
+--- a/src/hid/step/step.c
++++ b/src/hid/step/step.c
+@@ -80,7 +80,7 @@ Name of the STEP output file. Can contain a path.
+ %end-doc
+ */
+   {"stepfile", "STEP output file",
+-   HID_String, 0, 0, {0, 0, 0}, 0, 0},
++   HID_String, 0, 0, {0, 0, 0, 0}, 0, 0, 0},
+ #define HA_stepfile 0
+ 
+   /* %start-doc options "91 STEP Export"
+@@ -162,6 +162,7 @@ step_get_export_options (int *n)
+   return step_attribute_list;
+ }
+ 
++#if 0
+ /* NB: Result is in mm */
+ static void
+ parse_cartesian_point_3d_string (const char *str, double *x, double *y, double *z)
+@@ -182,6 +183,7 @@ parse_rotation_string (const char *str, double *rotation)
+ {
+   *rotation = 0.0;
+ }
++#endif
+ 
+ static void
+ parse_position_attribute (ElementType *element, char *attr_name, double *res)
+@@ -435,7 +437,7 @@ step_load_models(Coord board_thickness_)
+ static void
+ step_do_export (HID_Attr_Val * options)
+ {
+-  int i;
++  unsigned int i;
+   const char *filename;
+   const char *temp_pcb_filename = "_pcb.step";
+   GList *board_outline_list;
+@@ -605,11 +607,13 @@ step_do_export (HID_Attr_Val * options)
+             rx = 1.0, ry = 0.0, rz = 0.0;
+ #endif
+ 
++#if 0
+             /* XXX: Should parse a unit suffix, e.g. "degrees" */
+             attribute = AttributeGet (element, "PCB::rotation");
+             if (attribute == NULL)
+               continue;
+             parse_rotation_string (attribute, &rotation);
++#endif
+ 
+             /* XXX: QUICKER TO CODE INDIVIDULAL VALUES NOT SPACE SEPARATED */
+             parse_position_attribute (element, "PCB::3d_model::origin::X", &ox);
