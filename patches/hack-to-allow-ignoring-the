@@ -1,5 +1,5 @@
-Bottom: ecba75b65d05d4a0f1d2ac25ec9a443e2c12f75e
-Top:    5586eb0c4770bba36c862e0e6f5f79c5307a7323
+Bottom: adc0481fadc1a86cb7d0d77c7ae41b6ceb17cf8f
+Top:    34ced46436e5490105a7fc1812d91a952711b24f
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:08 +0000
 
@@ -11,10 +11,10 @@ Boy do I regret not refactoring this to some function or macro TEST_LOCK (...)
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 4e8ceb7..3ab2cfd 100644
+index 12ca76d..adefe55 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -1011,7 +1011,7 @@ NotifyMode (void)
+@@ -1013,7 +1013,7 @@ NotifyMode (void)
  	  {
  	    type = SearchScreen (Note.X, Note.Y, test, &ptr1, &ptr2, &ptr3);
  	    if (!Note.Hit && (type & MOVE_TYPES) &&
@@ -23,7 +23,7 @@ index 4e8ceb7..3ab2cfd 100644
  	      {
  		Note.Hit = type;
  		Note.ptr1 = ptr1;
-@@ -1477,8 +1477,9 @@ NotifyMode (void)
+@@ -1479,8 +1479,9 @@ NotifyMode (void)
  
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
@@ -35,7 +35,7 @@ index 4e8ceb7..3ab2cfd 100644
  		  {
  		    Message (_("Sorry, the object is locked\n"));
  		    Crosshair.AttachedObject.Type = NO_TYPE;
-@@ -1622,7 +1623,7 @@ NotifyMode (void)
+@@ -1624,7 +1625,7 @@ NotifyMode (void)
  	   SearchScreen (Note.X, Note.Y, REMOVE_TYPES, &ptr1, &ptr2,
  			 &ptr3)) != NO_TYPE)
  	{
@@ -44,7 +44,7 @@ index 4e8ceb7..3ab2cfd 100644
  	    {
  	      Message (_("Sorry, the object is locked\n"));
  	      break;
-@@ -1680,6 +1681,7 @@ NotifyMode (void)
+@@ -1682,6 +1683,7 @@ NotifyMode (void)
  	    if (Crosshair.AttachedObject.Type != NO_TYPE)
  	      {
  		if (Settings.Mode == MOVE_MODE &&
@@ -52,7 +52,7 @@ index 4e8ceb7..3ab2cfd 100644
  		    TEST_FLAG (LOCKFLAG, (PinType *)
  			       Crosshair.AttachedObject.Ptr2))
  		  {
-@@ -1734,7 +1736,8 @@ NotifyMode (void)
+@@ -1736,7 +1738,8 @@ NotifyMode (void)
  
  	  if (Crosshair.AttachedObject.Type != NO_TYPE)
  	    {
@@ -62,7 +62,7 @@ index 4e8ceb7..3ab2cfd 100644
  			     Crosshair.AttachedObject.Ptr2))
  		{
  		  Message (_("Sorry, the object is locked\n"));
-@@ -2439,7 +2442,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
+@@ -2441,7 +2444,8 @@ ActionDisperseElements (int argc, char **argv, Coord x, Coord y)
       * going to be used either with a brand new design or a scratch
       * design holding some new components
       */
@@ -72,7 +72,7 @@ index 4e8ceb7..3ab2cfd 100644
        {
  
  	/* figure out how much to move the element */
-@@ -3390,7 +3394,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
+@@ -3392,7 +3396,7 @@ ActionRenumber (int argc, char **argv, Coord x, Coord y)
    lock_cnt = 0;
    ELEMENT_LOOP (PCB->Data);
    {
@@ -81,7 +81,7 @@ index 4e8ceb7..3ab2cfd 100644
        {
  	/* 
  	 * add to the list of locked elements which we won't try to
-@@ -3673,7 +3677,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3675,7 +3679,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_All:
  	  ALLLINE_LOOP (PCB->Data);
  	  {
@@ -91,7 +91,7 @@ index 4e8ceb7..3ab2cfd 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3682,7 +3687,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3684,7 +3689,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  ALLARC_LOOP (PCB->Data);
  	  {
@@ -101,7 +101,7 @@ index 4e8ceb7..3ab2cfd 100644
  	      {
  		RemoveObject (ARC_TYPE, layer, arc, arc);
  		changed = true;
-@@ -3691,7 +3697,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3693,7 +3699,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  ENDALL_LOOP;
  	  VIA_LOOP (PCB->Data);
  	  {
@@ -111,7 +111,7 @@ index 4e8ceb7..3ab2cfd 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -3708,8 +3715,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3710,8 +3717,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	case F_Selected:
  	  VISIBLELINE_LOOP (PCB->Data);
  	  {
@@ -122,7 +122,7 @@ index 4e8ceb7..3ab2cfd 100644
  	      {
  		RemoveObject (LINE_TYPE, layer, line, line);
  		changed = true;
-@@ -3719,8 +3726,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
+@@ -3721,8 +3728,8 @@ ActionRipUp (int argc, char **argv, Coord x, Coord y)
  	  if (PCB->ViaOn)
  	    VIA_LOOP (PCB->Data);
  	  {
@@ -133,7 +133,7 @@ index 4e8ceb7..3ab2cfd 100644
  	      {
  		RemoveObject (VIA_TYPE, via, via, via);
  		changed = true;
-@@ -4107,7 +4114,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
+@@ -4109,7 +4116,7 @@ ActionChangeSize (int argc, char **argv, Coord x, Coord y)
  	    if ((type =
  		 SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			       &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -142,7 +142,7 @@ index 4e8ceb7..3ab2cfd 100644
  		Message (_("Sorry, the object is locked\n"));
  	    if (ChangeObjectSize (type, ptr1, ptr2, ptr3, value, absolute))
  	      SetChangedFlag (true);
-@@ -6844,7 +6851,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
+@@ -6846,7 +6853,7 @@ ChangeFlag (char *what, char *flag_name, int value, char *cmd_name)
  	if ((type =
  	     SearchScreen (Crosshair.X, Crosshair.Y, CHANGESIZE_TYPES,
  			   &ptr1, &ptr2, &ptr3)) != NO_TYPE)
@@ -626,10 +626,10 @@ index 7dff722..54f79c0 100644
  }
  
 diff --git a/src/global.h b/src/global.h
-index 2287475..40e9260 100644
+index fb9172c..d8a4319 100644
 --- a/src/global.h
 +++ b/src/global.h
-@@ -498,6 +498,7 @@ typedef struct PCBType
+@@ -499,6 +499,7 @@ typedef struct PCBType
      ElementOn, RatOn, InvisibleObjectsOn, PinOn, SilkActive,	/* active layer is actually silk */
      SolderMaskActive, /* active layer is actually solder mask */
      RatDraw;			 /* we're drawing rats */
