@@ -393,7 +393,7 @@ step_absr_fragment (step_file *step,
                     step_id_list styled_item_list,
                     step_id geometric_representation_context_identifier,
                     step_id product_definition_shape_identifier,
-                    step_id *shape_representation,
+//                    step_id *shape_representation,
                     step_id *shape_definition_representation,
                     step_id *placement_axis)
 {
@@ -424,8 +424,8 @@ step_absr_fragment (step_file *step,
   /* Emit references to the styled and over_ridden styled items */
   step_mechanical_design_geometric_presentation_representation (step, "", styled_item_list, geometric_representation_context_identifier);
 
-  if (shape_representation != NULL)
-    *shape_representation = shape_representation_identifier;
+//  if (shape_representation != NULL)
+//    *shape_representation = shape_representation_identifier;
 
   if (shape_definition_representation != NULL)
     *shape_definition_representation = shape_definition_representation_identifier;
@@ -438,7 +438,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
   step_file *step;
   step_id geometric_representation_context;
   step_id product_definition_shape;
-  step_id shape_representation;
+//  step_id shape_representation;
   step_id shape_definition_representation;
   step_id comp_brep;
   GList *object_iter;
@@ -500,7 +500,7 @@ object3d_list_export_to_step_part (GList *objects, const char *filename)
                       styled_items,
                       geometric_representation_context,
                       product_definition_shape,
-                      &shape_representation,
+//                      &shape_representation,
                       &shape_definition_representation,
                       NULL /* placement_axis */);
 
@@ -529,7 +529,7 @@ object3d_to_step_fragment (step_file *step, object3d *object, char *part_id, cha
                       styled_item_identifiers,
                       geometric_representation_context_identifier,
                       product_definition_shape_identifier,
-                      shape_representation,
+//                      NULL /* shape_representation */,
                       shape_definition_representation,
                       placement_axis);
 }
@@ -618,7 +618,7 @@ object3d_list_export_to_step_assy (GList *objects, const char *filename)
                       NULL, //styled_item_identifiers,
                       assy_geometric_representation_context_identifier,
                       assy_product_definition_shape_identifier,
-                      NULL /* shape_representation */,
+//                      NULL /* shape_representation */,
                       NULL /* shape_definition_representation */,
                       &origin_axis); /* This is set, not NULL so is taken as an input */
 
