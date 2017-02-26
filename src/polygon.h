@@ -35,7 +35,7 @@
 /* Implementation constants */
 
 #define POLY_CIRC_SEGS 8
-#define POLY_CIRC_SEGS_F (double)POLY_CIRC_SEGS)
+#define POLY_CIRC_SEGS_D (double)POLY_CIRC_SEGS)
 
 #if 0
 /* THIS IS BROKEN:
