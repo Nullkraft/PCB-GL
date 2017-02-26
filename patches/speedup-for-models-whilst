@@ -1,5 +1,5 @@
 Bottom: 34ced46436e5490105a7fc1812d91a952711b24f
-Top:    62262fa37a052e6609aedbce8766eed10853f926
+Top:    23d1b8ac262ad8c25aa048ce092d0a3bf43a14cf
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2016-03-06 14:59:09 +0000
 
@@ -39,7 +39,7 @@ index cb93187..eef7620 100644
      }
  
 diff --git a/src/polygon.h b/src/polygon.h
-index 90d0d26..c7be3ea 100644
+index 90d0d26..664d885 100644
 --- a/src/polygon.h
 +++ b/src/polygon.h
 @@ -34,8 +34,8 @@
@@ -49,7 +49,7 @@ index 90d0d26..c7be3ea 100644
 -#define POLY_CIRC_SEGS 40 //24 //20 //8 //40
 -#define POLY_CIRC_SEGS_D ((double)POLY_CIRC_SEGS)
 +#define POLY_CIRC_SEGS 8
-+#define POLY_CIRC_SEGS_F (double)POLY_CIRC_SEGS)
++#define POLY_CIRC_SEGS_D (double)POLY_CIRC_SEGS)
  
  #if 0
  /* THIS IS BROKEN:
