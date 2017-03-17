@@ -7362,9 +7362,6 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
   if (!e)
     {
       Message(_("Cannot change attribute of %s - element not found\n"), refdes);
-      /* XXX: We could possibly allow setting attributes on unplaced components, but we
-       *      would need to create a placeholder to store the attributes.
-       */
       return 1;
     }
 
