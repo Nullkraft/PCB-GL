@@ -460,6 +460,46 @@ FreeElement (ElementType *data)
 }
 
 /*!
+ * \brief Get the next slot for an unplaced element.
+ *
+ * Allocates memory if necessary.
+ */
+UnplacedType *
+GetUnplacedMemory (DataType *data)
+{
+  UnplacedType *new_obj;
+
+  new_obj = g_slice_new0 (UnplacedType);
+
+  if (data != NULL)
+    {
+      data->Unplaced = g_list_append (data->Unplaced, new_obj);
+      data->UnplacedN ++;
+    }
+
+  return new_obj;
+}
+
+void
+FreeUnplaced (UnplacedType *data)
+{
+  g_slice_free (UnplacedType, data);
+}
+
+void
+FreeUnplacedMemory (UnplacedType *unplaced)
+{
+  int i;
+
+  for (i = 0; i < MAX_ELEMENTNAMES; i++)
+    free (unplaced->Name[i]);
+  free (unplaced->footprint);
+
+  FreeElementMemory (unplaced->Element);
+  FreeElement (unplaced->Element);
+}
+
+/*!
  * \brief Get the next slot for a library menu.
  *
  * Allocates memory if necessary.
@@ -756,6 +796,12 @@ FreeDataMemory (DataType *data)
   }
   END_LOOP;
   g_list_free_full (data->Element, (GDestroyNotify)FreeElement);
+  UNPLACED_LOOP (data);
+  {
+    FreeUnplacedMemory (unplaced);
+  }
+  END_LOOP;
+  g_list_free_full (data->Unplaced, (GDestroyNotify)FreeUnplaced);
   g_list_free_full (data->Rat, (GDestroyNotify)FreeRat);
 
   for (layer = data->Layer, i = 0; i < MAX_ALL_LAYER; layer++, i++)
