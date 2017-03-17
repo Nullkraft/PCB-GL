@@ -1,5 +1,5 @@
 Bottom: 17cffd9a56e55fb72d5c0481a3861181acd59fa8
-Top:    ca9a6bfb84e89e3d9ea4addc5cde48b33db1dd58
+Top:    034ae70cb9e4c83effc652cc0ed5fdebe366f7e3
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-03-17 22:01:43 +0000
 
@@ -9,10 +9,18 @@ Remove UnplacedType and just use a buffer of DataType
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 924389c..dc68691 100644
+index 924389c..38f6344 100644
 --- a/src/action.c
 +++ b/src/action.c
-@@ -7129,15 +7129,12 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7106,6 +7106,7 @@ static int
+ ActionElementList (int argc, char **argv, Coord x, Coord y)
+ {
+   ElementType *e = NULL;
++  DataType *e_owner = NULL;
+   char *refdes, *value, *footprint, *old;
+   char *args[3];
+   char *function;
+@@ -7129,15 +7130,12 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
        element_cache = NULL;
        number_of_footprints_not_found = 0;
  
@@ -34,16 +42,34 @@ index 924389c..dc68691 100644
  
        return 0;
      }
-@@ -7191,7 +7188,7 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7188,10 +7186,10 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+ #endif
+ 
+   e = find_element_by_refdes (refdes);
++  e_owner = PCB->Data;
  
    if (!e)
      {
 -      UnplacedType *unplaced;
-+      ElementType *unplaced_e;
        Coord nx, ny, d;
  
  #ifdef DEBUG
-@@ -7234,14 +7231,7 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7199,13 +7197,13 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+ #endif
+ 
+       /* Not on board, need to add it. */
+-#if 0
+       if (LoadFootprint(argc, args, x, y))
+ 	{
+ 	  number_of_footprints_not_found ++;
+ 	  return 1;
+ 	}
+ 
++#if 0
+       nx = PCB->MaxWidth / 2;
+       ny = PCB->MaxHeight / 2;
+       d = MIN (PCB->MaxWidth, PCB->MaxHeight) / 10;
+@@ -7234,38 +7232,15 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
  	SetChangedFlag (true);
  #endif
  
@@ -55,31 +81,64 @@ index 924389c..dc68691 100644
 -      unplaced->footprint = strdup (footprint);
 -
 -      printf ("Created unplaced entry %p, refdes=%s\n", unplaced, unplaced->Name[NAMEONPCB_INDEX]);
+-
+-      if (LoadFootprint(argc, args, x, y))
+-        {
+-          /* Error */
+-          number_of_footprints_not_found ++;
+-          //return 1;
+-          printf ("Crap - Load problem\n");
+-        }
+-      else
+-        {
+-          /* Loaded OK, first element in paste-buffer will be what we want, take it */
+-          assert (PASTEBUFFER->Data->ElementN == 1);
 +      printf ("Created unplaced entry refdes=%s\n", refdes);
- 
-       if (LoadFootprint(argc, args, x, y))
-         {
-@@ -7255,13 +7245,14 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
-           /* Loaded OK, first element in paste-buffer will be what we want, take it */
-           assert (PASTEBUFFER->Data->ElementN == 1);
  
 -          unplaced->Element = PASTEBUFFER->Data->Element->data;
 -          PASTEBUFFER->Data->Element = NULL;
 -          PASTEBUFFER->Data->ElementN = 0;
 -          ClearBuffer (PASTEBUFFER);
-+          unplaced_e = PASTEBUFFER->Data->Element->data;
-+          MoveObjectToBuffer (PCB->Unplaced, PASTEBUFFER->Data, ELEMENT_TYPE, unplaced_e, NULL, NULL);
-+//          PASTEBUFFER->Data->Element = NULL;
-+//          PASTEBUFFER->Data->ElementN = 0;
-+//          ClearBuffer (PASTEBUFFER);
-+          e = unplaced_e;
-         }
+-        }
++      /* Loaded OK, first element in paste-buffer will be what we want, take it */
++      assert (PASTEBUFFER->Data->ElementN == 1);
  
 -      e = unplaced->Element;
-       if (e == NULL)
-         printf ("Crap - null e\n");
+-      if (e == NULL)
+-        printf ("Crap - null e\n");
++      e = PASTEBUFFER->Data->Element->data;
++      MoveObjectToBuffer (PCB->Unplaced, PASTEBUFFER->Data, ELEMENT_TYPE, e, NULL, NULL);
++      e_owner = PCB->Unplaced;
      }
-@@ -7371,12 +7362,11 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
+-
+   else if (e && DESCRIPTION_NAME(e) && strcmp (DESCRIPTION_NAME(e), footprint) != 0)
+     {
+       int er, pr, i;
+@@ -7310,15 +7285,17 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+       /* Now reload footprint */
+       element_cache = NULL;
+       e = find_element_by_refdes (refdes);
++      e_owner = PCB->Data;
++    }
+ 
+-      old = ChangeElementText (PCB, PCB->Data, e, NAMEONPCB_INDEX, strdup (refdes));
+-      free (old);
+-      old = ChangeElementText (PCB, PCB->Data, e, VALUE_INDEX, strdup (value));
+-      free (old);
+ 
+-      SET_FLAG (FOUNDFLAG, e);
++  old = ChangeElementText (PCB, e_owner, e, NAMEONPCB_INDEX, strdup (refdes));
++  free (old);
++  old = ChangeElementText (PCB, e_owner, e, VALUE_INDEX, strdup (value));
++  free (old);
++
++  SET_FLAG (FOUNDFLAG, e);
+ 
+-    }
+ 
+ #ifdef DEBUG
+   printf(" ... Leaving ActionElementList.\n");
+@@ -7371,12 +7348,11 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
    if (e == NULL)
      {
        /* Attempt to find in unplaced elements */
@@ -95,7 +154,7 @@ index 924389c..dc68691 100644
              break;
            }
        }
-@@ -7386,7 +7376,9 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
+@@ -7386,7 +7362,9 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
    if (!e)
      {
        Message(_("Cannot change attribute of %s - element not found\n"), refdes);
