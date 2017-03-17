@@ -459,6 +459,26 @@ typedef struct
   bool Valid;
 } FontType;
 
+
+/*!
+ * \brief Unplaced element data.
+ */
+typedef struct
+{
+  char *Name[MAX_ELEMENTNAMES];
+    /*!< The elements names;
+     * - description text,
+     * - name on PCB second,
+     * - value third.
+     * see macro.h.
+     */
+    /*!< NB: Duplicated from actual Element, so we can cope with "footprint not found" case */
+  char *footprint;
+  AttributeListType Attributes;
+    /*!< NB: Duplicated from actual Element, so we can cope with "footprint not found" case */
+  ElementType *Element;
+} UnplacedType;
+
 /*!
  * \brief Holds all objects.
  */
@@ -466,10 +486,12 @@ typedef struct
 {
   Cardinal ViaN; /*!< Number of vias. */
   Cardinal ElementN; /*!< Number of elements. */
+  Cardinal UnplacedN; /*!< Number of unplaced elements. */
   Cardinal RatN; /*!< Number of rat-lines. */
   int LayerN; /*!< Number of layers in this board. */
   GList *Via;
   GList *Element;
+  GList *Unplaced;
   GList *Rat;
   rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
    *rat_tree;
