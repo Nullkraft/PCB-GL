@@ -159,6 +159,10 @@ CreateNewPCB (void)
   ptr->Data->pcb = (PCBType *) ptr;
   ptr->Data->polyClip = 1;
 
+  ptr->Unplaced = CreateNewBuffer ();
+  ptr->Unplaced->pcb = (PCBType *) ptr;
+  ptr->Unplaced->polyClip = 0;
+
   ptr->ThermStyle = 4;
   ptr->IsleArea = 2.e8;
   ptr->SilkActive = false;
