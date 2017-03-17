@@ -1,5 +1,5 @@
 Bottom: 17cffd9a56e55fb72d5c0481a3861181acd59fa8
-Top:    e8124256053121f4c35d0f163125702b7dea4c57
+Top:    3df0369a72987bf3ee81dfddd55c18c542bcf024
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-03-17 22:01:43 +0000
 
@@ -9,7 +9,7 @@ Remove UnplacedType and just use a buffer of DataType
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 924389c..f7fb709 100644
+index 924389c..5c05c1d 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -7106,6 +7106,7 @@ static int
@@ -42,7 +42,21 @@ index 924389c..f7fb709 100644
  
        return 0;
      }
-@@ -7188,10 +7186,10 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7159,8 +7157,12 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+       END_LOOP;
+       if (number_of_footprints_not_found > 0)
+ 	gui->confirm_dialog (_("Not all requested footprints were found.\n"
+-			     "See the message log for details"),
++			     "See the message log for details.\n"
++                             "Place elements from the library window \"unplaced\" tab"),
+ 			     "Ok", NULL);
++      else
++        gui->confirm_dialog (_("Place elements from the library window \"unplaced\" tab"),
++                             "Ok", NULL);
+       return 0;
+     }
+ 
+@@ -7188,10 +7190,10 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
  #endif
  
    e = find_element_by_refdes (refdes);
@@ -54,7 +68,7 @@ index 924389c..f7fb709 100644
        Coord nx, ny, d;
  
  #ifdef DEBUG
-@@ -7199,13 +7197,13 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7199,13 +7201,13 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
  #endif
  
        /* Not on board, need to add it. */
@@ -69,7 +83,7 @@ index 924389c..f7fb709 100644
        nx = PCB->MaxWidth / 2;
        ny = PCB->MaxHeight / 2;
        d = MIN (PCB->MaxWidth, PCB->MaxHeight) / 10;
-@@ -7234,38 +7232,15 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7234,38 +7236,15 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
  	SetChangedFlag (true);
  #endif
  
@@ -79,12 +93,9 @@ index 924389c..f7fb709 100644
 -      unplaced->Name[VALUE_INDEX] = strdup (value);
 -      unplaced->Name[DESCRIPTION_INDEX] = strdup (footprint);
 -      unplaced->footprint = strdup (footprint);
-+      printf ("Created unplaced entry refdes=%s\n", refdes);
- 
+-
 -      printf ("Created unplaced entry %p, refdes=%s\n", unplaced, unplaced->Name[NAMEONPCB_INDEX]);
-+      /* Loaded OK, first element in paste-buffer will be what we want, take it */
-+      assert (PASTEBUFFER->Data->ElementN == 1);
- 
+-
 -      if (LoadFootprint(argc, args, x, y))
 -        {
 -          /* Error */
@@ -96,13 +107,16 @@ index 924389c..f7fb709 100644
 -        {
 -          /* Loaded OK, first element in paste-buffer will be what we want, take it */
 -          assert (PASTEBUFFER->Data->ElementN == 1);
--
++      printf ("Created unplaced entry refdes=%s\n", refdes);
+ 
 -          unplaced->Element = PASTEBUFFER->Data->Element->data;
 -          PASTEBUFFER->Data->Element = NULL;
 -          PASTEBUFFER->Data->ElementN = 0;
 -          ClearBuffer (PASTEBUFFER);
 -        }
--
++      /* Loaded OK, first element in paste-buffer will be what we want, take it */
++      assert (PASTEBUFFER->Data->ElementN == 1);
+ 
 -      e = unplaced->Element;
 -      if (e == NULL)
 -        printf ("Crap - null e\n");
@@ -114,7 +128,7 @@ index 924389c..f7fb709 100644
    else if (e && DESCRIPTION_NAME(e) && strcmp (DESCRIPTION_NAME(e), footprint) != 0)
      {
        int er, pr, i;
-@@ -7310,15 +7285,17 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
+@@ -7310,15 +7289,17 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
        /* Now reload footprint */
        element_cache = NULL;
        e = find_element_by_refdes (refdes);
@@ -138,7 +152,7 @@ index 924389c..f7fb709 100644
  
  #ifdef DEBUG
    printf(" ... Leaving ActionElementList.\n");
-@@ -7371,12 +7348,11 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
+@@ -7371,12 +7352,11 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
    if (e == NULL)
      {
        /* Attempt to find in unplaced elements */
@@ -154,7 +168,7 @@ index 924389c..f7fb709 100644
              break;
            }
        }
-@@ -7386,7 +7362,6 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
+@@ -7386,7 +7366,6 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
    if (!e)
      {
        Message(_("Cannot change attribute of %s - element not found\n"), refdes);
