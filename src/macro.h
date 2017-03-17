@@ -227,14 +227,6 @@ extern int mem_any_set (unsigned char *, int);
        __iter = __next, __next = g_list_next (__iter), n++) {       \
     ElementType *element = __iter->data;
 
-#define UNPLACED_LOOP(top) do {                                     \
-  GList *__iter, *__next;                                           \
-  Cardinal n = 0;                                                   \
-  for (__iter = (top)->Unplaced, __next = g_list_next (__iter);     \
-       __iter != NULL;                                              \
-       __iter = __next, __next = g_list_next (__iter), n++) {       \
-    UnplacedType *unplaced = __iter->data;
-
 #define RAT_LOOP(top) do {                                          \
   GList *__iter, *__next;                                           \
   Cardinal n = 0;                                                   \
