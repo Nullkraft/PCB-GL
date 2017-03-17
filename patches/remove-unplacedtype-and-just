@@ -1,5 +1,5 @@
 Bottom: 17cffd9a56e55fb72d5c0481a3861181acd59fa8
-Top:    034ae70cb9e4c83effc652cc0ed5fdebe366f7e3
+Top:    e8124256053121f4c35d0f163125702b7dea4c57
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-03-17 22:01:43 +0000
 
@@ -9,7 +9,7 @@ Remove UnplacedType and just use a buffer of DataType
 ---
 
 diff --git a/src/action.c b/src/action.c
-index 924389c..38f6344 100644
+index 924389c..f7fb709 100644
 --- a/src/action.c
 +++ b/src/action.c
 @@ -7106,6 +7106,7 @@ static int
@@ -79,9 +79,12 @@ index 924389c..38f6344 100644
 -      unplaced->Name[VALUE_INDEX] = strdup (value);
 -      unplaced->Name[DESCRIPTION_INDEX] = strdup (footprint);
 -      unplaced->footprint = strdup (footprint);
--
++      printf ("Created unplaced entry refdes=%s\n", refdes);
+ 
 -      printf ("Created unplaced entry %p, refdes=%s\n", unplaced, unplaced->Name[NAMEONPCB_INDEX]);
--
++      /* Loaded OK, first element in paste-buffer will be what we want, take it */
++      assert (PASTEBUFFER->Data->ElementN == 1);
+ 
 -      if (LoadFootprint(argc, args, x, y))
 -        {
 -          /* Error */
@@ -93,16 +96,13 @@ index 924389c..38f6344 100644
 -        {
 -          /* Loaded OK, first element in paste-buffer will be what we want, take it */
 -          assert (PASTEBUFFER->Data->ElementN == 1);
-+      printf ("Created unplaced entry refdes=%s\n", refdes);
- 
+-
 -          unplaced->Element = PASTEBUFFER->Data->Element->data;
 -          PASTEBUFFER->Data->Element = NULL;
 -          PASTEBUFFER->Data->ElementN = 0;
 -          ClearBuffer (PASTEBUFFER);
 -        }
-+      /* Loaded OK, first element in paste-buffer will be what we want, take it */
-+      assert (PASTEBUFFER->Data->ElementN == 1);
- 
+-
 -      e = unplaced->Element;
 -      if (e == NULL)
 -        printf ("Crap - null e\n");
@@ -154,14 +154,11 @@ index 924389c..38f6344 100644
              break;
            }
        }
-@@ -7386,7 +7362,9 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
+@@ -7386,7 +7362,6 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
    if (!e)
      {
        Message(_("Cannot change attribute of %s - element not found\n"), refdes);
 -      /* XXX: We could possibly allow setting attributes on unplaced components, but we need to extend this code below */
-+      /* XXX: We could possibly allow setting attributes on unplaced components, but we
-+       *      would need to create a placeholder to store the attributes.
-+       */
        return 1;
      }
  
