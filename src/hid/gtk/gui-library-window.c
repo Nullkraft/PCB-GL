@@ -998,8 +998,7 @@ enum
   UNPLACED_NAMEONPCB_COLUMN,
   UNPLACED_VALUE_COLUMN,
   UNPLACED_DESCRIPTION_COLUMN,
-  UNPLACED_FOOTPRINT_COLUMN,
-  UNPLACED_ITEM_COLUMN,         /* Pointer to the UnplacedType item */
+  UNPLACED_ITEM_COLUMN,         /* Pointer to the ElementType item */
   N_UNPLACED_COLUMNS
 };
 
@@ -1019,18 +1018,16 @@ create_unplaced_tree_model (GhidLibraryWindow * library_window)
                              G_TYPE_STRING,   /* UNPLACED_NAMEONPCB_COLUM */
                              G_TYPE_STRING,   /* UNPLACED_VALUE_COLUMN */
                              G_TYPE_STRING,   /* UNPLACED_DESCRIPTION_COLUMN */
-                             G_TYPE_STRING,   /* UNPLACED_FOOTPRINT_COLUMN */
                              G_TYPE_POINTER); /* UNPLACED_ITEM_COLUMN */
 
-  UNPLACED_LOOP (PCB->Data);
+  ELEMENT_LOOP (PCB->Unplaced);
   {
     gtk_list_store_append (list, &iter);
     gtk_list_store_set (list, &iter,
-                        UNPLACED_NAMEONPCB_COLUMN,   unplaced->Name[NAMEONPCB_INDEX],
-                        UNPLACED_VALUE_COLUMN,       unplaced->Name[VALUE_INDEX],
-                        UNPLACED_DESCRIPTION_COLUMN, unplaced->Name[DESCRIPTION_INDEX],
-                        UNPLACED_FOOTPRINT_COLUMN,   unplaced->footprint,
-                        UNPLACED_ITEM_COLUMN,        unplaced,
+                        UNPLACED_NAMEONPCB_COLUMN,   NAMEONPCB_NAME(element),
+                        UNPLACED_VALUE_COLUMN,       VALUE_NAME(element),
+                        UNPLACED_DESCRIPTION_COLUMN, DESCRIPTION_NAME(element),
+                        UNPLACED_ITEM_COLUMN,        element,
                         -1);
   }
   END_LOOP;
@@ -1056,54 +1053,28 @@ library_window_callback_unplaced_selection_changed (GtkTreeSelection * selection
   GtkTreeModel *model;
   GtkTreeIter iter;
   GhidLibraryWindow *library_window = (GhidLibraryWindow *) user_data;
-  UnplacedType *unplaced = NULL;
+  ElementType *element = NULL;
   gchar *m4_args;
+
+  /* update the preview with new symbol data */
+  g_object_set (library_window->preview,
+                "element-data", NULL, NULL);
 
   if (!gtk_tree_selection_get_selected (selection, &model, &iter))
     return;
 
-  gtk_tree_model_get (model, &iter, UNPLACED_ITEM_COLUMN, &unplaced, -1);
+  gtk_tree_model_get (model, &iter, UNPLACED_ITEM_COLUMN, &element, -1);
 
-  if (unplaced == NULL)
+  if (element == NULL)
     return;
 
-#if 0
-  /* -1 flags this is an element file part and the file path is in
-     |  entry->AllocateMemory.
-   */
-  if (entry->Template == (char *) -1)
-    {
-      if (LoadElementToBuffer (PASTEBUFFER, entry->AllocatedMemory, true))
-        {
-          SetMode (PASTEBUFFER_MODE);
-          goto out;
-        }
-      return;
-    }
-
-  /* Otherwise, it's a m4 element and we need to create a string of
-     |  macro arguments to be passed to the library command in
-     |  LoadElementToBuffer()
-   */
-  m4_args = g_strdup_printf ("'%s' '%s' '%s'", EMPTY (entry->Template),
-                             EMPTY (entry->Value), EMPTY (entry->Package));
-
-  if (LoadElementToBuffer (PASTEBUFFER, m4_args, false))
-    {
-      SetMode (PASTEBUFFER_MODE);
-      g_free (m4_args);
-      goto out;
-    }
-
-  g_free (m4_args);
-  return;
-
-out:
+  ClearBuffer (PASTEBUFFER);
+  CopyObjectToBuffer (PASTEBUFFER->Data, PCB->Unplaced, ELEMENT_TYPE, element, NULL, NULL);
+  SetMode (PASTEBUFFER_MODE);
 
   /* update the preview with new symbol data */
   g_object_set (library_window->preview,
                 "element-data", PASTEBUFFER->Data->Element->data, NULL);
-#endif
 }
 
 
