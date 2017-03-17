@@ -1,0 +1,22 @@
+Bottom: 034ae70cb9e4c83effc652cc0ed5fdebe366f7e3
+Top:    e8124256053121f4c35d0f163125702b7dea4c57
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2017-03-17 23:15:14 +0000
+
+Refresh of remove-unplacedtype-and-just
+
+---
+
+diff --git a/src/action.c b/src/action.c
+index 38f6344..f7fb709 100644
+--- a/src/action.c
++++ b/src/action.c
+@@ -7362,9 +7362,6 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
+   if (!e)
+     {
+       Message(_("Cannot change attribute of %s - element not found\n"), refdes);
+-      /* XXX: We could possibly allow setting attributes on unplaced components, but we
+-       *      would need to create a placeholder to store the attributes.
+-       */
+       return 1;
+     }
