@@ -1,4 +1,4 @@
-Bottom: 61cce534d8cb2e8ab26ea55ac08aedc61140872f
+Bottom: 47b37dc6d4c82745a51cffb4122c4eee43245997
 Top:    17cffd9a56e55fb72d5c0481a3861181acd59fa8
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-03-17 21:54:54 +0000
@@ -202,7 +202,7 @@ index fc95288..2941d26 100644
    rtree_t *via_tree, *element_tree, *pin_tree, *pad_tree, *name_tree[3],	/* for element names */
     *rat_tree;
 diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
-index c10eab5..6f2367f 100644
+index e72d85c..6f2367f 100644
 --- a/src/hid/gtk/gui-library-window.c
 +++ b/src/hid/gtk/gui-library-window.c
 @@ -84,6 +84,7 @@ static GtkWidget *library_window;
@@ -258,17 +258,7 @@ index c10eab5..6f2367f 100644
    /* include the vertical box in horizontal box */
    gtk_paned_pack1 (GTK_PANED (hpaned), notebook, TRUE, FALSE);
  
-@@ -974,7 +980,8 @@ ghid_library_window_get_type ()
- 	NULL,			/* class_data */
- 	sizeof (GhidLibraryWindow),
- 	0,			/* n_preallocs */
--	NULL			/* instance_init */
-+	NULL,			/* instance_init */
-+	NULL			/* value_table */
-       };
- 
-       library_window_type = g_type_register_static (GTK_TYPE_DIALOG,
-@@ -984,3 +991,311 @@ ghid_library_window_get_type ()
+@@ -985,3 +991,311 @@ ghid_library_window_get_type ()
  
    return library_window_type;
  }
