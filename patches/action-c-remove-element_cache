@@ -3,9 +3,11 @@ Top:    3df0369a72987bf3ee81dfddd55c18c542bcf024
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-03-17 23:18:27 +0000
 
-action.c Remove element_cache
+action.c Remove file scope static variable element_cache
 
-We don't tend to load in order anyway...
+We don't tend to load the same refdes multiple times, and don't actually
+even use the cache in the _possibly_ benefical case of looking up elements
+repeatedly when setting multiple attributes on them.
 
 
 ---
