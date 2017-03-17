@@ -7128,6 +7128,17 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
       END_LOOP;
       element_cache = NULL;
       number_of_footprints_not_found = 0;
+
+      /* Empty out the unplaced element list */
+      UNPLACED_LOOP (PCB->Data);
+      {
+        FreeUnplacedMemory (unplaced);
+      }
+      END_LOOP;
+      g_list_free_full (PCB->Data->Unplaced, (GDestroyNotify)FreeUnplaced);
+      PCB->Data->Unplaced = NULL;
+      PCB->Data->UnplacedN = 0;
+
       return 0;
     }
 
@@ -7180,12 +7191,15 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
 
   if (!e)
     {
+      UnplacedType *unplaced;
       Coord nx, ny, d;
 
 #ifdef DEBUG
       printf("  ... Footprint not on board, need to add it.\n");
 #endif
+
       /* Not on board, need to add it. */
+#if 0
       if (LoadFootprint(argc, args, x, y))
 	{
 	  number_of_footprints_not_found ++;
@@ -7218,6 +7232,38 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
       /* Place components onto center of board. */
       if (CopyPastebufferToLayout (nx, ny))
 	SetChangedFlag (true);
+#endif
+
+      unplaced = GetUnplacedMemory (PCB->Data);
+
+      unplaced->Name[NAMEONPCB_INDEX] = strdup (refdes);
+      unplaced->Name[VALUE_INDEX] = strdup (value);
+      unplaced->Name[DESCRIPTION_INDEX] = strdup (footprint);
+      unplaced->footprint = strdup (footprint);
+
+      printf ("Created unplaced entry %p, refdes=%s\n", unplaced, unplaced->Name[NAMEONPCB_INDEX]);
+
+      if (LoadFootprint(argc, args, x, y))
+        {
+          /* Error */
+          number_of_footprints_not_found ++;
+          //return 1;
+          printf ("Crap - Load problem\n");
+        }
+      else
+        {
+          /* Loaded OK, first element in paste-buffer will be what we want, take it */
+          assert (PASTEBUFFER->Data->ElementN == 1);
+
+          unplaced->Element = PASTEBUFFER->Data->Element->data;
+          PASTEBUFFER->Data->Element = NULL;
+          PASTEBUFFER->Data->ElementN = 0;
+          ClearBuffer (PASTEBUFFER);
+        }
+
+      e = unplaced->Element;
+      if (e == NULL)
+        printf ("Crap - null e\n");
     }
 
   else if (e && DESCRIPTION_NAME(e) && strcmp (DESCRIPTION_NAME(e), footprint) != 0)
@@ -7260,20 +7306,19 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
 
       if (CopyPastebufferToLayout (mx, my))
 	SetChangedFlag (true);
+
+      /* Now reload footprint */
+      element_cache = NULL;
+      e = find_element_by_refdes (refdes);
+
+      old = ChangeElementText (PCB, PCB->Data, e, NAMEONPCB_INDEX, strdup (refdes));
+      free (old);
+      old = ChangeElementText (PCB, PCB->Data, e, VALUE_INDEX, strdup (value));
+      free (old);
+
+      SET_FLAG (FOUNDFLAG, e);
+
     }
-
-  /* Now reload footprint */
-  element_cache = NULL;
-  e = find_element_by_refdes (refdes);
-
-  old = ChangeElementText (PCB, PCB->Data, e, NAMEONPCB_INDEX, strdup (refdes));
-  if (old)
-    free(old);
-  old = ChangeElementText (PCB, PCB->Data, e, VALUE_INDEX, strdup (value));
-  if (old)
-    free(old);
-
-  SET_FLAG (FOUNDFLAG, e);
 
 #ifdef DEBUG
   printf(" ... Leaving ActionElementList.\n");
@@ -7323,9 +7368,25 @@ ActionElementSetAttr (int argc, char **argv, Coord x, Coord y)
   }
   END_LOOP;
 
+  if (e == NULL)
+    {
+      /* Attempt to find in unplaced elements */
+      UNPLACED_LOOP (PCB->Data);
+      {
+        printf ("Unplaced = %p\n", unplaced);
+        if (NSTRCMP (refdes, unplaced->Name[NAMEONPCB_INDEX]) == 0)
+          {
+            e = unplaced->Element;
+            break;
+          }
+      }
+      END_LOOP;
+    }
+
   if (!e)
     {
       Message(_("Cannot change attribute of %s - element not found\n"), refdes);
+      /* XXX: We could possibly allow setting attributes on unplaced components, but we need to extend this code below */
       return 1;
     }
 

@@ -47,6 +47,7 @@ struct _GhidLibraryWindow
 
   GtkWidget *hpaned;
   GtkTreeView *libtreeview;
+  GtkTreeView *unplacedtreeview;
   GtkNotebook *viewtabs;
   GtkWidget *preview;
   GtkEntry *entry_filter;
