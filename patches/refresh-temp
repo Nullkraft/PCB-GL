@@ -1,0 +1,23 @@
+Bottom: 61cce534d8cb2e8ab26ea55ac08aedc61140872f
+Top:    47b37dc6d4c82745a51cffb4122c4eee43245997
+Author: Peter Clifton <peter@clifton-electronics.co.uk>
+Date:   2017-03-17 22:03:05 +0000
+
+Refresh of fix-un-set-field-in-gobject
+
+---
+
+diff --git a/src/hid/gtk/gui-library-window.c b/src/hid/gtk/gui-library-window.c
+index c10eab5..e72d85c 100644
+--- a/src/hid/gtk/gui-library-window.c
++++ b/src/hid/gtk/gui-library-window.c
+@@ -974,7 +974,8 @@ ghid_library_window_get_type ()
+ 	NULL,			/* class_data */
+ 	sizeof (GhidLibraryWindow),
+ 	0,			/* n_preallocs */
+-	NULL			/* instance_init */
++	NULL,			/* instance_init */
++	NULL			/* value_table */
+       };
+ 
+       library_window_type = g_type_register_static (GTK_TYPE_DIALOG,
