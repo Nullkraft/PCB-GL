@@ -974,7 +974,8 @@ ghid_library_window_get_type ()
 	NULL,			/* class_data */
 	sizeof (GhidLibraryWindow),
 	0,			/* n_preallocs */
-	NULL			/* instance_init */
+	NULL,			/* instance_init */
+	NULL			/* value_table */
       };
 
       library_window_type = g_type_register_static (GTK_TYPE_DIALOG,
