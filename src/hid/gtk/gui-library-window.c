@@ -84,6 +84,7 @@ static GtkWidget *library_window;
  */
 #define LIBRARY_FILTER_INTERVAL 200
 
+static GtkWidget *create_unplaced_treeview (GhidLibraryWindow * library_window);
 
 static gint
 library_window_configure_event_cb (GtkWidget * widget, GdkEventConfigure * ev,
@@ -362,7 +363,7 @@ tree_row_key_pressed (GtkTreeView *tree_view,
  *  \param [in] user_data The library dialog.
  */
 static void
-library_window_callback_tree_selection_changed (GtkTreeSelection * selection,
+library_window_callback_library_selection_changed (GtkTreeSelection * selection,
 						gpointer user_data)
 {
   GtkTreeModel *model;
@@ -736,7 +737,7 @@ create_lib_treeview (GhidLibraryWindow * library_window)
   g_signal_connect (selection,
 		    "changed",
 		    G_CALLBACK
-		    (library_window_callback_tree_selection_changed),
+		    (library_window_callback_library_selection_changed),
 		    library_window);
 
   /* insert a column to treeview for library/symbol name */
@@ -852,6 +853,7 @@ library_window_constructor (GType type,
   GtkWidget *content_area;
   GtkWidget *hpaned, *notebook;
   GtkWidget *libview;
+  GtkWidget *unplacedview;
   GtkWidget *preview;
   GtkWidget *alignment, *frame;
 
@@ -881,12 +883,16 @@ library_window_constructor (GType type,
 
   /* notebook for library views */
   notebook = GTK_WIDGET (g_object_new (GTK_TYPE_NOTEBOOK,
-				       "show-tabs", FALSE, NULL));
+                                       NULL));
   library_window->viewtabs = GTK_NOTEBOOK (notebook);
 
   libview = create_lib_treeview (library_window);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), libview,
 			    gtk_label_new (_("Libraries")));
+
+  unplacedview = create_unplaced_treeview (library_window);
+  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), unplacedview,
+                            gtk_label_new (_("Unplaced")));
 
   /* include the vertical box in horizontal box */
   gtk_paned_pack1 (GTK_PANED (hpaned), notebook, TRUE, FALSE);
@@ -984,4 +990,312 @@ ghid_library_window_get_type ()
     }
 
   return library_window_type;
+}
+
+
+enum
+{
+  UNPLACED_NAMEONPCB_COLUMN,
+  UNPLACED_VALUE_COLUMN,
+  UNPLACED_DESCRIPTION_COLUMN,
+  UNPLACED_FOOTPRINT_COLUMN,
+  UNPLACED_ITEM_COLUMN,         /* Pointer to the UnplacedType item */
+  N_UNPLACED_COLUMNS
+};
+
+
+/* \brief Create the tree model for the "Unplaced" view.
+ * \par Function Description
+ * Creates a list of the available unplaced elements.
+ */
+static GtkTreeModel *
+create_unplaced_tree_model (GhidLibraryWindow * library_window)
+{
+  GtkListStore *list;
+  GtkTreeIter *iter;
+  gchar *name;
+
+  list = gtk_list_store_new (N_UNPLACED_COLUMNS,
+                             G_TYPE_STRING,   /* UNPLACED_NAMEONPCB_COLUM */
+                             G_TYPE_STRING,   /* UNPLACED_VALUE_COLUMN */
+                             G_TYPE_STRING,   /* UNPLACED_DESCRIPTION_COLUMN */
+                             G_TYPE_STRING,   /* UNPLACED_FOOTPRINT_COLUMN */
+                             G_TYPE_POINTER); /* UNPLACED_ITEM_COLUMN */
+
+  UNPLACED_LOOP (PCB->Data);
+  {
+    gtk_list_store_append (list, &iter);
+    gtk_list_store_set (list, &iter,
+                        UNPLACED_NAMEONPCB_COLUMN,   unplaced->Name[NAMEONPCB_INDEX],
+                        UNPLACED_VALUE_COLUMN,       unplaced->Name[VALUE_INDEX],
+                        UNPLACED_DESCRIPTION_COLUMN, unplaced->Name[DESCRIPTION_INDEX],
+                        UNPLACED_FOOTPRINT_COLUMN,   unplaced->footprint,
+                        UNPLACED_ITEM_COLUMN,        unplaced,
+                        -1);
+  }
+  END_LOOP;
+
+  return (GtkTreeModel *)list;
+}
+
+/*! \brief Handles changes in the treeview selection.
+ *  \par Function Description
+ *  This is the callback function that is called every time the user
+ *  select a row the library treeview of the dialog.
+ *
+ *  If the selection is not a selection of a footprint, it does
+ *  nothing. Otherwise it updates the preview and Element data.
+ *
+ *  \param [in] selection The current selection in the treeview.
+ *  \param [in] user_data The library dialog.
+ */
+static void
+library_window_callback_unplaced_selection_changed (GtkTreeSelection * selection,
+                                                    gpointer user_data)
+{
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  GhidLibraryWindow *library_window = (GhidLibraryWindow *) user_data;
+  UnplacedType *unplaced = NULL;
+  gchar *m4_args;
+
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter))
+    return;
+
+  gtk_tree_model_get (model, &iter, UNPLACED_ITEM_COLUMN, &unplaced, -1);
+
+  if (unplaced == NULL)
+    return;
+
+#if 0
+  /* -1 flags this is an element file part and the file path is in
+     |  entry->AllocateMemory.
+   */
+  if (entry->Template == (char *) -1)
+    {
+      if (LoadElementToBuffer (PASTEBUFFER, entry->AllocatedMemory, true))
+        {
+          SetMode (PASTEBUFFER_MODE);
+          goto out;
+        }
+      return;
+    }
+
+  /* Otherwise, it's a m4 element and we need to create a string of
+     |  macro arguments to be passed to the library command in
+     |  LoadElementToBuffer()
+   */
+  m4_args = g_strdup_printf ("'%s' '%s' '%s'", EMPTY (entry->Template),
+                             EMPTY (entry->Value), EMPTY (entry->Package));
+
+  if (LoadElementToBuffer (PASTEBUFFER, m4_args, false))
+    {
+      SetMode (PASTEBUFFER_MODE);
+      g_free (m4_args);
+      goto out;
+    }
+
+  g_free (m4_args);
+  return;
+
+out:
+
+  /* update the preview with new symbol data */
+  g_object_set (library_window->preview,
+                "element-data", PASTEBUFFER->Data->Element->data, NULL);
+#endif
+}
+
+
+/*! \brief Creates the treeview for the "Unplaced" view */
+static GtkWidget *
+create_unplaced_treeview (GhidLibraryWindow * library_window)
+{
+  GtkWidget *treeview;
+  GtkWidget *vbox;
+  GtkWidget *scrolled_win;
+  GtkWidget *label;
+  GtkWidget *hbox;
+  GtkWidget *entry;
+  GtkWidget *button;
+  GtkTreeModel *child_model, *model;
+  GtkTreeSelection *selection;
+  GtkCellRenderer *renderer;
+  GtkTreeViewColumn *column;
+
+  /* -- unplaced selection view -- */
+
+  /* vertical box for footprint selection and search entry */
+  vbox = GTK_WIDGET (g_object_new (GTK_TYPE_VBOX,
+                                   /* GtkContainer */
+                                   "border-width", 5,
+                                   /* GtkBox */
+                                   "homogeneous", FALSE, "spacing", 5, NULL));
+
+  child_model = create_unplaced_tree_model (library_window);
+//  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (child_model),
+//                                        UNPLACED_NAMEONPCB_COLUMN, GTK_SORT_ASCENDING);
+  model = (GtkTreeModel *) g_object_new (GTK_TYPE_TREE_MODEL_FILTER,
+                                         "child-model", child_model,
+                                         "virtual-root", NULL, NULL);
+
+  scrolled_win = GTK_WIDGET (g_object_new (GTK_TYPE_SCROLLED_WINDOW,
+                                           /* GtkScrolledWindow */
+                                           "hscrollbar-policy",
+                                           GTK_POLICY_AUTOMATIC,
+                                           "vscrollbar-policy",
+                                           GTK_POLICY_ALWAYS, "shadow-type",
+                                           GTK_SHADOW_ETCHED_IN, NULL));
+  /* create the treeview */
+  treeview = GTK_WIDGET (g_object_new (GTK_TYPE_TREE_VIEW,
+                                       /* GtkTreeView */
+                                       "model", model,
+                                       "rules-hint", TRUE,
+                                       "headers-visible", FALSE, NULL));
+
+//  g_signal_connect (treeview,
+//                    "row-activated",
+//                    G_CALLBACK (tree_row_activated),
+//                    NULL);
+
+//  g_signal_connect (treeview,
+//                    "key-press-event",
+//                    G_CALLBACK (tree_row_key_pressed),
+//                    NULL);
+
+  /* connect callback to selection */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+
+  /* XXX: Make multiple select */
+  gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+  g_signal_connect (selection,
+                    "changed",
+                    G_CALLBACK
+                    (library_window_callback_unplaced_selection_changed),
+                    library_window);
+
+  /* insert a column to treeview for library/symbol name */
+  renderer = GTK_CELL_RENDERER (g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                                              /* GtkCellRendererText */
+                                              "editable", FALSE, NULL));
+  column = GTK_TREE_VIEW_COLUMN (g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
+                                               /* GtkTreeViewColumn */
+                                               "title", _("Name on PCB"),
+                                               NULL));
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", UNPLACED_NAMEONPCB_COLUMN, NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+
+  renderer = GTK_CELL_RENDERER (g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                                              /* GtkCellRendererText */
+                                              "editable", FALSE, NULL));
+  column = GTK_TREE_VIEW_COLUMN (g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
+                                               /* GtkTreeViewColumn */
+                                               "title", _("Description"),
+                                               NULL));
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", UNPLACED_DESCRIPTION_COLUMN, NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+
+  renderer = GTK_CELL_RENDERER (g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                                              /* GtkCellRendererText */
+                                              "editable", FALSE, NULL));
+  column = GTK_TREE_VIEW_COLUMN (g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
+                                               /* GtkTreeViewColumn */
+                                               "title", _("Value"),
+                                               NULL));
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", UNPLACED_VALUE_COLUMN, NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (treeview), column);
+
+  /* add the treeview to the scrolled window */
+  gtk_container_add (GTK_CONTAINER (scrolled_win), treeview);
+
+  /* add the scrolled window for directories to the vertical box */
+  gtk_box_pack_start (GTK_BOX (vbox), scrolled_win, TRUE, TRUE, 0);
+
+
+  /* -- filter area -- */
+  hbox = GTK_WIDGET (g_object_new (GTK_TYPE_HBOX,
+                                   /* GtkBox */
+                                   "homogeneous", FALSE, "spacing", 3, NULL));
+
+  /* create the entry label */
+  label = GTK_WIDGET (g_object_new (GTK_TYPE_LABEL,
+                                    /* GtkMisc */
+                                    "xalign", 0.0,
+                                    /* GtkLabel */
+                                    "label", _("Filter:"), NULL));
+  /* add the search label to the filter area */
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+
+  /* create the text entry for filter in footprints */
+  entry = GTK_WIDGET (g_object_new (GTK_TYPE_ENTRY,
+                                    /* GtkEntry */
+                                    "text", "", NULL));
+  g_signal_connect (entry,
+                    "changed",
+                    G_CALLBACK (library_window_callback_filter_entry_changed),
+                    library_window);
+
+  /* now that that we have an entry, set the filter func of model */
+  gtk_tree_model_filter_set_visible_func ((GtkTreeModelFilter *) model,
+                                          lib_model_filter_visible_func,
+                                          library_window, NULL);
+
+  /* add the filter entry to the filter area */
+  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  /* set filter entry of library_window */
+  library_window->entry_filter = GTK_ENTRY (entry);
+  /* and init the event source for footprint filter */
+  library_window->filter_timeout = 0;
+
+  /* create the erase button for filter entry */
+  button = GTK_WIDGET (g_object_new (GTK_TYPE_BUTTON,
+                                     /* GtkWidget */
+                                     "sensitive", FALSE,
+                                     /* GtkButton */
+                                     "relief", GTK_RELIEF_NONE, NULL));
+
+  gtk_container_add (GTK_CONTAINER (button),
+                     gtk_image_new_from_stock (GTK_STOCK_CLEAR,
+                                               GTK_ICON_SIZE_SMALL_TOOLBAR));
+  g_signal_connect (button,
+                    "clicked",
+                    G_CALLBACK
+                    (library_window_callback_filter_button_clicked),
+                    library_window);
+  /* add the clear button to the filter area */
+  gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+  /* set clear button of library_window */
+  library_window->button_clear = GTK_BUTTON (button);
+
+#if 0
+  /* create the refresh button */
+  button = GTK_WIDGET (g_object_new (GTK_TYPE_BUTTON,
+                                     /* GtkWidget */
+                                     "sensitive", TRUE,
+                                     /* GtkButton */
+                                     "relief", GTK_RELIEF_NONE, NULL));
+  gtk_container_add (GTK_CONTAINER (button),
+                     gtk_image_new_from_stock (GTK_STOCK_REFRESH,
+                                               GTK_ICON_SIZE_SMALL_TOOLBAR));
+  /* add the refresh button to the filter area */
+  gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+  g_signal_connect (button,
+                    "clicked",
+                    G_CALLBACK (library_window_callback_refresh_library),
+                    library_window);
+#endif
+
+  /* add the filter area to the vertical box */
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+
+  /* save pointer to treeview in library_window */
+  library_window->unplacedtreeview = GTK_TREE_VIEW (treeview);
+
+  return vbox;
 }
