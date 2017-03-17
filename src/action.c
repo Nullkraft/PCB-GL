@@ -7157,8 +7157,12 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
       END_LOOP;
       if (number_of_footprints_not_found > 0)
 	gui->confirm_dialog (_("Not all requested footprints were found.\n"
-			     "See the message log for details"),
+			     "See the message log for details.\n"
+                             "Place elements from the library window \"unplaced\" tab"),
 			     "Ok", NULL);
+      else
+        gui->confirm_dialog (_("Place elements from the library window \"unplaced\" tab"),
+                             "Ok", NULL);
       return 0;
     }
 
