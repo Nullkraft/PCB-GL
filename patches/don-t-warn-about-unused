@@ -1,5 +1,5 @@
 Bottom: 47b37dc6d4c82745a51cffb4122c4eee43245997
-Top:    47b37dc6d4c82745a51cffb4122c4eee43245997
+Top:    1d78eeab2cf34d23a81ead35c6d2ba7b98789371
 Author: Peter Clifton <peter@clifton-electronics.co.uk>
 Date:   2017-03-17 22:05:06 +0000
 
@@ -8,4 +8,18 @@ Don't warn about unused parameters (can't find the really important warnings in 
 
 ---
 
-
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 058c10f..dd6a071 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -24,8 +24,9 @@ bin_PROGRAMS=	pcb
+ 
+ if DEBUG_BUILD
+ # don't disable assert()
++AM_CFLAGS= -Wno-unused-parameter
+ else
+-AM_CFLAGS= -DNDEBUG
++AM_CFLAGS= -DNDEBUG -Wno-unused-parameter
+ endif
+ 
+ PCB_SRCS = \
