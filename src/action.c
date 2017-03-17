@@ -7015,23 +7015,15 @@ ActionPSCalib (int argc, char **argv, Coord x, Coord y)
 
 /* --------------------------------------------------------------------------- */
 
-static ElementType *element_cache = NULL;
-
 static ElementType *
 find_element_by_refdes (char *refdes)
 {
-  if (element_cache
-      && NAMEONPCB_NAME(element_cache)
-      && strcmp (NAMEONPCB_NAME(element_cache), refdes) == 0)
-    return element_cache;
-
   ELEMENT_LOOP (PCB->Data);
   {
     if (NAMEONPCB_NAME(element)
 	&& strcmp (NAMEONPCB_NAME(element), refdes) == 0)
       {
-	element_cache = element;
-	return element_cache;
+        return element;
       }
   }
   END_LOOP;
@@ -7127,7 +7119,6 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
 	CLEAR_FLAG (FOUNDFLAG, element);
       }
       END_LOOP;
-      element_cache = NULL;
       number_of_footprints_not_found = 0;
 
       /* Empty out the unplaced element list.
@@ -7287,7 +7278,6 @@ ActionElementList (int argc, char **argv, Coord x, Coord y)
 	SetChangedFlag (true);
 
       /* Now reload footprint */
-      element_cache = NULL;
       e = find_element_by_refdes (refdes);
       e_owner = PCB->Data;
     }
