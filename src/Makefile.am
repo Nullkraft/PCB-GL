@@ -157,7 +157,7 @@ PCB_SRCS = \
 	hid/common/draw_helpers.h \
 	hid/common/hid_resource.c \
 	hid/common/hid_resource.h \
-	hid/hidint.h 
+	hid/hidint.h
 
 EXTRA_pcb_SOURCES = ${DBUS_SRCS} ${GL_SRCS} toporouter.c toporouter.h
 DBUS_SRCS= \
@@ -243,7 +243,7 @@ core_lists.h : ${PCB_SRCS} Makefile
 	mv $@.tmp $@
 
 # for globalconst.h
-INCLUDES=	-I$(top_srcdir) -I$(srcdir)/icons -I$(srcdir)/../gts
+AM_CPPFLAGS=	-I$(top_srcdir) -I$(srcdir)/icons -I$(srcdir)/../gts
 
 DEFS= 	-DLOCALEDIR=\"$(localedir)\" @DEFS@
 
@@ -401,7 +401,7 @@ LIBLESSTIF_SRCS = \
 	hid/lesstif/menu.c \
 	hid/lesstif/netlist.c \
 	hid/lesstif/styles.c \
-	hid/lesstif/xincludes.h 
+	hid/lesstif/xincludes.h
 liblesstif_a_SOURCES = ${LIBLESSTIF_SRCS} hid/lesstif/lesstif_lists.h
 
 hid/lesstif/lesstif_lists.h : ${LIBLESSTIF_SRCS} Makefile
@@ -413,7 +413,7 @@ hid/lesstif/lesstif_lists.h : ${LIBLESSTIF_SRCS} Makefile
 libbatch_a_CPPFLAGS = -I./hid/batch
 LIBBATCH_SRCS = \
 	hid/hidint.h \
-	hid/batch/batch.c 
+	hid/batch/batch.c
 libbatch_a_SOURCES = ${LIBBATCH_SRCS} hid/batch/batch_lists.h
 
 hid/batch/batch_lists.h : ${LIBBATCH_SRCS} Makefile
@@ -436,7 +436,7 @@ LIBPS_SRCS = \
 	hid/hidint.h \
 	hid/ps/ps.c \
 	hid/ps/ps.h \
-	hid/ps/eps.c 
+	hid/ps/eps.c
 libps_a_SOURCES = ${LIBPS_SRCS} hid/ps/ps_lists.h
 
 hid/ps/ps_lists.h : ${LIBPS_SRCS} Makefile
@@ -450,7 +450,7 @@ LIBPNG_SRCS = \
 	dolists.h \
 	hid/hidint.h \
 	hid/png/png.c \
-	hid/png/png.h 
+	hid/png/png.h
 libpng_a_SOURCES = ${LIBPNG_SRCS} hid/png/png_lists.h
 
 hid/png/png_lists.h : ${LIBPNG_SRCS} Makefile
@@ -473,7 +473,7 @@ LIBGCODE_SRCS = \
 	hid/gcode/auxiliary.h \
 	hid/gcode/bitmap.h \
 	hid/gcode/lists.h \
-	hid/gcode/potracelib.h 
+	hid/gcode/potracelib.h
 libgcode_a_SOURCES = ${LIBGCODE_SRCS} hid/gcode/gcode_lists.h
 
 hid/gcode/gcode_lists.h : ${LIBGCODE_SRCS} Makefile
